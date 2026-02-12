@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { supabase, type Registration, type SiteSettings } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
+import { type Registration, type SiteSettings } from "@/lib/supabase";
 import { getGrade } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 
@@ -55,7 +56,7 @@ const Admin = () => {
 
   const fetchSettings = async () => {
     const { data } = await supabase.from("site_settings").select("*").single();
-    if (data) setSettings(data);
+    if (data) setSettings(data as unknown as SiteSettings);
   };
 
   const updateSetting = async (key: string, value: string | null) => {

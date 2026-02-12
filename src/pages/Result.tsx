@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { supabase, type Result as ResultType, type SiteSettings } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
+import { type Result as ResultType } from "@/lib/supabase";
 import { ORG_NAME } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 
@@ -68,7 +69,7 @@ const ResultPage = () => {
         .single();
 
       if (resData) {
-        setResult({ ...resData, ...regData });
+        setResult({ ...(resData as unknown as ResultType), ...regData } as any);
       } else {
         toast({ title: "No result found", description: "Please check the roll number.", variant: "destructive" });
       }
@@ -103,7 +104,7 @@ const ResultPage = () => {
         .single();
 
       if (resData) {
-        setResult({ ...resData, name: regData.name, father_name: regData.father_name, class: regData.class });
+        setResult({ ...(resData as unknown as ResultType), name: regData.name, father_name: regData.father_name, class: regData.class } as any);
       } else {
         toast({ title: "No result found", variant: "destructive" });
       }

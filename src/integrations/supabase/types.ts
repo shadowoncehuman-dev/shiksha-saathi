@@ -14,7 +14,120 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      registrations: {
+        Row: {
+          class: number
+          created_at: string
+          father_name: string
+          group: string
+          id: string
+          name: string
+          phone: string
+          roll_number: string
+          village: string
+        }
+        Insert: {
+          class: number
+          created_at?: string
+          father_name: string
+          group: string
+          id?: string
+          name: string
+          phone: string
+          roll_number: string
+          village: string
+        }
+        Update: {
+          class?: number
+          created_at?: string
+          father_name?: string
+          group?: string
+          id?: string
+          name?: string
+          phone?: string
+          roll_number?: string
+          village?: string
+        }
+        Relationships: []
+      }
+      results: {
+        Row: {
+          grade: string
+          id: string
+          percentage: number
+          roll_number: string
+          status: string
+          subject1: number
+          subject2: number
+          subject3: number
+          subject4: number
+          total: number
+        }
+        Insert: {
+          grade?: string
+          id?: string
+          percentage?: number
+          roll_number: string
+          status?: string
+          subject1?: number
+          subject2?: number
+          subject3?: number
+          subject4?: number
+          total?: number
+        }
+        Update: {
+          grade?: string
+          id?: string
+          percentage?: number
+          roll_number?: string
+          status?: string
+          subject1?: number
+          subject2?: number
+          subject3?: number
+          subject4?: number
+          total?: number
+        }
+        Relationships: []
+      }
+      roll_counters: {
+        Row: {
+          class: number
+          last_number: number
+        }
+        Insert: {
+          class: number
+          last_number?: number
+        }
+        Update: {
+          class?: number
+          last_number?: number
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          id: number
+          registration_status: string
+          result_expiry_date: string | null
+          result_publish_date: string | null
+          result_status: string
+        }
+        Insert: {
+          id?: number
+          registration_status?: string
+          result_expiry_date?: string | null
+          result_publish_date?: string | null
+          result_status?: string
+        }
+        Update: {
+          id?: number
+          registration_status?: string
+          result_expiry_date?: string | null
+          result_publish_date?: string | null
+          result_status?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
