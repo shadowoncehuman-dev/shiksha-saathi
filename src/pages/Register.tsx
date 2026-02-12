@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase, type SiteSettings } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { VILLAGES, getGroup, ORG_NAME } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 

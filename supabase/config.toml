@@ -1,1 +1,7 @@
 project_id = "qukzclnrxscrrhindgsz"
+
+[functions.validate-admin]
+verify_jwt = false
+
+[functions.generate-roll-number]
+verify_jwt = false
