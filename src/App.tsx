@@ -8,6 +8,9 @@ import Register from "./pages/Register";
 import AdmitCard from "./pages/AdmitCard";
 import Result from "./pages/Result";
 import Admin from "./pages/Admin";
+import Team from "./pages/Team";
+import Gallery from "./pages/Gallery";
+import ExamDetails from "./pages/ExamDetails";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +27,9 @@ const App = () => (
           <Route path="/admit-card" element={<AdmitCard />} />
           <Route path="/result" element={<Result />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/team" element={<Team />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/exam-details" element={<ExamDetails />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
