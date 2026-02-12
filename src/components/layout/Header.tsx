@@ -1,13 +1,16 @@
 import { Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { ORG_NAME } from "@/lib/constants";
 
 const navItems = [
   { label: "Home", path: "/" },
+  { label: "Exam Details", path: "/exam-details" },
   { label: "Register", path: "/register" },
   { label: "Result", path: "/result" },
+  { label: "Team", path: "/team" },
+  { label: "Gallery", path: "/gallery" },
 ];
 
 const Header = () => {
@@ -15,11 +18,11 @@ const Header = () => {
   const location = useLocation();
 
   return (
-    <header className="sticky top-0 z-50 bg-primary text-primary-foreground shadow-lg">
+    <header className="sticky top-0 z-50 hero-gradient text-primary-foreground shadow-xl backdrop-blur-lg">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
-          <Link to="/" className="flex items-center gap-3 shrink-0">
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-secondary flex items-center justify-center font-playfair font-bold text-secondary-foreground text-lg">
+          <Link to="/" className="flex items-center gap-3 shrink-0 group">
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center font-playfair font-bold text-secondary-foreground text-lg shadow-lg shadow-secondary/20 group-hover:scale-110 transition-transform">
               अ
             </div>
             <div className="hidden sm:block">
@@ -30,25 +33,31 @@ const Header = () => {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                   location.pathname === item.path
-                    ? "bg-primary-foreground/20"
-                    : "hover:bg-primary-foreground/10"
+                    ? "bg-primary-foreground/15 text-secondary"
+                    : "hover:bg-primary-foreground/10 text-primary-foreground/80 hover:text-primary-foreground"
                 }`}
               >
                 {item.label}
+                {location.pathname === item.path && (
+                  <motion.div
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-secondary rounded-full"
+                    layoutId="activeNav"
+                  />
+                )}
               </Link>
             ))}
           </nav>
 
           {/* Mobile toggle */}
           <button
-            className="md:hidden p-2 hover:bg-primary-foreground/10 rounded-md"
+            className="lg:hidden p-2 hover:bg-primary-foreground/10 rounded-lg transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -57,29 +66,37 @@ const Header = () => {
         </div>
 
         {/* Mobile Nav */}
-        {mobileOpen && (
-          <motion.nav
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden pb-4 border-t border-primary-foreground/20"
-          >
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setMobileOpen(false)}
-                className={`block px-4 py-3 text-sm font-medium transition-colors ${
-                  location.pathname === item.path
-                    ? "bg-primary-foreground/20"
-                    : "hover:bg-primary-foreground/10"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </motion.nav>
-        )}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.nav
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden pb-4 border-t border-primary-foreground/10"
+            >
+              {navItems.map((item, i) => (
+                <motion.div
+                  key={item.path}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <Link
+                    to={item.path}
+                    onClick={() => setMobileOpen(false)}
+                    className={`block px-4 py-3 text-sm font-medium transition-all rounded-lg my-0.5 ${
+                      location.pathname === item.path
+                        ? "bg-primary-foreground/15 text-secondary"
+                        : "hover:bg-primary-foreground/10"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </motion.nav>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );

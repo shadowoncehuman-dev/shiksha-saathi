@@ -1,15 +1,18 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { BookOpen, Clock, Calendar, Award, Users, Shield } from "lucide-react";
+import { BookOpen, Clock, Calendar, Award, Users, Shield, ArrowRight, ChevronRight, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { ORG_NAME, TAGLINE, SUBHEADING, EXAM_DATE, EXAM_GROUPS } from "@/lib/constants";
+import heroBg from "@/assets/hero-bg.jpg";
+import galleryMeeting from "@/assets/gallery-meeting.jpg";
+import galleryShields from "@/assets/gallery-shields.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({
     opacity: 1, y: 0,
-    transition: { delay: i * 0.15, duration: 0.6, ease: "easeOut" as const },
+    transition: { delay: i * 0.12, duration: 0.6, ease: "easeOut" as const },
   }),
 };
 
@@ -17,36 +20,31 @@ const Index = () => {
   return (
     <Layout>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-primary text-primary-foreground py-20 md:py-32">
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 41px),
-              repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 41px)`,
-          }} />
+      <section className="relative overflow-hidden min-h-[80vh] flex items-center">
+        <div className="absolute inset-0">
+          <img src={heroBg} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 hero-gradient opacity-90" />
         </div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20rem] font-playfair font-bold opacity-[0.03] select-none pointer-events-none">
-          अ
-        </div>
-        <div className="container mx-auto px-4 relative z-10 text-center">
+        <div className="container mx-auto px-4 relative z-10 text-center py-20 md:py-32">
           <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/20 text-secondary text-sm font-medium mb-6">
-              <Calendar size={16} /> Exam Date: {EXAM_DATE}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-secondary/20 backdrop-blur-sm text-secondary text-sm font-semibold mb-8 border border-secondary/20">
+              <Calendar size={16} /> Exam: {EXAM_DATE}
             </div>
           </motion.div>
           <motion.h1
-            className="font-playfair text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4"
+            className="font-playfair text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-5 text-primary-foreground text-shadow"
             initial="hidden" animate="visible" variants={fadeUp} custom={1}
           >
             {ORG_NAME}
           </motion.h1>
           <motion.p
-            className="text-xl md:text-2xl text-secondary font-playfair font-medium mb-2"
+            className="text-xl md:text-2xl text-secondary font-playfair font-medium mb-3"
             initial="hidden" animate="visible" variants={fadeUp} custom={2}
           >
             {TAGLINE}
           </motion.p>
           <motion.p
-            className="text-primary-foreground/70 max-w-2xl mx-auto mb-10"
+            className="text-primary-foreground/60 max-w-2xl mx-auto mb-12 text-sm md:text-base"
             initial="hidden" animate="visible" variants={fadeUp} custom={3}
           >
             {SUBHEADING}
@@ -55,26 +53,65 @@ const Index = () => {
             className="flex flex-col sm:flex-row gap-4 justify-center"
             initial="hidden" animate="visible" variants={fadeUp} custom={4}
           >
-            <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold text-base px-8">
-              <a href="#exam-groups">View Exam Details</a>
+            <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold text-base px-8 shadow-lg shadow-secondary/25 group">
+              <Link to="/exam-details">
+                View Exam Details
+                <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 font-semibold text-base px-8">
+            <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 font-semibold text-base px-8 backdrop-blur-sm">
               <Link to="/register">Register Now</Link>
             </Button>
           </motion.div>
         </div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          animate={{ y: [0, 8, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+        >
+          <ChevronRight size={24} className="text-primary-foreground/40 rotate-90" />
+        </motion.div>
+      </section>
+
+      {/* Stats Bar */}
+      <section className="bg-card border-b border-border">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-border">
+            {[
+              { label: "Exam Groups", value: "2" },
+              { label: "Classes", value: "6–12" },
+              { label: "Villages", value: "7+" },
+              { label: "Exam Date", value: "Apr 2026" },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                className="py-6 text-center"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <p className="font-playfair text-2xl md:text-3xl font-bold text-primary">{stat.value}</p>
+                <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Exam Groups */}
-      <section id="exam-groups" className="py-16 md:py-24">
+      <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <motion.div
-            className="text-center mb-12"
+            className="text-center mb-14"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mb-3">
+            <span className="text-secondary text-sm font-semibold tracking-wider uppercase">Examination Structure</span>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">
               Examination Groups
             </h2>
             <div className="section-divider mb-4" />
@@ -87,29 +124,38 @@ const Index = () => {
             {EXAM_GROUPS.map((group, i) => (
               <motion.div
                 key={group.name}
-                className="glass-card gold-border rounded-xl p-8 text-center hover:shadow-xl transition-shadow"
+                className="glass-card rounded-2xl overflow-hidden card-hover gold-glow"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.2 }}
-                whileHover={{ y: -4 }}
               >
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <BookOpen className="text-primary" size={28} />
+                <div className={`p-6 ${i === 0 ? 'bg-gradient-to-r from-primary to-primary/80' : 'bg-gradient-to-r from-secondary to-accent'} text-primary-foreground`}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+                      <BookOpen size={24} />
+                    </div>
+                    <div>
+                      <h3 className="font-playfair text-2xl font-bold">{group.name}</h3>
+                      <p className="text-sm opacity-80">Classes {group.classes.join(", ")}</p>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="font-playfair text-2xl font-bold text-foreground mb-2">
-                  {group.name}
-                </h3>
-                <p className="text-lg text-muted-foreground mb-4">
-                  Classes: <span className="font-semibold text-foreground">{group.classes.join(", ")}</span>
-                </p>
-                <div className="flex items-center justify-center gap-2 text-secondary font-medium">
-                  <Clock size={18} />
-                  Duration: {group.duration}
-                </div>
-                <div className="mt-4 flex items-center justify-center gap-2 text-muted-foreground text-sm">
-                  <Calendar size={14} />
-                  {EXAM_DATE}
+                <div className="p-6 space-y-4">
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <Clock size={16} className="text-secondary" />
+                    Duration: <span className="font-semibold text-foreground">{group.duration}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <Calendar size={16} className="text-secondary" />
+                    Date: <span className="font-semibold text-foreground">{EXAM_DATE}</span>
+                  </div>
+                  <Button asChild variant="outline" className="w-full group">
+                    <Link to="/exam-details">
+                      View Details
+                      <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </Button>
                 </div>
               </motion.div>
             ))}
@@ -118,18 +164,19 @@ const Index = () => {
       </section>
 
       {/* About */}
-      <section className="py-16 md:py-24 bg-muted/50">
+      <section className="py-16 md:py-24 bg-muted/40">
         <div className="container mx-auto px-4">
           <motion.div
-            className="text-center mb-12"
+            className="text-center mb-14"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mb-3">
+            <span className="text-secondary text-sm font-semibold tracking-wider uppercase">Who We Are</span>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">
               About the Samiti
             </h2>
-            <div className="section-divider mb-4" />
+            <div className="section-divider" />
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -140,16 +187,16 @@ const Index = () => {
             ].map((item, i) => (
               <motion.div
                 key={item.title}
-                className="glass-card rounded-xl p-8 text-center"
+                className="glass-card rounded-2xl p-8 text-center card-hover"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15 }}
               >
-                <div className="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-4">
-                  <item.icon className="text-secondary" size={24} />
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-secondary/20 to-accent/20 flex items-center justify-center mx-auto mb-5">
+                  <item.icon className="text-secondary" size={28} />
                 </div>
-                <h3 className="font-playfair text-xl font-semibold text-foreground mb-2">
+                <h3 className="font-playfair text-xl font-semibold text-foreground mb-3">
                   {item.title}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
@@ -158,6 +205,85 @@ const Index = () => {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Gallery Preview */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <motion.div
+            className="text-center mb-14"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="text-secondary text-sm font-semibold tracking-wider uppercase">Moments</span>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">
+              From Our Gallery
+            </h2>
+            <div className="section-divider" />
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-10">
+            {[
+              { img: galleryMeeting, title: "Meeting 2025" },
+              { img: galleryShields, title: "Shields 2024" },
+            ].map((item, i) => (
+              <motion.div
+                key={item.title}
+                className="relative rounded-2xl overflow-hidden group cursor-pointer card-hover"
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15 }}
+              >
+                <img src={item.img} alt={item.title} className="w-full h-64 md:h-72 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4">
+                  <p className="text-primary-foreground font-playfair text-lg font-semibold">{item.title}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Button asChild variant="outline" size="lg" className="group">
+              <Link to="/gallery">
+                View Full Gallery
+                <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-16 md:py-24 hero-gradient text-primary-foreground relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: `radial-gradient(circle at 50% 50%, hsl(45 93% 47% / 0.2) 0%, transparent 60%)`,
+        }} />
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <GraduationCap size={48} className="text-secondary mx-auto mb-6" />
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-4 text-shadow">
+              Ready to Register?
+            </h2>
+            <p className="text-primary-foreground/60 max-w-lg mx-auto mb-8">
+              Join thousands of students in the Dr. B.R. Ambedkar examination. Registration is quick and easy.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold px-10 shadow-lg shadow-secondary/25">
+                <Link to="/register">Register Now</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 backdrop-blur-sm">
+                <Link to="/team">Meet Our Team</Link>
+              </Button>
+            </div>
+          </motion.div>
         </div>
       </section>
     </Layout>
