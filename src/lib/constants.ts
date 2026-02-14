@@ -10,6 +10,7 @@ export const CONTACT = {
 };
 
 export const EXAM_DATE = "10–14 April 2026";
+export const EXAM_CENTER = "Govt. School, Nayagaon";
 
 export const EXAM_GROUPS = [
   {
@@ -46,4 +47,18 @@ export function getGrade(percentage: number): string {
   if (percentage >= 50) return "C";
   if (percentage >= 33) return "D";
   return "F";
+}
+
+export function formatIndianDateTime(date: Date | string): string {
+  const d = typeof date === "string" ? new Date(date) : date;
+  return d.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
 }

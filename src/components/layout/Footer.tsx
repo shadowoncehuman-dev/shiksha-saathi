@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, ArrowUpRight } from "lucide-react";
 import { ORG_NAME, CONTACT } from "@/lib/constants";
+import logo from "@/assets/logo.png";
 
 const Footer = () => {
   return (
@@ -9,9 +10,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center font-playfair font-bold text-secondary-foreground">
-                अ
-              </div>
+              <img src={logo} alt="Logo" className="w-12 h-12 rounded-full object-contain bg-white" />
               <h3 className="font-playfair text-lg font-semibold text-primary-foreground">
                 BBDBASS
               </h3>
