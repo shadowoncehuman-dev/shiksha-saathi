@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, Loader2, Award } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
-import { type Result as ResultType } from "@/lib/supabase";
 import { ORG_NAME } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 
@@ -15,11 +14,11 @@ const ResultPage = () => {
   const [resultStatus, setResultStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
-  const [result, setResult] = useState<(ResultType & { name?: string; father_name?: string; class?: number }) | null>(null);
   const [rollNumber, setRollNumber] = useState("");
   const [searchName, setSearchName] = useState("");
   const [searchFatherName, setSearchFatherName] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -51,10 +50,14 @@ const ResultPage = () => {
     fetchStatus();
   }, []);
 
+  const navigateToResult = (resultData: any, regData: any) => {
+    sessionStorage.setItem("result_data", JSON.stringify({ ...resultData, ...regData }));
+    navigate("/result-detail");
+  };
+
   const searchByRoll = async () => {
     if (!rollNumber.trim()) return;
     setSearching(true);
-    setResult(null);
     try {
       const { data: regData } = await supabase
         .from("registrations")
@@ -69,7 +72,7 @@ const ResultPage = () => {
         .single();
 
       if (resData) {
-        setResult({ ...(resData as unknown as ResultType), ...regData } as any);
+        navigateToResult(resData, regData);
       } else {
         toast({ title: "No result found", description: "Please check the roll number.", variant: "destructive" });
       }
@@ -82,7 +85,6 @@ const ResultPage = () => {
   const searchByName = async () => {
     if (!searchName.trim() || !searchFatherName.trim()) return;
     setSearching(true);
-    setResult(null);
     try {
       const { data: regData } = await supabase
         .from("registrations")
@@ -104,7 +106,7 @@ const ResultPage = () => {
         .single();
 
       if (resData) {
-        setResult({ ...(resData as unknown as ResultType), name: regData.name, father_name: regData.father_name, class: regData.class } as any);
+        navigateToResult(resData, { name: regData.name, father_name: regData.father_name, class: regData.class });
       } else {
         toast({ title: "No result found", variant: "destructive" });
       }
@@ -179,75 +181,6 @@ const ResultPage = () => {
               </TabsContent>
             </Tabs>
           </motion.div>
-
-          {/* Result Card */}
-          {result && (
-            <motion.div
-              className="mt-8 bg-card rounded-xl overflow-hidden shadow-2xl"
-              style={{ border: "3px solid hsl(43, 80%, 50%)" }}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <div className="bg-primary text-primary-foreground p-5 text-center relative">
-                <div className="absolute inset-0 flex items-center justify-center opacity-5 text-[8rem] font-playfair font-bold select-none pointer-events-none">अ</div>
-                <h3 className="font-playfair text-lg font-bold relative z-10">{ORG_NAME}</h3>
-                <p className="text-secondary text-sm relative z-10">EXAMINATION RESULT</p>
-              </div>
-
-              <div className="p-6 md:p-8 relative">
-                <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] select-none pointer-events-none">
-                  <p className="font-playfair text-lg rotate-[-30deg]">Official Result – BBDBASS Samiti</p>
-                </div>
-
-                <div className="space-y-3 relative z-10 mb-6">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-muted-foreground text-xs">Student Name</p>
-                      <p className="font-semibold text-foreground">{result.name || "N/A"}</p>
-                    </div>
-                    <Badge className={result.status === "PASS" ? "bg-green-600 hover:bg-green-700 text-white" : "bg-destructive hover:bg-destructive/90 text-white"}>
-                      {result.status}
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div><p className="text-muted-foreground text-xs">Roll Number</p><p className="font-bold text-primary text-xl">{result.roll_number}</p></div>
-                    <div><p className="text-muted-foreground text-xs">Class</p><p className="font-semibold">{result.class ? `Class ${result.class}` : "N/A"}</p></div>
-                  </div>
-                </div>
-
-                {/* Subject Marks */}
-                <div className="bg-muted/50 rounded-lg p-4 mb-4 relative z-10">
-                  <h4 className="font-playfair font-semibold mb-3 text-foreground">Subject-wise Marks</h4>
-                  <div className="space-y-2">
-                    {["Subject 1", "Subject 2", "Subject 3", "Subject 4"].map((sub, i) => {
-                      const key = `subject${i + 1}` as keyof typeof result;
-                      return (
-                        <div key={sub} className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">{sub}</span>
-                          <span className="font-medium text-foreground">{result[key] as number}/100</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4 relative z-10">
-                  <div className="text-center p-3 bg-primary/5 rounded-lg">
-                    <p className="text-xs text-muted-foreground">Total</p>
-                    <p className="font-bold text-lg text-primary">{result.total}/400</p>
-                  </div>
-                  <div className="text-center p-3 bg-primary/5 rounded-lg">
-                    <p className="text-xs text-muted-foreground">Percentage</p>
-                    <p className="font-bold text-lg text-primary">{result.percentage}%</p>
-                  </div>
-                  <div className="text-center p-3 bg-primary/5 rounded-lg">
-                    <p className="text-xs text-muted-foreground">Grade</p>
-                    <p className="font-bold text-lg text-primary">{result.grade}</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
         </div>
       </section>
     </Layout>

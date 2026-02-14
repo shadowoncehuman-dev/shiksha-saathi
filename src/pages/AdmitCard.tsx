@@ -7,7 +7,8 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { ORG_NAME, EXAM_DATE, CONTACT } from "@/lib/constants";
+import { ORG_NAME, EXAM_DATE, EXAM_CENTER, CONTACT } from "@/lib/constants";
+import logo from "@/assets/logo.png";
 
 type AdmitData = {
   roll_number: string;
@@ -83,6 +84,7 @@ const AdmitCard = () => {
               <div className="absolute inset-0 opacity-5 flex items-center justify-center text-[10rem] font-playfair font-bold select-none pointer-events-none">
                 अ
               </div>
+              <img src={logo} alt="Logo" className="w-14 h-14 mx-auto mb-2 rounded-full bg-white p-1 relative z-10" />
               <h2 className="font-playfair text-xl md:text-2xl font-bold relative z-10 mb-1">
                 {ORG_NAME}
               </h2>
@@ -104,6 +106,7 @@ const AdmitCard = () => {
                     { label: "Class", value: `Class ${data.class}` },
                     { label: "Exam Date", value: EXAM_DATE },
                     { label: "Duration", value: data.duration },
+                    { label: "Exam Center", value: EXAM_CENTER },
                   ].map((item) => (
                     <div key={item.label} className="flex gap-2">
                       <span className="text-muted-foreground text-sm min-w-[110px]">{item.label}:</span>

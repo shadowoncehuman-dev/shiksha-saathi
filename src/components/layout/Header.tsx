@@ -1,8 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { ORG_NAME } from "@/lib/constants";
+import logo from "@/assets/logo.png";
 
 const navItems = [
   { label: "Home", path: "/" },
@@ -22,9 +23,7 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           <Link to="/" className="flex items-center gap-3 shrink-0 group">
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center font-playfair font-bold text-secondary-foreground text-lg shadow-lg shadow-secondary/20 group-hover:scale-110 transition-transform">
-              अ
-            </div>
+            <img src={logo} alt="Logo" className="w-10 h-10 md:w-12 md:h-12 rounded-full object-contain bg-white shadow-lg group-hover:scale-110 transition-transform" />
             <div className="hidden sm:block">
               <h1 className="font-playfair text-sm md:text-base font-semibold leading-tight max-w-xs lg:max-w-md">
                 {ORG_NAME}
@@ -32,7 +31,6 @@ const Header = () => {
             </div>
           </Link>
 
-          {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
               <Link
@@ -55,7 +53,6 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Mobile toggle */}
           <button
             className="lg:hidden p-2 hover:bg-primary-foreground/10 rounded-lg transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -65,7 +62,6 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Mobile Nav */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.nav

@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Register from "./pages/Register";
 import AdmitCard from "./pages/AdmitCard";
 import Result from "./pages/Result";
+import ResultDetail from "./pages/ResultDetail";
 import Admin from "./pages/Admin";
 import Team from "./pages/Team";
 import Gallery from "./pages/Gallery";
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/register" element={<Register />} />
           <Route path="/admit-card" element={<AdmitCard />} />
           <Route path="/result" element={<Result />} />
+          <Route path="/result-detail" element={<ResultDetail />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/team" element={<Team />} />
           <Route path="/gallery" element={<Gallery />} />

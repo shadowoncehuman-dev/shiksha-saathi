@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Lock, Loader2, Settings, Users, BookOpen, Upload, Download, Trash2, Edit, Search, Save } from "lucide-react";
+import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { type Registration, type SiteSettings } from "@/lib/supabase";
-import { getGrade } from "@/lib/constants";
+import { getGrade, formatIndianDateTime } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 
 const Admin = () => {
@@ -17,7 +17,6 @@ const Admin = () => {
   const [verifying, setVerifying] = useState(false);
   const { toast } = useToast();
 
-  // Settings state
   const [settings, setSettings] = useState<SiteSettings>({
     registration_status: "Not Started",
     result_status: "Not Declared",
@@ -25,14 +24,13 @@ const Admin = () => {
     result_expiry_date: null,
   });
 
-  // Students state
   const [students, setStudents] = useState<Registration[]>([]);
   const [loadingStudents, setLoadingStudents] = useState(false);
 
-  // Marks state
+  // Marks state - total only
   const [markRoll, setMarkRoll] = useState("");
   const [markStudent, setMarkStudent] = useState<Registration | null>(null);
-  const [marks, setMarks] = useState({ subject1: "", subject2: "", subject3: "", subject4: "" });
+  const [totalMarks, setTotalMarks] = useState("");
   const [savingMarks, setSavingMarks] = useState(false);
 
   const handleLogin = async () => {
@@ -81,8 +79,8 @@ const Admin = () => {
 
   const exportCSV = () => {
     if (!students.length) return;
-    const headers = ["Roll Number", "Name", "Father Name", "Class", "Group", "Phone", "Village"];
-    const rows = students.map((s) => [s.roll_number, s.name, s.father_name, s.class, s.group, s.phone, s.village]);
+    const headers = ["Roll Number", "Name", "Father Name", "Class", "Group", "Phone", "Village", "Registered At"];
+    const rows = students.map((s) => [s.roll_number, s.name, s.father_name, s.class, s.group, s.phone, s.village, s.created_at ? formatIndianDateTime(s.created_at) : ""]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -97,17 +95,11 @@ const Admin = () => {
     const { data } = await supabase.from("registrations").select("*").eq("roll_number", markRoll.trim()).single();
     if (data) {
       setMarkStudent(data);
-      // Check existing marks
       const { data: existing } = await supabase.from("results").select("*").eq("roll_number", markRoll.trim()).single();
       if (existing) {
-        setMarks({
-          subject1: existing.subject1?.toString() || "",
-          subject2: existing.subject2?.toString() || "",
-          subject3: existing.subject3?.toString() || "",
-          subject4: existing.subject4?.toString() || "",
-        });
+        setTotalMarks(existing.total?.toString() || "");
       } else {
-        setMarks({ subject1: "", subject2: "", subject3: "", subject4: "" });
+        setTotalMarks("");
       }
     } else {
       toast({ title: "Student not found", variant: "destructive" });
@@ -117,21 +109,16 @@ const Admin = () => {
 
   const saveMarks = async () => {
     if (!markStudent) return;
-    const s1 = parseInt(marks.subject1) || 0;
-    const s2 = parseInt(marks.subject2) || 0;
-    const s3 = parseInt(marks.subject3) || 0;
-    const s4 = parseInt(marks.subject4) || 0;
-    const total = s1 + s2 + s3 + s4;
+    const total = parseInt(totalMarks) || 0;
     const percentage = Math.round((total / 400) * 100);
     const grade = getGrade(percentage);
     const status = percentage >= 33 ? "PASS" : "FAIL";
 
     setSavingMarks(true);
-    // Upsert
     const { error } = await supabase.from("results").upsert(
       {
         roll_number: markStudent.roll_number,
-        subject1: s1, subject2: s2, subject3: s3, subject4: s4,
+        subject1: 0, subject2: 0, subject3: 0, subject4: 0,
         total, percentage, grade, status,
       },
       { onConflict: "roll_number" }
@@ -145,7 +132,6 @@ const Admin = () => {
     setSavingMarks(false);
   };
 
-  // Login screen
   if (!authenticated) {
     return (
       <Layout>
@@ -193,7 +179,6 @@ const Admin = () => {
               <TabsTrigger value="students"><Users size={16} className="mr-1" /> Students</TabsTrigger>
             </TabsList>
 
-            {/* Settings Tab */}
             <TabsContent value="settings">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="glass-card rounded-xl p-6">
@@ -230,7 +215,6 @@ const Admin = () => {
               </div>
             </TabsContent>
 
-            {/* Add Marks Tab */}
             <TabsContent value="marks">
               <div className="glass-card rounded-xl p-6 max-w-lg">
                 <h3 className="font-playfair text-lg font-semibold mb-4">Add / Update Marks</h3>
@@ -245,24 +229,22 @@ const Admin = () => {
                       <p className="text-sm"><strong>{markStudent.name}</strong> — Class {markStudent.class} ({markStudent.group})</p>
                       <p className="text-xs text-muted-foreground">Father: {markStudent.father_name}</p>
                     </div>
-                    {[1, 2, 3, 4].map((n) => (
-                      <div key={n}>
-                        <label className="text-sm text-muted-foreground">Subject {n} (out of 100)</label>
-                        <Input
-                          type="number"
-                          min={0}
-                          max={100}
-                          value={marks[`subject${n}` as keyof typeof marks]}
-                          onChange={(e) => setMarks((prev) => ({ ...prev, [`subject${n}`]: e.target.value }))}
-                        />
-                      </div>
-                    ))}
+                    <div>
+                      <label className="text-sm text-muted-foreground">Total Marks (out of 400)</label>
+                      <Input
+                        type="number"
+                        min={0}
+                        max={400}
+                        placeholder="Enter total marks"
+                        value={totalMarks}
+                        onChange={(e) => setTotalMarks(e.target.value)}
+                      />
+                    </div>
 
-                    {/* Preview */}
-                    {Object.values(marks).some((m) => m !== "") && (
+                    {totalMarks && (
                       <div className="bg-muted/50 rounded-lg p-3 text-sm">
                         {(() => {
-                          const total = [marks.subject1, marks.subject2, marks.subject3, marks.subject4].reduce((sum, v) => sum + (parseInt(v) || 0), 0);
+                          const total = parseInt(totalMarks) || 0;
                           const pct = Math.round((total / 400) * 100);
                           return (
                             <p>Total: <strong>{total}/400</strong> | Percentage: <strong>{pct}%</strong> | Grade: <strong>{getGrade(pct)}</strong> | {pct >= 33 ? "✅ PASS" : "❌ FAIL"}</p>
@@ -279,7 +261,6 @@ const Admin = () => {
               </div>
             </TabsContent>
 
-            {/* Students Tab */}
             <TabsContent value="students">
               <div className="glass-card rounded-xl p-6">
                 <div className="flex justify-between items-center mb-4">
@@ -299,7 +280,7 @@ const Admin = () => {
                           <th className="text-left py-3 px-2 text-muted-foreground font-medium hidden md:table-cell">Father</th>
                           <th className="text-left py-3 px-2 text-muted-foreground font-medium">Class</th>
                           <th className="text-left py-3 px-2 text-muted-foreground font-medium hidden md:table-cell">Phone</th>
-                          <th className="text-left py-3 px-2 text-muted-foreground font-medium hidden lg:table-cell">Village</th>
+                          <th className="text-left py-3 px-2 text-muted-foreground font-medium hidden lg:table-cell">Registered</th>
                           <th className="text-right py-3 px-2 text-muted-foreground font-medium">Actions</th>
                         </tr>
                       </thead>
@@ -311,7 +292,7 @@ const Admin = () => {
                             <td className="py-2 px-2 hidden md:table-cell">{s.father_name}</td>
                             <td className="py-2 px-2">{s.class}</td>
                             <td className="py-2 px-2 hidden md:table-cell">{s.phone}</td>
-                            <td className="py-2 px-2 hidden lg:table-cell">{s.village}</td>
+                            <td className="py-2 px-2 hidden lg:table-cell text-xs text-muted-foreground">{s.created_at ? formatIndianDateTime(s.created_at) : ""}</td>
                             <td className="py-2 px-2 text-right">
                               <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => s.id && deleteStudent(s.id)}>
                                 <Trash2 size={14} />

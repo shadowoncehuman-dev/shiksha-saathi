@@ -4,7 +4,7 @@ import { BookOpen, Clock, Calendar, Award, Users, Shield, ArrowRight, ChevronRig
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { ORG_NAME, TAGLINE, SUBHEADING, EXAM_DATE, EXAM_GROUPS } from "@/lib/constants";
-import heroBg from "@/assets/hero-bg.jpg";
+import logo from "@/assets/logo.png";
 import galleryMeeting from "@/assets/gallery-meeting.jpg";
 import galleryShields from "@/assets/gallery-shields.jpg";
 
@@ -20,38 +20,41 @@ const Index = () => {
   return (
     <Layout>
       {/* Hero */}
-      <section className="relative overflow-hidden min-h-[80vh] flex items-center">
-        <div className="absolute inset-0">
-          <img src={heroBg} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 hero-gradient opacity-90" />
-        </div>
+      <section className="relative overflow-hidden min-h-[85vh] flex items-center">
+        <div className="absolute inset-0 hero-gradient" />
+        <div className="absolute inset-0 opacity-[0.04]" style={{
+          backgroundImage: `radial-gradient(circle at 20% 50%, hsl(45 93% 47% / 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, hsl(36 100% 50% / 0.2) 0%, transparent 50%)`,
+        }} />
         <div className="container mx-auto px-4 relative z-10 text-center py-20 md:py-32">
           <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-secondary/20 backdrop-blur-sm text-secondary text-sm font-semibold mb-8 border border-secondary/20">
+            <img src={logo} alt="Logo" className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-6 rounded-full bg-white/95 p-2 shadow-2xl shadow-secondary/20" />
+          </motion.div>
+          <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1}>
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-secondary/20 backdrop-blur-sm text-secondary text-sm font-semibold mb-6 border border-secondary/20">
               <Calendar size={16} /> Exam: {EXAM_DATE}
             </div>
           </motion.div>
           <motion.h1
             className="font-playfair text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-5 text-primary-foreground text-shadow"
-            initial="hidden" animate="visible" variants={fadeUp} custom={1}
+            initial="hidden" animate="visible" variants={fadeUp} custom={2}
           >
             {ORG_NAME}
           </motion.h1>
           <motion.p
             className="text-xl md:text-2xl text-secondary font-playfair font-medium mb-3"
-            initial="hidden" animate="visible" variants={fadeUp} custom={2}
+            initial="hidden" animate="visible" variants={fadeUp} custom={3}
           >
             {TAGLINE}
           </motion.p>
           <motion.p
             className="text-primary-foreground/60 max-w-2xl mx-auto mb-12 text-sm md:text-base"
-            initial="hidden" animate="visible" variants={fadeUp} custom={3}
+            initial="hidden" animate="visible" variants={fadeUp} custom={4}
           >
             {SUBHEADING}
           </motion.p>
           <motion.div
             className="flex flex-col sm:flex-row gap-4 justify-center"
-            initial="hidden" animate="visible" variants={fadeUp} custom={4}
+            initial="hidden" animate="visible" variants={fadeUp} custom={5}
           >
             <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold text-base px-8 shadow-lg shadow-secondary/25 group">
               <Link to="/exam-details">
@@ -65,7 +68,6 @@ const Index = () => {
           </motion.div>
         </div>
 
-        {/* Scroll indicator */}
         <motion.div
           className="absolute bottom-8 left-1/2 -translate-x-1/2"
           animate={{ y: [0, 8, 0] }}
@@ -104,20 +106,11 @@ const Index = () => {
       {/* Exam Groups */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
-          <motion.div
-            className="text-center mb-14"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
+          <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <span className="text-secondary text-sm font-semibold tracking-wider uppercase">Examination Structure</span>
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">
-              Examination Groups
-            </h2>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">Examination Groups</h2>
             <div className="section-divider mb-4" />
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              Students are divided into two groups based on their class for systematic examination.
-            </p>
+            <p className="text-muted-foreground max-w-xl mx-auto">Students are divided into two groups based on their class for systematic examination.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -166,16 +159,9 @@ const Index = () => {
       {/* About */}
       <section className="py-16 md:py-24 bg-muted/40">
         <div className="container mx-auto px-4">
-          <motion.div
-            className="text-center mb-14"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
+          <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <span className="text-secondary text-sm font-semibold tracking-wider uppercase">Who We Are</span>
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">
-              About the Samiti
-            </h2>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">About the Samiti</h2>
             <div className="section-divider" />
           </motion.div>
 
@@ -196,12 +182,8 @@ const Index = () => {
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-secondary/20 to-accent/20 flex items-center justify-center mx-auto mb-5">
                   <item.icon className="text-secondary" size={28} />
                 </div>
-                <h3 className="font-playfair text-xl font-semibold text-foreground mb-3">
-                  {item.title}
-                </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  {item.desc}
-                </p>
+                <h3 className="font-playfair text-xl font-semibold text-foreground mb-3">{item.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -211,16 +193,9 @@ const Index = () => {
       {/* Gallery Preview */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
-          <motion.div
-            className="text-center mb-14"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
+          <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <span className="text-secondary text-sm font-semibold tracking-wider uppercase">Moments</span>
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">
-              From Our Gallery
-            </h2>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">From Our Gallery</h2>
             <div className="section-divider" />
           </motion.div>
 
@@ -263,15 +238,9 @@ const Index = () => {
           backgroundImage: `radial-gradient(circle at 50% 50%, hsl(45 93% 47% / 0.2) 0%, transparent 60%)`,
         }} />
         <div className="container mx-auto px-4 text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <GraduationCap size={48} className="text-secondary mx-auto mb-6" />
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-4 text-shadow">
-              Ready to Register?
-            </h2>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-4 text-shadow">Ready to Register?</h2>
             <p className="text-primary-foreground/60 max-w-lg mx-auto mb-8">
               Join thousands of students in the Dr. B.R. Ambedkar examination. Registration is quick and easy.
             </p>
