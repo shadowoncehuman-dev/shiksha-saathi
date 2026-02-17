@@ -1,8 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { ORG_NAME } from "@/lib/constants";
 import logo from "@/assets/logo.png";
 
 const navItems = [
@@ -16,49 +15,67 @@ const navItems = [
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setScrolled(latest > 20);
+  });
 
   return (
-    <header className="sticky top-0 z-50 hero-gradient text-primary-foreground shadow-xl backdrop-blur-lg">
+    <motion.header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-primary/95 backdrop-blur-xl shadow-lg shadow-primary/10"
+          : "bg-transparent"
+      }`}
+    >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           <Link to="/" className="flex items-center gap-3 shrink-0 group">
-            <img src={logo} alt="Logo" className="w-10 h-10 md:w-12 md:h-12 rounded-full object-contain bg-white shadow-lg group-hover:scale-110 transition-transform" />
-            <div className="hidden sm:block">
-              <h1 className="font-playfair text-sm md:text-base font-semibold leading-tight max-w-xs lg:max-w-md">
-                {ORG_NAME}
-              </h1>
-            </div>
+            <motion.img
+              src={logo}
+              alt="Logo"
+              className="w-10 h-10 md:w-11 md:h-11 rounded-full object-contain bg-white/95 p-0.5 shadow-lg"
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            />
+            <span className="hidden sm:block font-playfair text-sm font-bold text-white tracking-wide">
+              BBDBASS
+            </span>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
-                  location.pathname === item.path
-                    ? "bg-primary-foreground/15 text-secondary"
-                    : "hover:bg-primary-foreground/10 text-primary-foreground/80 hover:text-primary-foreground"
-                }`}
-              >
-                {item.label}
-                {location.pathname === item.path && (
-                  <motion.div
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-secondary rounded-full"
-                    layoutId="activeNav"
-                  />
-                )}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className="relative px-4 py-2 text-sm font-medium transition-all duration-300"
+                >
+                  <span className={isActive ? "text-secondary" : "text-white/70 hover:text-white"}>
+                    {item.label}
+                  </span>
+                  {isActive && (
+                    <motion.div
+                      className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-0.5 bg-secondary rounded-full"
+                      layoutId="activeNav"
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
           <button
-            className="lg:hidden p-2 hover:bg-primary-foreground/10 rounded-lg transition-colors"
+            className="lg:hidden p-2 text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
 
@@ -68,33 +85,36 @@ const Header = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden pb-4 border-t border-primary-foreground/10"
+              transition={{ duration: 0.3 }}
+              className="lg:hidden pb-4 overflow-hidden"
             >
-              {navItems.map((item, i) => (
-                <motion.div
-                  key={item.path}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                >
-                  <Link
-                    to={item.path}
-                    onClick={() => setMobileOpen(false)}
-                    className={`block px-4 py-3 text-sm font-medium transition-all rounded-lg my-0.5 ${
-                      location.pathname === item.path
-                        ? "bg-primary-foreground/15 text-secondary"
-                        : "hover:bg-primary-foreground/10"
-                    }`}
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-2 border border-white/10">
+                {navItems.map((item, i) => (
+                  <motion.div
+                    key={item.path}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
                   >
-                    {item.label}
-                  </Link>
-                </motion.div>
-              ))}
+                    <Link
+                      to={item.path}
+                      onClick={() => setMobileOpen(false)}
+                      className={`block px-4 py-3 text-sm font-medium rounded-xl transition-all ${
+                        location.pathname === item.path
+                          ? "bg-secondary/20 text-secondary"
+                          : "text-white/70 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
             </motion.nav>
           )}
         </AnimatePresence>
       </div>
-    </header>
+    </motion.header>
   );
 };
 

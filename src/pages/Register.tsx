@@ -39,14 +39,9 @@ const Register = () => {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const { data } = await supabase
-          .from("site_settings")
-          .select("registration_status")
-          .single();
+        const { data } = await supabase.from("site_settings").select("registration_status").single();
         setStatus(data?.registration_status || "Not Started");
-      } catch {
-        setStatus("Not Started");
-      }
+      } catch { setStatus("Not Started"); }
       setLoading(false);
     };
     fetchStatus();
@@ -57,40 +52,19 @@ const Register = () => {
     try {
       const studentClass = parseInt(values.student_class);
       const group = getGroup(studentClass);
-
-      // Generate roll number via edge function
-      const { data: rollData, error: rollError } = await supabase.functions.invoke("generate-roll-number", {
-        body: { student_class: studentClass },
-      });
-
-      if (rollError || !rollData?.roll_number) {
-        throw new Error("Failed to generate roll number");
-      }
+      const { data: rollData, error: rollError } = await supabase.functions.invoke("generate-roll-number", { body: { student_class: studentClass } });
+      if (rollError || !rollData?.roll_number) throw new Error("Failed to generate roll number");
 
       const { error: insertError } = await supabase.from("registrations").insert({
-        roll_number: rollData.roll_number,
-        name: values.name.trim(),
-        father_name: values.father_name.trim(),
-        class: studentClass,
-        group: group.name,
-        phone: values.phone,
-        village: values.village,
+        roll_number: rollData.roll_number, name: values.name.trim(), father_name: values.father_name.trim(),
+        class: studentClass, group: group.name, phone: values.phone, village: values.village,
       });
-
       if (insertError) throw insertError;
 
-      // Store for admit card page
       sessionStorage.setItem("admit_card_data", JSON.stringify({
-        roll_number: rollData.roll_number,
-        name: values.name.trim(),
-        father_name: values.father_name.trim(),
-        class: studentClass,
-        group: group.name,
-        phone: values.phone,
-        village: values.village,
-        duration: group.duration,
+        roll_number: rollData.roll_number, name: values.name.trim(), father_name: values.father_name.trim(),
+        class: studentClass, group: group.name, phone: values.phone, village: values.village, duration: group.duration,
       }));
-
       toast({ title: "Registration Successful!", description: `Roll Number: ${rollData.roll_number}` });
       navigate("/admit-card");
     } catch (error: any) {
@@ -103,7 +77,7 @@ const Register = () => {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="animate-spin text-primary" size={40} />
+          <Loader2 className="animate-spin text-primary" size={36} />
         </div>
       </Layout>
     );
@@ -112,19 +86,15 @@ const Register = () => {
   if (status !== "Open") {
     return (
       <Layout>
-        <div className="flex items-center justify-center min-h-[60vh] px-4">
-          <motion.div
-            className="glass-card gold-border rounded-xl p-10 text-center max-w-md"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-4">
-              <UserPlus className="text-secondary" size={28} />
+        <div className="flex items-center justify-center min-h-[70vh] px-4 pt-20">
+          <motion.div className="bg-card rounded-2xl p-10 text-center max-w-md premium-shadow border border-border" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+            <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-5">
+              <UserPlus className="text-secondary" size={24} />
             </div>
             <h2 className="font-playfair text-2xl font-bold text-foreground mb-3">
               {status === "Not Started" ? "Registration Not Started" : "Registration Closed"}
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               {status === "Not Started"
                 ? "Registration has not started yet. Please check back later."
                 : "Registration is currently closed. Thank you for your interest."}
@@ -137,51 +107,40 @@ const Register = () => {
 
   return (
     <Layout>
-      <section className="py-12 md:py-20">
+      <section className="pt-28 pb-16 md:pt-36 md:pb-24">
         <div className="container mx-auto px-4 max-w-lg">
-          <motion.div
-            className="text-center mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <h2 className="font-playfair text-3xl font-bold text-foreground mb-2">
-              Student Registration
-            </h2>
-            <div className="section-divider mb-3" />
+          <motion.div className="text-center mb-10" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">Join Us</span>
+            <h2 className="font-playfair text-3xl font-bold text-foreground mt-3 mb-3">Student Registration</h2>
+            <div className="section-divider mb-4" />
             <p className="text-muted-foreground text-sm">{ORG_NAME}</p>
           </motion.div>
 
           <motion.div
-            className="glass-card gold-border rounded-xl p-8"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            className="bg-card rounded-2xl p-8 premium-shadow border border-border"
+            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           >
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                 <FormField control={form.control} name="name" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Student Name</FormLabel>
-                    <FormControl><Input placeholder="Enter full name" {...field} /></FormControl>
+                    <FormLabel className="text-sm font-medium">Student Name</FormLabel>
+                    <FormControl><Input placeholder="Enter full name" className="h-11 rounded-xl" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
-
                 <FormField control={form.control} name="father_name" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Father's Name</FormLabel>
-                    <FormControl><Input placeholder="Enter father's name" {...field} /></FormControl>
+                    <FormLabel className="text-sm font-medium">Father's Name</FormLabel>
+                    <FormControl><Input placeholder="Enter father's name" className="h-11 rounded-xl" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
-
                 <FormField control={form.control} name="student_class" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Class</FormLabel>
+                    <FormLabel className="text-sm font-medium">Class</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger><SelectValue placeholder="Select class" /></SelectTrigger>
-                      </FormControl>
+                      <FormControl><SelectTrigger className="h-11 rounded-xl"><SelectValue placeholder="Select class" /></SelectTrigger></FormControl>
                       <SelectContent>
                         {[6, 7, 8, 9, 10, 11, 12].map((c) => (
                           <SelectItem key={c} value={c.toString()}>Class {c}</SelectItem>
@@ -191,34 +150,27 @@ const Register = () => {
                     <FormMessage />
                   </FormItem>
                 )} />
-
                 <FormField control={form.control} name="phone" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl><Input placeholder="10-digit phone number" maxLength={10} {...field} /></FormControl>
+                    <FormLabel className="text-sm font-medium">Phone Number</FormLabel>
+                    <FormControl><Input placeholder="10-digit phone number" maxLength={10} className="h-11 rounded-xl" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
-
                 <FormField control={form.control} name="village" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Village</FormLabel>
+                    <FormLabel className="text-sm font-medium">Village</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger><SelectValue placeholder="Select village" /></SelectTrigger>
-                      </FormControl>
+                      <FormControl><SelectTrigger className="h-11 rounded-xl"><SelectValue placeholder="Select village" /></SelectTrigger></FormControl>
                       <SelectContent>
-                        {VILLAGES.map((v) => (
-                          <SelectItem key={v} value={v}>{v}</SelectItem>
-                        ))}
+                        {VILLAGES.map((v) => (<SelectItem key={v} value={v}>{v}</SelectItem>))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
                 )} />
-
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-lg py-6" disabled={submitting}>
-                  {submitting ? <><Loader2 className="animate-spin mr-2" size={18} /> Registering...</> : "Register Now"}
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 h-12 text-sm font-semibold rounded-xl" disabled={submitting}>
+                  {submitting ? <><Loader2 className="animate-spin mr-2" size={16} /> Registering...</> : "Register Now"}
                 </Button>
               </form>
             </Form>

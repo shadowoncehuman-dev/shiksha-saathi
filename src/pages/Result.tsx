@@ -23,28 +23,15 @@ const ResultPage = () => {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const { data } = await supabase
-          .from("site_settings")
-          .select("result_status, result_publish_date, result_expiry_date")
-          .single();
-
+        const { data } = await supabase.from("site_settings").select("result_status, result_publish_date, result_expiry_date").single();
         if (!data) { setResultStatus("Not Declared"); setLoading(false); return; }
-
         const now = new Date();
         if (data.result_status === "Available") {
-          if (data.result_publish_date && new Date(data.result_publish_date) > now) {
-            setResultStatus("Not Declared");
-          } else if (data.result_expiry_date && new Date(data.result_expiry_date) < now) {
-            setResultStatus("Viewing Period Ended");
-          } else {
-            setResultStatus("Available");
-          }
-        } else {
-          setResultStatus(data.result_status);
-        }
-      } catch {
-        setResultStatus("Not Declared");
-      }
+          if (data.result_publish_date && new Date(data.result_publish_date) > now) setResultStatus("Not Declared");
+          else if (data.result_expiry_date && new Date(data.result_expiry_date) < now) setResultStatus("Viewing Period Ended");
+          else setResultStatus("Available");
+        } else setResultStatus(data.result_status);
+      } catch { setResultStatus("Not Declared"); }
       setLoading(false);
     };
     fetchStatus();
@@ -59,26 +46,11 @@ const ResultPage = () => {
     if (!rollNumber.trim()) return;
     setSearching(true);
     try {
-      const { data: regData } = await supabase
-        .from("registrations")
-        .select("name, father_name, class")
-        .eq("roll_number", rollNumber.trim())
-        .single();
-
-      const { data: resData } = await supabase
-        .from("results")
-        .select("*")
-        .eq("roll_number", rollNumber.trim())
-        .single();
-
-      if (resData) {
-        navigateToResult(resData, regData);
-      } else {
-        toast({ title: "No result found", description: "Please check the roll number.", variant: "destructive" });
-      }
-    } catch {
-      toast({ title: "Error", description: "Failed to fetch result.", variant: "destructive" });
-    }
+      const { data: regData } = await supabase.from("registrations").select("name, father_name, class").eq("roll_number", rollNumber.trim()).single();
+      const { data: resData } = await supabase.from("results").select("*").eq("roll_number", rollNumber.trim()).single();
+      if (resData) navigateToResult(resData, regData);
+      else toast({ title: "No result found", description: "Please check the roll number.", variant: "destructive" });
+    } catch { toast({ title: "Error", description: "Failed to fetch result.", variant: "destructive" }); }
     setSearching(false);
   };
 
@@ -86,58 +58,31 @@ const ResultPage = () => {
     if (!searchName.trim() || !searchFatherName.trim()) return;
     setSearching(true);
     try {
-      const { data: regData } = await supabase
-        .from("registrations")
-        .select("roll_number, name, father_name, class")
-        .ilike("name", searchName.trim())
-        .ilike("father_name", searchFatherName.trim())
-        .single();
-
-      if (!regData) {
-        toast({ title: "Student not found", variant: "destructive" });
-        setSearching(false);
-        return;
-      }
-
-      const { data: resData } = await supabase
-        .from("results")
-        .select("*")
-        .eq("roll_number", regData.roll_number)
-        .single();
-
-      if (resData) {
-        navigateToResult(resData, { name: regData.name, father_name: regData.father_name, class: regData.class });
-      } else {
-        toast({ title: "No result found", variant: "destructive" });
-      }
-    } catch {
-      toast({ title: "Error", description: "Failed to fetch result.", variant: "destructive" });
-    }
+      const { data: regData } = await supabase.from("registrations").select("roll_number, name, father_name, class").ilike("name", searchName.trim()).ilike("father_name", searchFatherName.trim()).single();
+      if (!regData) { toast({ title: "Student not found", variant: "destructive" }); setSearching(false); return; }
+      const { data: resData } = await supabase.from("results").select("*").eq("roll_number", regData.roll_number).single();
+      if (resData) navigateToResult(resData, { name: regData.name, father_name: regData.father_name, class: regData.class });
+      else toast({ title: "No result found", variant: "destructive" });
+    } catch { toast({ title: "Error", description: "Failed to fetch result.", variant: "destructive" }); }
     setSearching(false);
   };
 
   if (loading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="animate-spin text-primary" size={40} />
-        </div>
-      </Layout>
-    );
+    return <Layout><div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="animate-spin text-primary" size={36} /></div></Layout>;
   }
 
   if (resultStatus !== "Available") {
     return (
       <Layout>
-        <div className="flex items-center justify-center min-h-[60vh] px-4">
-          <motion.div className="glass-card gold-border rounded-xl p-10 text-center max-w-md" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
-            <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-4">
-              <Award className="text-secondary" size={28} />
+        <div className="flex items-center justify-center min-h-[70vh] px-4 pt-20">
+          <motion.div className="bg-card rounded-2xl p-10 text-center max-w-md premium-shadow border border-border" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+            <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-5">
+              <Award className="text-secondary" size={24} />
             </div>
             <h2 className="font-playfair text-2xl font-bold text-foreground mb-3">
               {resultStatus === "Not Declared" ? "Result Not Declared" : "Viewing Period Ended"}
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               {resultStatus === "Not Declared"
                 ? "Results will be declared soon. Please check back later."
                 : "The result viewing period has ended. Contact the office for queries."}
@@ -150,33 +95,34 @@ const ResultPage = () => {
 
   return (
     <Layout>
-      <section className="py-12 md:py-20">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <motion.div className="text-center mb-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <h2 className="font-playfair text-3xl font-bold text-foreground mb-2">Check Your Result</h2>
-            <div className="section-divider mb-3" />
+      <section className="pt-28 pb-16 md:pt-36 md:pb-24">
+        <div className="container mx-auto px-4 max-w-xl">
+          <motion.div className="text-center mb-10" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">Examination</span>
+            <h2 className="font-playfair text-3xl font-bold text-foreground mt-3 mb-3">Check Your Result</h2>
+            <div className="section-divider mb-4" />
             <p className="text-muted-foreground text-sm">{ORG_NAME}</p>
           </motion.div>
 
-          <motion.div className="glass-card gold-border rounded-xl p-6" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <motion.div className="bg-card rounded-2xl p-6 md:p-8 premium-shadow border border-border" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <Tabs defaultValue="roll">
-              <TabsList className="w-full mb-4">
-                <TabsTrigger value="roll" className="flex-1">By Roll Number</TabsTrigger>
-                <TabsTrigger value="name" className="flex-1">By Name</TabsTrigger>
+              <TabsList className="w-full mb-5 h-11 rounded-xl p-1 bg-muted">
+                <TabsTrigger value="roll" className="flex-1 rounded-lg text-sm">By Roll Number</TabsTrigger>
+                <TabsTrigger value="name" className="flex-1 rounded-lg text-sm">By Name</TabsTrigger>
               </TabsList>
               <TabsContent value="roll">
                 <div className="flex gap-3">
-                  <Input placeholder="Enter Roll Number" value={rollNumber} onChange={(e) => setRollNumber(e.target.value)} onKeyDown={(e) => e.key === "Enter" && searchByRoll()} />
-                  <Button onClick={searchByRoll} disabled={searching} className="bg-primary shrink-0">
-                    {searching ? <Loader2 className="animate-spin" size={18} /> : <Search size={18} />}
+                  <Input placeholder="Enter Roll Number" className="h-11 rounded-xl" value={rollNumber} onChange={(e) => setRollNumber(e.target.value)} onKeyDown={(e) => e.key === "Enter" && searchByRoll()} />
+                  <Button onClick={searchByRoll} disabled={searching} className="bg-primary shrink-0 h-11 w-11 rounded-xl p-0">
+                    {searching ? <Loader2 className="animate-spin" size={16} /> : <Search size={16} />}
                   </Button>
                 </div>
               </TabsContent>
               <TabsContent value="name" className="space-y-3">
-                <Input placeholder="Student Name" value={searchName} onChange={(e) => setSearchName(e.target.value)} />
-                <Input placeholder="Father's Name" value={searchFatherName} onChange={(e) => setSearchFatherName(e.target.value)} />
-                <Button onClick={searchByName} disabled={searching} className="w-full bg-primary">
-                  {searching ? <><Loader2 className="animate-spin mr-2" size={18} /> Searching...</> : <><Search size={18} className="mr-2" /> Search</>}
+                <Input placeholder="Student Name" className="h-11 rounded-xl" value={searchName} onChange={(e) => setSearchName(e.target.value)} />
+                <Input placeholder="Father's Name" className="h-11 rounded-xl" value={searchFatherName} onChange={(e) => setSearchFatherName(e.target.value)} />
+                <Button onClick={searchByName} disabled={searching} className="w-full bg-primary h-11 rounded-xl">
+                  {searching ? <><Loader2 className="animate-spin mr-2" size={16} /> Searching...</> : <><Search size={16} className="mr-2" /> Search</>}
                 </Button>
               </TabsContent>
             </Tabs>
