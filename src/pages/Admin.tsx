@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save } from "lucide-react";
 import Layout from "@/components/layout/Layout";
@@ -18,16 +18,12 @@ const Admin = () => {
   const { toast } = useToast();
 
   const [settings, setSettings] = useState<SiteSettings>({
-    registration_status: "Not Started",
-    result_status: "Not Declared",
-    result_publish_date: null,
-    result_expiry_date: null,
+    registration_status: "Not Started", result_status: "Not Declared",
+    result_publish_date: null, result_expiry_date: null,
   });
 
   const [students, setStudents] = useState<Registration[]>([]);
   const [loadingStudents, setLoadingStudents] = useState(false);
-
-  // Marks state - total only
   const [markRoll, setMarkRoll] = useState("");
   const [markStudent, setMarkStudent] = useState<Registration | null>(null);
   const [totalMarks, setTotalMarks] = useState("");
@@ -36,19 +32,10 @@ const Admin = () => {
   const handleLogin = async () => {
     setVerifying(true);
     try {
-      const { data, error } = await supabase.functions.invoke("validate-admin", {
-        body: { password },
-      });
-      if (error || !data?.valid) {
-        toast({ title: "Access Denied", description: "Invalid password.", variant: "destructive" });
-      } else {
-        setAuthenticated(true);
-        fetchSettings();
-        fetchStudents();
-      }
-    } catch {
-      toast({ title: "Error", description: "Failed to verify.", variant: "destructive" });
-    }
+      const { data, error } = await supabase.functions.invoke("validate-admin", { body: { password } });
+      if (error || !data?.valid) toast({ title: "Access Denied", description: "Invalid password.", variant: "destructive" });
+      else { setAuthenticated(true); fetchSettings(); fetchStudents(); }
+    } catch { toast({ title: "Error", description: "Failed to verify.", variant: "destructive" }); }
     setVerifying(false);
   };
 
@@ -96,11 +83,8 @@ const Admin = () => {
     if (data) {
       setMarkStudent(data);
       const { data: existing } = await supabase.from("results").select("*").eq("roll_number", markRoll.trim()).single();
-      if (existing) {
-        setTotalMarks(existing.total?.toString() || "");
-      } else {
-        setTotalMarks("");
-      }
+      if (existing) setTotalMarks(existing.total?.toString() || "");
+      else setTotalMarks("");
     } else {
       toast({ title: "Student not found", variant: "destructive" });
       setMarkStudent(null);
@@ -113,51 +97,32 @@ const Admin = () => {
     const percentage = Math.round((total / 400) * 100);
     const grade = getGrade(percentage);
     const status = percentage >= 33 ? "PASS" : "FAIL";
-
     setSavingMarks(true);
     const { error } = await supabase.from("results").upsert(
-      {
-        roll_number: markStudent.roll_number,
-        subject1: 0, subject2: 0, subject3: 0, subject4: 0,
-        total, percentage, grade, status,
-      },
+      { roll_number: markStudent.roll_number, subject1: 0, subject2: 0, subject3: 0, subject4: 0, total, percentage, grade, status },
       { onConflict: "roll_number" }
     );
-
-    if (error) {
-      toast({ title: "Error saving marks", variant: "destructive" });
-    } else {
-      toast({ title: "Marks Saved", description: `Total: ${total}, Grade: ${grade}, ${status}` });
-    }
+    if (error) toast({ title: "Error saving marks", variant: "destructive" });
+    else toast({ title: "Marks Saved", description: `Total: ${total}, Grade: ${grade}, ${status}` });
     setSavingMarks(false);
   };
 
   if (!authenticated) {
     return (
       <Layout>
-        <div className="flex items-center justify-center min-h-[60vh] px-4">
-          <motion.div
-            className="glass-card gold-border rounded-xl p-8 w-full max-w-sm"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
+        <div className="flex items-center justify-center min-h-[70vh] px-4 pt-20">
+          <motion.div className="bg-card rounded-2xl p-8 w-full max-w-sm premium-shadow border border-border" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
             <div className="text-center mb-6">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                <Lock className="text-primary" size={24} />
+              <div className="w-14 h-14 rounded-2xl bg-primary/5 flex items-center justify-center mx-auto mb-4">
+                <Lock className="text-primary" size={22} />
               </div>
               <h2 className="font-playfair text-2xl font-bold text-foreground">Admin Access</h2>
               <p className="text-muted-foreground text-sm mt-1">Enter admin password to continue</p>
             </div>
             <div className="space-y-4">
-              <Input
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-              />
-              <Button onClick={handleLogin} className="w-full bg-primary" disabled={verifying}>
-                {verifying ? <><Loader2 className="animate-spin mr-2" size={18} /> Verifying...</> : "Access Dashboard"}
+              <Input type="password" placeholder="Enter password" className="h-11 rounded-xl" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleLogin()} />
+              <Button onClick={handleLogin} className="w-full bg-primary h-11 rounded-xl" disabled={verifying}>
+                {verifying ? <><Loader2 className="animate-spin mr-2" size={16} /> Verifying...</> : "Access Dashboard"}
               </Button>
             </div>
           </motion.div>
@@ -168,23 +133,26 @@ const Admin = () => {
 
   return (
     <Layout>
-      <section className="py-8 md:py-12">
+      <section className="pt-24 pb-12 md:pt-28 md:pb-16">
         <div className="container mx-auto px-4">
-          <h2 className="font-playfair text-2xl md:text-3xl font-bold text-foreground mb-6">Admin Dashboard</h2>
+          <div className="mb-8">
+            <h2 className="font-playfair text-2xl md:text-3xl font-bold text-foreground">Admin Dashboard</h2>
+            <p className="text-muted-foreground text-sm mt-1">Manage registrations, results, and settings</p>
+          </div>
 
           <Tabs defaultValue="settings">
-            <TabsList className="mb-6 flex-wrap h-auto">
-              <TabsTrigger value="settings"><Settings size={16} className="mr-1" /> Settings</TabsTrigger>
-              <TabsTrigger value="marks"><BookOpen size={16} className="mr-1" /> Add Marks</TabsTrigger>
-              <TabsTrigger value="students"><Users size={16} className="mr-1" /> Students</TabsTrigger>
+            <TabsList className="mb-6 flex-wrap h-auto gap-1 bg-muted p-1 rounded-xl">
+              <TabsTrigger value="settings" className="rounded-lg text-sm"><Settings size={14} className="mr-1.5" /> Settings</TabsTrigger>
+              <TabsTrigger value="marks" className="rounded-lg text-sm"><BookOpen size={14} className="mr-1.5" /> Add Marks</TabsTrigger>
+              <TabsTrigger value="students" className="rounded-lg text-sm"><Users size={14} className="mr-1.5" /> Students</TabsTrigger>
             </TabsList>
 
             <TabsContent value="settings">
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="glass-card rounded-xl p-6">
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
                   <h3 className="font-playfair text-lg font-semibold mb-4">Registration Control</h3>
                   <Select value={settings.registration_status} onValueChange={(v) => updateSetting("registration_status", v)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-11 rounded-xl"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Not Started">Not Started</SelectItem>
                       <SelectItem value="Open">Open</SelectItem>
@@ -192,11 +160,10 @@ const Admin = () => {
                     </SelectContent>
                   </Select>
                 </div>
-
-                <div className="glass-card rounded-xl p-6 space-y-4">
-                  <h3 className="font-playfair text-lg font-semibold mb-4">Result Control</h3>
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border space-y-4">
+                  <h3 className="font-playfair text-lg font-semibold">Result Control</h3>
                   <Select value={settings.result_status} onValueChange={(v) => updateSetting("result_status", v)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-11 rounded-xl"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Not Declared">Not Declared</SelectItem>
                       <SelectItem value="Available">Available</SelectItem>
@@ -204,57 +171,45 @@ const Admin = () => {
                     </SelectContent>
                   </Select>
                   <div>
-                    <label className="text-sm text-muted-foreground block mb-1">Publish Date</label>
-                    <Input type="datetime-local" value={settings.result_publish_date || ""} onChange={(e) => updateSetting("result_publish_date", e.target.value || null)} />
+                    <label className="text-sm text-muted-foreground block mb-1.5">Publish Date</label>
+                    <Input type="datetime-local" className="h-11 rounded-xl" value={settings.result_publish_date || ""} onChange={(e) => updateSetting("result_publish_date", e.target.value || null)} />
                   </div>
                   <div>
-                    <label className="text-sm text-muted-foreground block mb-1">Expiry Date</label>
-                    <Input type="datetime-local" value={settings.result_expiry_date || ""} onChange={(e) => updateSetting("result_expiry_date", e.target.value || null)} />
+                    <label className="text-sm text-muted-foreground block mb-1.5">Expiry Date</label>
+                    <Input type="datetime-local" className="h-11 rounded-xl" value={settings.result_expiry_date || ""} onChange={(e) => updateSetting("result_expiry_date", e.target.value || null)} />
                   </div>
                 </div>
               </div>
             </TabsContent>
 
             <TabsContent value="marks">
-              <div className="glass-card rounded-xl p-6 max-w-lg">
+              <div className="bg-card rounded-2xl p-6 max-w-lg premium-shadow border border-border">
                 <h3 className="font-playfair text-lg font-semibold mb-4">Add / Update Marks</h3>
                 <div className="flex gap-3 mb-4">
-                  <Input placeholder="Enter Roll Number" value={markRoll} onChange={(e) => setMarkRoll(e.target.value)} onKeyDown={(e) => e.key === "Enter" && searchStudentForMarks()} />
-                  <Button onClick={searchStudentForMarks} className="shrink-0"><Search size={18} /></Button>
+                  <Input placeholder="Enter Roll Number" className="h-11 rounded-xl" value={markRoll} onChange={(e) => setMarkRoll(e.target.value)} onKeyDown={(e) => e.key === "Enter" && searchStudentForMarks()} />
+                  <Button onClick={searchStudentForMarks} className="shrink-0 h-11 w-11 rounded-xl p-0"><Search size={16} /></Button>
                 </div>
-
                 {markStudent && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                    <div className="bg-muted/50 rounded-lg p-3">
+                    <div className="bg-muted/50 rounded-xl p-3">
                       <p className="text-sm"><strong>{markStudent.name}</strong> — Class {markStudent.class} ({markStudent.group})</p>
                       <p className="text-xs text-muted-foreground">Father: {markStudent.father_name}</p>
                     </div>
                     <div>
-                      <label className="text-sm text-muted-foreground">Total Marks (out of 400)</label>
-                      <Input
-                        type="number"
-                        min={0}
-                        max={400}
-                        placeholder="Enter total marks"
-                        value={totalMarks}
-                        onChange={(e) => setTotalMarks(e.target.value)}
-                      />
+                      <label className="text-sm text-muted-foreground block mb-1.5">Total Marks (out of 400)</label>
+                      <Input type="number" min={0} max={400} placeholder="Enter total marks" className="h-11 rounded-xl" value={totalMarks} onChange={(e) => setTotalMarks(e.target.value)} />
                     </div>
-
                     {totalMarks && (
-                      <div className="bg-muted/50 rounded-lg p-3 text-sm">
+                      <div className="bg-muted/50 rounded-xl p-3 text-sm">
                         {(() => {
                           const total = parseInt(totalMarks) || 0;
                           const pct = Math.round((total / 400) * 100);
-                          return (
-                            <p>Total: <strong>{total}/400</strong> | Percentage: <strong>{pct}%</strong> | Grade: <strong>{getGrade(pct)}</strong> | {pct >= 33 ? "✅ PASS" : "❌ FAIL"}</p>
-                          );
+                          return <p>Total: <strong>{total}/400</strong> | Percentage: <strong>{pct}%</strong> | Grade: <strong>{getGrade(pct)}</strong> | {pct >= 33 ? "✅ PASS" : "❌ FAIL"}</p>;
                         })()}
                       </div>
                     )}
-
-                    <Button onClick={saveMarks} className="w-full bg-primary" disabled={savingMarks}>
-                      {savingMarks ? <><Loader2 className="animate-spin mr-2" size={18} /> Saving...</> : <><Save size={18} className="mr-2" /> Save Marks</>}
+                    <Button onClick={saveMarks} className="w-full bg-primary h-11 rounded-xl" disabled={savingMarks}>
+                      {savingMarks ? <><Loader2 className="animate-spin mr-2" size={16} /> Saving...</> : <><Save size={16} className="mr-2" /> Save Marks</>}
                     </Button>
                   </motion.div>
                 )}
@@ -262,47 +217,46 @@ const Admin = () => {
             </TabsContent>
 
             <TabsContent value="students">
-              <div className="glass-card rounded-xl p-6">
-                <div className="flex justify-between items-center mb-4">
+              <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                <div className="flex justify-between items-center mb-5">
                   <h3 className="font-playfair text-lg font-semibold">Registered Students ({students.length})</h3>
-                  <Button variant="outline" onClick={exportCSV} size="sm"><Download size={16} className="mr-1" /> Export CSV</Button>
+                  <Button variant="outline" onClick={exportCSV} size="sm" className="rounded-xl"><Download size={14} className="mr-1.5" /> Export CSV</Button>
                 </div>
-
                 {loadingStudents ? (
-                  <div className="flex justify-center py-8"><Loader2 className="animate-spin text-primary" size={32} /></div>
+                  <div className="flex justify-center py-8"><Loader2 className="animate-spin text-primary" size={28} /></div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-border">
-                          <th className="text-left py-3 px-2 text-muted-foreground font-medium">Roll No.</th>
-                          <th className="text-left py-3 px-2 text-muted-foreground font-medium">Name</th>
-                          <th className="text-left py-3 px-2 text-muted-foreground font-medium hidden md:table-cell">Father</th>
-                          <th className="text-left py-3 px-2 text-muted-foreground font-medium">Class</th>
-                          <th className="text-left py-3 px-2 text-muted-foreground font-medium hidden md:table-cell">Phone</th>
-                          <th className="text-left py-3 px-2 text-muted-foreground font-medium hidden lg:table-cell">Registered</th>
-                          <th className="text-right py-3 px-2 text-muted-foreground font-medium">Actions</th>
+                          <th className="text-left py-3 px-2 text-muted-foreground font-medium text-xs">Roll No.</th>
+                          <th className="text-left py-3 px-2 text-muted-foreground font-medium text-xs">Name</th>
+                          <th className="text-left py-3 px-2 text-muted-foreground font-medium text-xs hidden md:table-cell">Father</th>
+                          <th className="text-left py-3 px-2 text-muted-foreground font-medium text-xs">Class</th>
+                          <th className="text-left py-3 px-2 text-muted-foreground font-medium text-xs hidden md:table-cell">Phone</th>
+                          <th className="text-left py-3 px-2 text-muted-foreground font-medium text-xs hidden lg:table-cell">Registered</th>
+                          <th className="text-right py-3 px-2 text-muted-foreground font-medium text-xs">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         {students.map((s) => (
-                          <tr key={s.id} className="border-b border-border/50 hover:bg-muted/30">
-                            <td className="py-2 px-2 font-mono font-bold text-primary">{s.roll_number}</td>
-                            <td className="py-2 px-2">{s.name}</td>
-                            <td className="py-2 px-2 hidden md:table-cell">{s.father_name}</td>
-                            <td className="py-2 px-2">{s.class}</td>
-                            <td className="py-2 px-2 hidden md:table-cell">{s.phone}</td>
-                            <td className="py-2 px-2 hidden lg:table-cell text-xs text-muted-foreground">{s.created_at ? formatIndianDateTime(s.created_at) : ""}</td>
-                            <td className="py-2 px-2 text-right">
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => s.id && deleteStudent(s.id)}>
-                                <Trash2 size={14} />
+                          <tr key={s.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                            <td className="py-2.5 px-2 font-mono font-bold text-primary text-xs">{s.roll_number}</td>
+                            <td className="py-2.5 px-2 text-xs">{s.name}</td>
+                            <td className="py-2.5 px-2 hidden md:table-cell text-xs">{s.father_name}</td>
+                            <td className="py-2.5 px-2 text-xs">{s.class}</td>
+                            <td className="py-2.5 px-2 hidden md:table-cell text-xs">{s.phone}</td>
+                            <td className="py-2.5 px-2 hidden lg:table-cell text-xs text-muted-foreground">{s.created_at ? formatIndianDateTime(s.created_at) : ""}</td>
+                            <td className="py-2.5 px-2 text-right">
+                              <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive rounded-lg" onClick={() => s.id && deleteStudent(s.id)}>
+                                <Trash2 size={13} />
                               </Button>
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                    {!students.length && <p className="text-center py-8 text-muted-foreground">No registrations yet.</p>}
+                    {!students.length && <p className="text-center py-8 text-muted-foreground text-sm">No registrations yet.</p>}
                   </div>
                 )}
               </div>

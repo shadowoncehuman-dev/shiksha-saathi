@@ -1,18 +1,40 @@
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
-import { BookOpen, Clock, Calendar, Award, Users, Shield, ArrowRight, ChevronRight, GraduationCap } from "lucide-react";
+import { BookOpen, Clock, Calendar, Award, Users, Shield, ArrowRight, ChevronDown, GraduationCap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { ORG_NAME, TAGLINE, SUBHEADING, EXAM_DATE, EXAM_GROUPS } from "@/lib/constants";
 import logo from "@/assets/logo.png";
 import galleryMeeting from "@/assets/gallery-meeting.jpg";
 import galleryShields from "@/assets/gallery-shields.jpg";
+import { useRef, useEffect, useState } from "react";
+
+const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: string }) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (!inView) return;
+    let start = 0;
+    const duration = 1500;
+    const step = (timestamp: number) => {
+      start = start || timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      setCount(Math.floor(progress * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [inView, target]);
+
+  return <span ref={ref}>{count}{suffix}</span>;
+};
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 40 },
   visible: (i: number) => ({
     opacity: 1, y: 0,
-    transition: { delay: i * 0.12, duration: 0.6, ease: "easeOut" as const },
+    transition: { delay: i * 0.1, duration: 0.7, ease: "easeOut" as const },
   }),
 };
 
@@ -20,49 +42,68 @@ const Index = () => {
   return (
     <Layout>
       {/* Hero */}
-      <section className="relative overflow-hidden min-h-[85vh] flex items-center">
+      <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0 hero-gradient" />
-        <div className="absolute inset-0 opacity-[0.04]" style={{
-          backgroundImage: `radial-gradient(circle at 20% 50%, hsl(45 93% 47% / 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, hsl(36 100% 50% / 0.2) 0%, transparent 50%)`,
-        }} />
-        <div className="container mx-auto px-4 relative z-10 text-center py-20 md:py-32">
+        {/* Geometric circles */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full border border-white/[0.03]" />
+          <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full border border-white/[0.05]" />
+          <div className="absolute bottom-20 -left-20 w-64 h-64 rounded-full border border-secondary/[0.08]" />
+          <div className="absolute top-1/3 right-1/4 w-2 h-2 rounded-full bg-secondary/30" style={{ animation: "float 4s ease-in-out infinite" }} />
+          <div className="absolute top-2/3 left-1/4 w-1.5 h-1.5 rounded-full bg-accent/20" style={{ animation: "float 5s ease-in-out infinite 1s" }} />
+          <div className="absolute top-1/2 right-1/3 w-1 h-1 rounded-full bg-white/20" style={{ animation: "float 3s ease-in-out infinite 0.5s" }} />
+        </div>
+        <div className="absolute inset-0 grain-overlay" />
+
+        <div className="container mx-auto px-4 relative z-10 text-center pt-28 pb-20 md:pt-36 md:pb-32">
           <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
-            <img src={logo} alt="Logo" className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-6 rounded-full bg-white/95 p-2 shadow-2xl shadow-secondary/20" />
+            <motion.img
+              src={logo}
+              alt="Logo"
+              className="w-20 h-20 md:w-24 md:h-24 mx-auto mb-8 rounded-full bg-white/95 p-1.5 shadow-2xl"
+              style={{ animation: "pulse-glow 3s ease-in-out infinite" }}
+            />
           </motion.div>
+
           <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1}>
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-secondary/20 backdrop-blur-sm text-secondary text-sm font-semibold mb-6 border border-secondary/20">
-              <Calendar size={16} /> Exam: {EXAM_DATE}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.06] backdrop-blur-sm text-secondary text-xs font-semibold mb-8 border border-white/[0.08]">
+              <Sparkles size={14} />
+              <span>Exam: {EXAM_DATE}</span>
             </div>
           </motion.div>
+
           <motion.h1
-            className="font-playfair text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-5 text-primary-foreground text-shadow"
+            className="font-playfair text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] mb-6 text-white text-shadow max-w-4xl mx-auto"
             initial="hidden" animate="visible" variants={fadeUp} custom={2}
           >
             {ORG_NAME}
           </motion.h1>
+
           <motion.p
-            className="text-xl md:text-2xl text-secondary font-playfair font-medium mb-3"
+            className="text-xl md:text-2xl text-secondary font-playfair font-medium mb-4 tracking-wide"
             initial="hidden" animate="visible" variants={fadeUp} custom={3}
           >
             {TAGLINE}
           </motion.p>
+
           <motion.p
-            className="text-primary-foreground/60 max-w-2xl mx-auto mb-12 text-sm md:text-base"
+            className="text-white/40 max-w-xl mx-auto mb-12 text-sm md:text-base leading-relaxed"
             initial="hidden" animate="visible" variants={fadeUp} custom={4}
           >
             {SUBHEADING}
           </motion.p>
+
           <motion.div
             className="flex flex-col sm:flex-row gap-4 justify-center"
             initial="hidden" animate="visible" variants={fadeUp} custom={5}
           >
-            <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold text-base px-8 shadow-lg shadow-secondary/25 group">
+            <Button asChild size="lg" className="bg-secondary text-white hover:bg-secondary/90 font-semibold text-sm px-8 h-12 shadow-lg shadow-secondary/20 group rounded-xl">
               <Link to="/exam-details">
                 View Exam Details
-                <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 font-semibold text-base px-8 backdrop-blur-sm">
+            <Button asChild size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 font-semibold text-sm px-8 h-12 backdrop-blur-sm rounded-xl">
               <Link to="/register">Register Now</Link>
             </Button>
           </motion.div>
@@ -71,32 +112,34 @@ const Index = () => {
         <motion.div
           className="absolute bottom-8 left-1/2 -translate-x-1/2"
           animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
+          transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
         >
-          <ChevronRight size={24} className="text-primary-foreground/40 rotate-90" />
+          <ChevronDown size={20} className="text-white/20" />
         </motion.div>
       </section>
 
-      {/* Stats Bar */}
-      <section className="bg-card border-b border-border">
+      {/* Stats */}
+      <section className="relative -mt-1 bg-card border-y border-border">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-border">
+          <div className="grid grid-cols-2 md:grid-cols-4">
             {[
-              { label: "Exam Groups", value: "2" },
-              { label: "Classes", value: "6–12" },
-              { label: "Villages", value: "7+" },
-              { label: "Exam Date", value: "Apr 2026" },
+              { label: "Exam Groups", value: 2, suffix: "" },
+              { label: "Classes", value: 7, suffix: "+" },
+              { label: "Villages", value: 7, suffix: "+" },
+              { label: "Students", value: 500, suffix: "+" },
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
-                className="py-6 text-center"
+                className={`py-8 md:py-10 text-center ${i < 3 ? "border-r border-border" : ""}`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
               >
-                <p className="font-playfair text-2xl md:text-3xl font-bold text-primary">{stat.value}</p>
-                <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+                <p className="font-playfair text-3xl md:text-4xl font-bold text-primary">
+                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+                </p>
+                <p className="text-xs text-muted-foreground mt-2 uppercase tracking-wider font-medium">{stat.label}</p>
               </motion.div>
             ))}
           </div>
@@ -104,49 +147,49 @@ const Index = () => {
       </section>
 
       {/* Exam Groups */}
-      <section className="py-16 md:py-24">
+      <section className="py-20 md:py-32">
         <div className="container mx-auto px-4">
-          <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <span className="text-secondary text-sm font-semibold tracking-wider uppercase">Examination Structure</span>
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">Examination Groups</h2>
-            <div className="section-divider mb-4" />
-            <p className="text-muted-foreground max-w-xl mx-auto">Students are divided into two groups based on their class for systematic examination.</p>
+          <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">Examination Structure</span>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">Examination Groups</h2>
+            <div className="section-divider mb-5" />
+            <p className="text-muted-foreground max-w-md mx-auto text-sm">Students are divided into two groups based on their class for systematic examination.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {EXAM_GROUPS.map((group, i) => (
               <motion.div
                 key={group.name}
-                className="glass-card rounded-2xl overflow-hidden card-hover gold-glow"
-                initial={{ opacity: 0, y: 30 }}
+                className="rounded-2xl overflow-hidden premium-shadow bg-card border border-border card-hover"
+                initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
+                transition={{ delay: i * 0.15, duration: 0.6 }}
               >
-                <div className={`p-6 ${i === 0 ? 'bg-gradient-to-r from-primary to-primary/80' : 'bg-gradient-to-r from-secondary to-accent'} text-primary-foreground`}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-primary-foreground/20 flex items-center justify-center">
-                      <BookOpen size={24} />
+                <div className={`p-6 ${i === 0 ? 'hero-gradient' : 'bg-gradient-to-br from-secondary to-accent'} text-white`}>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm">
+                      <BookOpen size={22} />
                     </div>
                     <div>
-                      <h3 className="font-playfair text-2xl font-bold">{group.name}</h3>
-                      <p className="text-sm opacity-80">Classes {group.classes.join(", ")}</p>
+                      <h3 className="font-playfair text-xl font-bold">{group.name}</h3>
+                      <p className="text-sm text-white/60">Classes {group.classes.join(", ")}</p>
                     </div>
                   </div>
                 </div>
                 <div className="p-6 space-y-4">
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <Clock size={16} className="text-secondary" />
-                    Duration: <span className="font-semibold text-foreground">{group.duration}</span>
+                    <Clock size={15} className="text-secondary" />
+                    <span>Duration: <span className="font-semibold text-foreground">{group.duration}</span></span>
                   </div>
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <Calendar size={16} className="text-secondary" />
-                    Date: <span className="font-semibold text-foreground">{EXAM_DATE}</span>
+                    <Calendar size={15} className="text-secondary" />
+                    <span>Date: <span className="font-semibold text-foreground">{EXAM_DATE}</span></span>
                   </div>
-                  <Button asChild variant="outline" className="w-full group">
+                  <Button asChild variant="outline" className="w-full group rounded-xl h-11 mt-2">
                     <Link to="/exam-details">
                       View Details
-                      <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </Button>
                 </div>
@@ -157,11 +200,11 @@ const Index = () => {
       </section>
 
       {/* About */}
-      <section className="py-16 md:py-24 bg-muted/40">
+      <section className="py-20 md:py-32 bg-muted/30">
         <div className="container mx-auto px-4">
-          <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <span className="text-secondary text-sm font-semibold tracking-wider uppercase">Who We Are</span>
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">About the Samiti</h2>
+          <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">Who We Are</span>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">About the Samiti</h2>
             <div className="section-divider" />
           </motion.div>
 
@@ -173,16 +216,16 @@ const Index = () => {
             ].map((item, i) => (
               <motion.div
                 key={item.title}
-                className="glass-card rounded-2xl p-8 text-center card-hover"
+                className="bg-card rounded-2xl p-8 text-center premium-shadow border border-border card-hover"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
+                transition={{ delay: i * 0.12, duration: 0.6 }}
               >
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-secondary/20 to-accent/20 flex items-center justify-center mx-auto mb-5">
-                  <item.icon className="text-secondary" size={28} />
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-secondary/10 to-accent/10 flex items-center justify-center mx-auto mb-6">
+                  <item.icon className="text-secondary" size={24} />
                 </div>
-                <h3 className="font-playfair text-xl font-semibold text-foreground mb-3">{item.title}</h3>
+                <h3 className="font-playfair text-xl font-bold text-foreground mb-3">{item.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
@@ -191,41 +234,41 @@ const Index = () => {
       </section>
 
       {/* Gallery Preview */}
-      <section className="py-16 md:py-24">
+      <section className="py-20 md:py-32">
         <div className="container mx-auto px-4">
-          <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <span className="text-secondary text-sm font-semibold tracking-wider uppercase">Moments</span>
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">From Our Gallery</h2>
+          <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">Moments</span>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">From Our Gallery</h2>
             <div className="section-divider" />
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-10">
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
             {[
               { img: galleryMeeting, title: "Meeting 2025" },
               { img: galleryShields, title: "Shields 2024" },
             ].map((item, i) => (
               <motion.div
                 key={item.title}
-                className="relative rounded-2xl overflow-hidden group cursor-pointer card-hover"
+                className="relative rounded-2xl overflow-hidden group cursor-pointer card-hover aspect-[4/3]"
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
+                transition={{ delay: i * 0.15, duration: 0.6 }}
               >
-                <img src={item.img} alt={item.title} className="w-full h-64 md:h-72 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4">
-                  <p className="text-primary-foreground font-playfair text-lg font-semibold">{item.title}</p>
+                <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent" />
+                <div className="absolute bottom-5 left-5">
+                  <p className="text-white font-playfair text-lg font-bold">{item.title}</p>
                 </div>
               </motion.div>
             ))}
           </div>
 
           <div className="text-center">
-            <Button asChild variant="outline" size="lg" className="group">
+            <Button asChild variant="outline" size="lg" className="group rounded-xl h-12">
               <Link to="/gallery">
                 View Full Gallery
-                <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
           </div>
@@ -233,22 +276,25 @@ const Index = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-16 md:py-24 hero-gradient text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: `radial-gradient(circle at 50% 50%, hsl(45 93% 47% / 0.2) 0%, transparent 60%)`,
-        }} />
+      <section className="py-20 md:py-32 hero-gradient text-white relative overflow-hidden">
+        <div className="absolute inset-0 grain-overlay" />
+        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full border border-white/[0.03]" />
+        <div className="absolute bottom-10 -left-10 w-60 h-60 rounded-full border border-secondary/[0.05]" />
+
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <GraduationCap size={48} className="text-secondary mx-auto mb-6" />
+            <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-8">
+              <GraduationCap size={32} className="text-secondary" />
+            </div>
             <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-4 text-shadow">Ready to Register?</h2>
-            <p className="text-primary-foreground/60 max-w-lg mx-auto mb-8">
+            <p className="text-white/40 max-w-lg mx-auto mb-10 text-sm leading-relaxed">
               Join thousands of students in the Dr. B.R. Ambedkar examination. Registration is quick and easy.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold px-10 shadow-lg shadow-secondary/25">
+              <Button asChild size="lg" className="bg-secondary text-white hover:bg-secondary/90 font-semibold px-10 h-12 shadow-lg shadow-secondary/20 rounded-xl">
                 <Link to="/register">Register Now</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 backdrop-blur-sm">
+              <Button asChild size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 backdrop-blur-sm h-12 rounded-xl">
                 <Link to="/team">Meet Our Team</Link>
               </Button>
             </div>
