@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { ORG_NAME } from "@/lib/constants";
+import { useLang } from "@/lib/i18n";
 import { useToast } from "@/hooks/use-toast";
 
 const ResultPage = () => {
@@ -19,6 +20,7 @@ const ResultPage = () => {
   const [searchFatherName, setSearchFatherName] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { tr } = useLang();
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -80,12 +82,10 @@ const ResultPage = () => {
               <Award className="text-secondary" size={24} />
             </div>
             <h2 className="font-playfair text-2xl font-bold text-foreground mb-3">
-              {resultStatus === "Not Declared" ? "Result Not Declared" : "Viewing Period Ended"}
+              {resultStatus === "Not Declared" ? tr.result.notDeclared : tr.result.viewingEnded}
             </h2>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              {resultStatus === "Not Declared"
-                ? "Results will be declared soon. Please check back later."
-                : "The result viewing period has ended. Contact the office for queries."}
+              {resultStatus === "Not Declared" ? tr.result.notDeclaredMsg : tr.result.viewingEndedMsg}
             </p>
           </motion.div>
         </div>
@@ -98,8 +98,8 @@ const ResultPage = () => {
       <section className="pt-28 pb-16 md:pt-36 md:pb-24">
         <div className="container mx-auto px-4 max-w-xl">
           <motion.div className="text-center mb-10" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">Examination</span>
-            <h2 className="font-playfair text-3xl font-bold text-foreground mt-3 mb-3">Check Your Result</h2>
+            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">{tr.result.examination}</span>
+            <h2 className="font-playfair text-3xl font-bold text-foreground mt-3 mb-3">{tr.result.checkResult}</h2>
             <div className="section-divider mb-4" />
             <p className="text-muted-foreground text-sm">{ORG_NAME}</p>
           </motion.div>
@@ -107,22 +107,22 @@ const ResultPage = () => {
           <motion.div className="bg-card rounded-2xl p-6 md:p-8 premium-shadow border border-border" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <Tabs defaultValue="roll">
               <TabsList className="w-full mb-5 h-11 rounded-xl p-1 bg-muted">
-                <TabsTrigger value="roll" className="flex-1 rounded-lg text-sm">By Roll Number</TabsTrigger>
-                <TabsTrigger value="name" className="flex-1 rounded-lg text-sm">By Name</TabsTrigger>
+                <TabsTrigger value="roll" className="flex-1 rounded-lg text-sm">{tr.result.byRollNumber}</TabsTrigger>
+                <TabsTrigger value="name" className="flex-1 rounded-lg text-sm">{tr.result.byName}</TabsTrigger>
               </TabsList>
               <TabsContent value="roll">
                 <div className="flex gap-3">
-                  <Input placeholder="Enter Roll Number" className="h-11 rounded-xl" value={rollNumber} onChange={(e) => setRollNumber(e.target.value)} onKeyDown={(e) => e.key === "Enter" && searchByRoll()} />
+                  <Input placeholder={tr.result.enterRoll} className="h-11 rounded-xl" value={rollNumber} onChange={(e) => setRollNumber(e.target.value)} onKeyDown={(e) => e.key === "Enter" && searchByRoll()} />
                   <Button onClick={searchByRoll} disabled={searching} className="bg-primary shrink-0 h-11 w-11 rounded-xl p-0">
                     {searching ? <Loader2 className="animate-spin" size={16} /> : <Search size={16} />}
                   </Button>
                 </div>
               </TabsContent>
               <TabsContent value="name" className="space-y-3">
-                <Input placeholder="Student Name" className="h-11 rounded-xl" value={searchName} onChange={(e) => setSearchName(e.target.value)} />
-                <Input placeholder="Father's Name" className="h-11 rounded-xl" value={searchFatherName} onChange={(e) => setSearchFatherName(e.target.value)} />
+                <Input placeholder={tr.result.studentName} className="h-11 rounded-xl" value={searchName} onChange={(e) => setSearchName(e.target.value)} />
+                <Input placeholder={tr.result.fatherName} className="h-11 rounded-xl" value={searchFatherName} onChange={(e) => setSearchFatherName(e.target.value)} />
                 <Button onClick={searchByName} disabled={searching} className="w-full bg-primary h-11 rounded-xl">
-                  {searching ? <><Loader2 className="animate-spin mr-2" size={16} /> Searching...</> : <><Search size={16} className="mr-2" /> Search</>}
+                  {searching ? <><Loader2 className="animate-spin mr-2" size={16} /> {tr.result.searching}</> : <><Search size={16} className="mr-2" /> {tr.result.search}</>}
                 </Button>
               </TabsContent>
             </Tabs>

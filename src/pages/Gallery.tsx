@@ -2,16 +2,18 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ZoomIn } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import { useLang } from "@/lib/i18n";
 import galleryMeeting from "@/assets/gallery-meeting.jpg";
 import galleryShields from "@/assets/gallery-shields.jpg";
 
-const galleries = [
-  { title: "Meeting 2025", images: [galleryMeeting] },
-  { title: "Shields 2024", images: [galleryShields] },
-];
-
 const Gallery = () => {
   const [lightbox, setLightbox] = useState<string | null>(null);
+  const { tr } = useLang();
+
+  const galleries = [
+    { title: "Meeting 2025", images: [galleryMeeting] },
+    { title: "Shields 2024", images: [galleryShields] },
+  ];
 
   return (
     <Layout>
@@ -21,14 +23,14 @@ const Gallery = () => {
         <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full border border-white/[0.03]" />
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            Captured Moments
+            {tr.gallery.capturedMoments}
           </motion.span>
           <motion.h1 className="font-playfair text-4xl md:text-5xl font-bold mt-3 mb-4 text-shadow" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            Our Gallery
+            {tr.gallery.ourGallery}
           </motion.h1>
           <motion.div className="section-divider mb-5" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.3 }} />
           <motion.p className="text-white/40 max-w-md mx-auto text-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-            Moments from our events, meetings, and award ceremonies
+            {tr.gallery.galleryDesc}
           </motion.p>
         </div>
       </section>
@@ -44,15 +46,7 @@ const Gallery = () => {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
               {gallery.images.map((img, i) => (
-                <motion.div
-                  key={i}
-                  className="relative group rounded-2xl overflow-hidden premium-shadow cursor-pointer card-hover aspect-[4/3]"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
-                  onClick={() => setLightbox(img)}
-                >
+                <motion.div key={i} className="relative group rounded-2xl overflow-hidden premium-shadow cursor-pointer card-hover aspect-[4/3]" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }} onClick={() => setLightbox(img)}>
                   <img src={img} alt={`${gallery.title} ${i + 1}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
                   <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/40 transition-colors duration-500 flex items-center justify-center">
                     <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-lg" size={28} />
@@ -67,17 +61,8 @@ const Gallery = () => {
       {/* Lightbox */}
       <AnimatePresence>
         {lightbox && (
-          <motion.div
-            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            onClick={() => setLightbox(null)}
-          >
-            <motion.img
-              src={lightbox}
-              alt="Gallery"
-              className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl"
-              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-            />
+          <motion.div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setLightbox(null)}>
+            <motion.img src={lightbox} alt="Gallery" className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl" initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} />
             <button className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors" onClick={() => setLightbox(null)}>
               <X size={20} />
             </button>

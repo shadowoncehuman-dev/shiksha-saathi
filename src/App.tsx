@@ -1,3 +1,4 @@
+import { LangProvider } from "@/lib/i18n";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,24 +19,26 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/admit-card" element={<AdmitCard />} />
-          <Route path="/result" element={<Result />} />
-          <Route path="/result-detail" element={<ResultDetail />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/team" element={<Team />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/exam-details" element={<ExamDetails />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <LangProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/admit-card" element={<AdmitCard />} />
+            <Route path="/result" element={<Result />} />
+            <Route path="/result-detail" element={<ResultDetail />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/team" element={<Team />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/exam-details" element={<ExamDetails />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </LangProvider>
   </QueryClientProvider>
 );
 

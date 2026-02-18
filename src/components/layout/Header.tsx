@@ -1,27 +1,29 @@
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Languages } from "lucide-react";
 import { useState } from "react";
 import logo from "@/assets/logo.png";
-
-const navItems = [
-  { label: "Home", path: "/" },
-  { label: "Exam Details", path: "/exam-details" },
-  { label: "Register", path: "/register" },
-  { label: "Result", path: "/result" },
-  { label: "Team", path: "/team" },
-  { label: "Gallery", path: "/gallery" },
-];
+import { useLang } from "@/lib/i18n";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const { scrollY } = useScroll();
+  const { lang, setLang, tr } = useLang();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 20);
   });
+
+  const navItems = [
+    { label: tr.nav.home, path: "/" },
+    { label: tr.nav.examDetails, path: "/exam-details" },
+    { label: tr.nav.register, path: "/register" },
+    { label: tr.nav.result, path: "/result" },
+    { label: tr.nav.team, path: "/team" },
+    { label: tr.nav.gallery, path: "/gallery" },
+  ];
 
   return (
     <motion.header
@@ -70,13 +72,25 @@ const Header = () => {
             })}
           </nav>
 
-          <button
-            className="lg:hidden p-2 text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
-          >
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Language Toggle */}
+            <button
+              onClick={() => setLang(lang === "en" ? "hi" : "en")}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-all border border-white/10 hover:border-white/20"
+              title="Toggle Language"
+            >
+              <Languages size={13} />
+              <span>{lang === "en" ? "हिं" : "EN"}</span>
+            </button>
+
+            <button
+              className="lg:hidden p-2 text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
 
         <AnimatePresence>
