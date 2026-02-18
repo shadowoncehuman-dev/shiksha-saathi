@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { BookOpen, Clock, Calendar, Award, Users, Shield, ArrowRight, ChevronDown, GraduationCap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
-import { ORG_NAME, TAGLINE, SUBHEADING, EXAM_DATE, EXAM_GROUPS } from "@/lib/constants";
+import { ORG_NAME, EXAM_DATE, EXAM_GROUPS } from "@/lib/constants";
+import { useLang } from "@/lib/i18n";
 import logo from "@/assets/logo.png";
 import galleryMeeting from "@/assets/gallery-meeting.jpg";
 import galleryShields from "@/assets/gallery-shields.jpg";
@@ -39,12 +40,13 @@ const fadeUp = {
 };
 
 const Index = () => {
+  const { tr } = useLang();
+
   return (
     <Layout>
       {/* Hero */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0 hero-gradient" />
-        {/* Geometric circles */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full border border-white/[0.03]" />
           <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full border border-white/[0.05]" />
@@ -57,63 +59,42 @@ const Index = () => {
 
         <div className="container mx-auto px-4 relative z-10 text-center pt-28 pb-20 md:pt-36 md:pb-32">
           <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
-            <motion.img
-              src={logo}
-              alt="Logo"
-              className="w-20 h-20 md:w-24 md:h-24 mx-auto mb-8 rounded-full bg-white/95 p-1.5 shadow-2xl"
-              style={{ animation: "pulse-glow 3s ease-in-out infinite" }}
-            />
+            <motion.img src={logo} alt="Logo" className="w-20 h-20 md:w-24 md:h-24 mx-auto mb-8 rounded-full bg-white/95 p-1.5 shadow-2xl" style={{ animation: "pulse-glow 3s ease-in-out infinite" }} />
           </motion.div>
 
           <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1}>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.06] backdrop-blur-sm text-secondary text-xs font-semibold mb-8 border border-white/[0.08]">
               <Sparkles size={14} />
-              <span>Exam: {EXAM_DATE}</span>
+              <span>{tr.hero.examBadge}: {EXAM_DATE}</span>
             </div>
           </motion.div>
 
-          <motion.h1
-            className="font-playfair text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] mb-6 text-white text-shadow max-w-4xl mx-auto"
-            initial="hidden" animate="visible" variants={fadeUp} custom={2}
-          >
+          <motion.h1 className="font-playfair text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] mb-6 text-white text-shadow max-w-4xl mx-auto" initial="hidden" animate="visible" variants={fadeUp} custom={2}>
             {ORG_NAME}
           </motion.h1>
 
-          <motion.p
-            className="text-xl md:text-2xl text-secondary font-playfair font-medium mb-4 tracking-wide"
-            initial="hidden" animate="visible" variants={fadeUp} custom={3}
-          >
-            {TAGLINE}
+          <motion.p className="text-xl md:text-2xl text-secondary font-playfair font-medium mb-4 tracking-wide" initial="hidden" animate="visible" variants={fadeUp} custom={3}>
+            {tr.hero.tagline}
           </motion.p>
 
-          <motion.p
-            className="text-white/40 max-w-xl mx-auto mb-12 text-sm md:text-base leading-relaxed"
-            initial="hidden" animate="visible" variants={fadeUp} custom={4}
-          >
-            {SUBHEADING}
+          <motion.p className="text-white/40 max-w-xl mx-auto mb-12 text-sm md:text-base leading-relaxed" initial="hidden" animate="visible" variants={fadeUp} custom={4}>
+            {tr.hero.subheading}
           </motion.p>
 
-          <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-            initial="hidden" animate="visible" variants={fadeUp} custom={5}
-          >
+          <motion.div className="flex flex-col sm:flex-row gap-4 justify-center" initial="hidden" animate="visible" variants={fadeUp} custom={5}>
             <Button asChild size="lg" className="bg-secondary text-white hover:bg-secondary/90 font-semibold text-sm px-8 h-12 shadow-lg shadow-secondary/20 group rounded-xl">
               <Link to="/exam-details">
-                View Exam Details
+                {tr.hero.viewExam}
                 <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 font-semibold text-sm px-8 h-12 backdrop-blur-sm rounded-xl">
-              <Link to="/register">Register Now</Link>
+              <Link to="/register">{tr.hero.registerNow}</Link>
             </Button>
           </motion.div>
         </div>
 
-        <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-        >
+        <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2" animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}>
           <ChevronDown size={20} className="text-white/20" />
         </motion.div>
       </section>
@@ -123,19 +104,12 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4">
             {[
-              { label: "Exam Groups", value: 2, suffix: "" },
-              { label: "Classes", value: 7, suffix: "+" },
-              { label: "Villages", value: 7, suffix: "+" },
-              { label: "Students", value: 500, suffix: "+" },
+              { label: tr.stats.examGroups, value: 2, suffix: "" },
+              { label: tr.stats.classes, value: 7, suffix: "+" },
+              { label: tr.stats.villages, value: 7, suffix: "+" },
+              { label: tr.stats.students, value: 500, suffix: "+" },
             ].map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                className={`py-8 md:py-10 text-center ${i < 3 ? "border-r border-border" : ""}`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-              >
+              <motion.div key={stat.label} className={`py-8 md:py-10 text-center ${i < 3 ? "border-r border-border" : ""}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }}>
                 <p className="font-playfair text-3xl md:text-4xl font-bold text-primary">
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} />
                 </p>
@@ -150,22 +124,15 @@ const Index = () => {
       <section className="py-20 md:py-32">
         <div className="container mx-auto px-4">
           <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">Examination Structure</span>
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">Examination Groups</h2>
+            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">{tr.index.examinationStructure}</span>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">{tr.index.examinationGroups}</h2>
             <div className="section-divider mb-5" />
-            <p className="text-muted-foreground max-w-md mx-auto text-sm">Students are divided into two groups based on their class for systematic examination.</p>
+            <p className="text-muted-foreground max-w-md mx-auto text-sm">{tr.index.examinationGroupsDesc}</p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {EXAM_GROUPS.map((group, i) => (
-              <motion.div
-                key={group.name}
-                className="rounded-2xl overflow-hidden premium-shadow bg-card border border-border card-hover"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15, duration: 0.6 }}
-              >
+              <motion.div key={group.name} className="rounded-2xl overflow-hidden premium-shadow bg-card border border-border card-hover" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.6 }}>
                 <div className={`p-6 ${i === 0 ? 'hero-gradient' : 'bg-gradient-to-br from-secondary to-accent'} text-white`}>
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm">
@@ -173,22 +140,22 @@ const Index = () => {
                     </div>
                     <div>
                       <h3 className="font-playfair text-xl font-bold">{group.name}</h3>
-                      <p className="text-sm text-white/60">Classes {group.classes.join(", ")}</p>
+                      <p className="text-sm text-white/60">{tr.examDetails.classes} {group.classes.join(", ")}</p>
                     </div>
                   </div>
                 </div>
                 <div className="p-6 space-y-4">
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
                     <Clock size={15} className="text-secondary" />
-                    <span>Duration: <span className="font-semibold text-foreground">{group.duration}</span></span>
+                    <span>{tr.index.duration}: <span className="font-semibold text-foreground">{group.duration}</span></span>
                   </div>
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
                     <Calendar size={15} className="text-secondary" />
-                    <span>Date: <span className="font-semibold text-foreground">{EXAM_DATE}</span></span>
+                    <span>{tr.index.date}: <span className="font-semibold text-foreground">{EXAM_DATE}</span></span>
                   </div>
                   <Button asChild variant="outline" className="w-full group rounded-xl h-11 mt-2">
                     <Link to="/exam-details">
-                      View Details
+                      {tr.index.viewDetails}
                       <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </Button>
@@ -203,25 +170,18 @@ const Index = () => {
       <section className="py-20 md:py-32 bg-muted/30">
         <div className="container mx-auto px-4">
           <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">Who We Are</span>
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">About the Samiti</h2>
+            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">{tr.index.whoWeAre}</span>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">{tr.index.aboutSamiti}</h2>
             <div className="section-divider" />
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {[
-              { icon: Award, title: "Excellence", desc: "Committed to maintaining the highest standards of educational assessment and student evaluation." },
-              { icon: Users, title: "Inclusivity", desc: "Providing equal opportunities for students across all classes from 6 to 12 to demonstrate their knowledge." },
-              { icon: Shield, title: "Integrity", desc: "Ensuring transparent, fair, and secure examination processes that uphold trust and credibility." },
+              { icon: Award, title: tr.index.excellence, desc: tr.index.excellenceDesc },
+              { icon: Users, title: tr.index.inclusivity, desc: tr.index.inclusivityDesc },
+              { icon: Shield, title: tr.index.integrity, desc: tr.index.integrityDesc },
             ].map((item, i) => (
-              <motion.div
-                key={item.title}
-                className="bg-card rounded-2xl p-8 text-center premium-shadow border border-border card-hover"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.12, duration: 0.6 }}
-              >
+              <motion.div key={item.title} className="bg-card rounded-2xl p-8 text-center premium-shadow border border-border card-hover" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.6 }}>
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-secondary/10 to-accent/10 flex items-center justify-center mx-auto mb-6">
                   <item.icon className="text-secondary" size={24} />
                 </div>
@@ -237,8 +197,8 @@ const Index = () => {
       <section className="py-20 md:py-32">
         <div className="container mx-auto px-4">
           <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">Moments</span>
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">From Our Gallery</h2>
+            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">{tr.index.moments}</span>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">{tr.index.fromGallery}</h2>
             <div className="section-divider" />
           </motion.div>
 
@@ -247,14 +207,7 @@ const Index = () => {
               { img: galleryMeeting, title: "Meeting 2025" },
               { img: galleryShields, title: "Shields 2024" },
             ].map((item, i) => (
-              <motion.div
-                key={item.title}
-                className="relative rounded-2xl overflow-hidden group cursor-pointer card-hover aspect-[4/3]"
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15, duration: 0.6 }}
-              >
+              <motion.div key={item.title} className="relative rounded-2xl overflow-hidden group cursor-pointer card-hover aspect-[4/3]" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.6 }}>
                 <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent" />
                 <div className="absolute bottom-5 left-5">
@@ -267,7 +220,7 @@ const Index = () => {
           <div className="text-center">
             <Button asChild variant="outline" size="lg" className="group rounded-xl h-12">
               <Link to="/gallery">
-                View Full Gallery
+                {tr.index.viewFullGallery}
                 <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
@@ -286,16 +239,14 @@ const Index = () => {
             <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-8">
               <GraduationCap size={32} className="text-secondary" />
             </div>
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-4 text-shadow">Ready to Register?</h2>
-            <p className="text-white/40 max-w-lg mx-auto mb-10 text-sm leading-relaxed">
-              Join thousands of students in the Dr. B.R. Ambedkar examination. Registration is quick and easy.
-            </p>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-4 text-shadow">{tr.index.readyToRegister}</h2>
+            <p className="text-white/40 max-w-lg mx-auto mb-10 text-sm leading-relaxed">{tr.index.readyDesc}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg" className="bg-secondary text-white hover:bg-secondary/90 font-semibold px-10 h-12 shadow-lg shadow-secondary/20 rounded-xl">
-                <Link to="/register">Register Now</Link>
+                <Link to="/register">{tr.hero.registerNow}</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 backdrop-blur-sm h-12 rounded-xl">
-                <Link to="/team">Meet Our Team</Link>
+                <Link to="/team">{tr.index.meetTeam}</Link>
               </Button>
             </div>
           </motion.div>

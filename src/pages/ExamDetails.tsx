@@ -4,37 +4,42 @@ import { BookOpen, Clock, Calendar, Download, FileText, GraduationCap, ArrowRigh
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { EXAM_DATE } from "@/lib/constants";
-
-const groups = [
-  {
-    name: "Group 1",
-    classes: "Class 6 – 8",
-    duration: "2 Hours",
-    date: `Between ${EXAM_DATE}`,
-    topics: [
-      "Early Life of Dr. Ambedkar",
-      "Educational Journey",
-      "Social Reforms",
-      "Basic Constitutional Concepts",
-    ],
-    gradient: "hero-gradient",
-  },
-  {
-    name: "Group 2",
-    classes: "Class 9 – 12",
-    duration: "3 Hours",
-    date: `Between ${EXAM_DATE}`,
-    topics: [
-      "Constitutional Contributions",
-      "Social Justice Movement",
-      "Political Philosophy",
-      "Economic Thoughts",
-    ],
-    gradient: "bg-gradient-to-br from-secondary to-accent",
-  },
-];
+import { useLang } from "@/lib/i18n";
 
 const ExamDetails = () => {
+  const { tr } = useLang();
+
+  const groups = [
+    {
+      name: "Group 1",
+      classes: "Class 6 – 8",
+      duration: "2 Hours",
+      date: `Between ${EXAM_DATE}`,
+      topics: [
+        "Early Life of Dr. Ambedkar",
+        "Educational Journey",
+        "Social Reforms",
+        "Basic Constitutional Concepts",
+      ],
+      gradient: "hero-gradient",
+      slug: "group-1",
+    },
+    {
+      name: "Group 2",
+      classes: "Class 9 – 12",
+      duration: "3 Hours",
+      date: `Between ${EXAM_DATE}`,
+      topics: [
+        "Constitutional Contributions",
+        "Social Justice Movement",
+        "Political Philosophy",
+        "Economic Thoughts",
+      ],
+      gradient: "bg-gradient-to-br from-secondary to-accent",
+      slug: "group-2",
+    },
+  ];
+
   return (
     <Layout>
       {/* Hero */}
@@ -42,18 +47,15 @@ const ExamDetails = () => {
         <div className="absolute inset-0 grain-overlay" />
         <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full border border-white/[0.03]" />
         <div className="container mx-auto px-4 text-center relative z-10">
-          <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.06] text-secondary text-xs font-semibold mb-6 border border-white/[0.08]"
-            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          >
-            <GraduationCap size={14} /> Dr. B.R. Ambedkar Examination
+          <motion.div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.06] text-secondary text-xs font-semibold mb-6 border border-white/[0.08]" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+            <GraduationCap size={14} /> {tr.examDetails.badge}
           </motion.div>
           <motion.h1 className="font-playfair text-4xl md:text-5xl font-bold mb-4 text-shadow" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            Examination Groups
+            {tr.examDetails.title}
           </motion.h1>
           <motion.div className="section-divider mb-5" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.3 }} />
           <motion.p className="text-white/40 max-w-md mx-auto text-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-            Detailed information about examination groups, syllabus, and templates
+            {tr.examDetails.subtitle}
           </motion.p>
         </div>
       </section>
@@ -63,14 +65,7 @@ const ExamDetails = () => {
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {groups.map((group, i) => (
-              <motion.div
-                key={group.name}
-                className="bg-card rounded-2xl overflow-hidden premium-shadow border border-border card-hover"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15, duration: 0.6 }}
-              >
+              <motion.div key={group.name} className="bg-card rounded-2xl overflow-hidden premium-shadow border border-border card-hover" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.6 }}>
                 {/* Header */}
                 <div className={`${group.gradient} p-6 text-white`}>
                   <div className="flex items-center gap-4">
@@ -79,7 +74,7 @@ const ExamDetails = () => {
                     </div>
                     <div>
                       <h3 className="font-playfair text-xl font-bold">{group.name}</h3>
-                      <p className="text-sm text-white/60">{group.classes}</p>
+                      <p className="text-sm text-white/80">{group.classes}</p>
                     </div>
                   </div>
                 </div>
@@ -104,29 +99,21 @@ const ExamDetails = () => {
                   {/* Downloads */}
                   <div>
                     <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2 text-sm">
-                      <Download size={14} className="text-secondary" /> Downloads
+                      <Download size={14} className="text-secondary" /> {tr.examDetails.downloads}
                     </h4>
                     <div className="flex gap-3">
-                      <a
-                        href={`/downloads/${group.name.toLowerCase().replace(' ', '-')}-syllabus.pdf`}
-                        download
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary/[0.03] border border-primary/10 text-xs font-medium text-primary hover:bg-primary/[0.06] transition-colors"
-                      >
-                        <FileText size={14} /> Syllabus
+                      <a href={`/downloads/${group.slug}-syllabus.pdf`} download className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary/[0.03] border border-primary/10 text-xs font-medium text-primary hover:bg-primary/[0.06] transition-colors">
+                        <FileText size={14} /> {tr.examDetails.syllabus}
                       </a>
-                      <a
-                        href={`/downloads/${group.name.toLowerCase().replace(' ', '-')}-template.pdf`}
-                        download
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-secondary/[0.03] border border-secondary/10 text-xs font-medium text-secondary hover:bg-secondary/[0.06] transition-colors"
-                      >
-                        <FileText size={14} /> Template
+                      <a href={`/downloads/${group.slug}-template.pdf`} download className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-secondary/[0.03] border border-secondary/10 text-xs font-medium text-secondary hover:bg-secondary/[0.06] transition-colors">
+                        <FileText size={14} /> {tr.examDetails.template}
                       </a>
                     </div>
                   </div>
 
                   {/* Topics */}
                   <div>
-                    <h4 className="font-semibold text-foreground mb-3 text-sm">Topics</h4>
+                    <h4 className="font-semibold text-foreground mb-3 text-sm">{tr.examDetails.topics}</h4>
                     <ul className="space-y-2">
                       {group.topics.map((topic) => (
                         <li key={topic} className="flex items-center gap-3 text-sm text-muted-foreground">
@@ -140,7 +127,7 @@ const ExamDetails = () => {
                   {/* CTA */}
                   <Button asChild className="w-full bg-primary text-white hover:bg-primary/90 group rounded-xl h-11 mt-2 [&>*]:text-white">
                     <Link to="/register" className="text-white">
-                      <span className="text-white font-semibold">Register Now</span>
+                      <span className="text-white font-semibold">{tr.examDetails.registerNow}</span>
                       <ArrowRight size={14} className="ml-2 text-white group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </Button>
