@@ -138,10 +138,10 @@ const ExamDetails = () => {
                   </div>
 
                   {/* CTA */}
-                  <Button asChild className="w-full bg-primary hover:bg-primary/90 group rounded-xl h-11 mt-2">
-                    <Link to="/register">
-                      Register Now
-                      <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  <Button asChild className="w-full bg-primary text-white hover:bg-primary/90 group rounded-xl h-11 mt-2 [&>*]:text-white">
+                    <Link to="/register" className="text-white">
+                      <span className="text-white font-semibold">Register Now</span>
+                      <ArrowRight size={14} className="ml-2 text-white group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </Button>
                 </div>
