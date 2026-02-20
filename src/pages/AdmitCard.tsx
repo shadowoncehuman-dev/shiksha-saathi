@@ -68,7 +68,7 @@ const AdmitCard = () => {
           <motion.div ref={cardRef} className="bg-white rounded-2xl overflow-hidden shadow-2xl" style={{ border: "3px solid hsl(43, 96%, 56%)" }} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
             {/* Header */}
             <div style={{ background: "linear-gradient(165deg, hsl(222 67% 10%), hsl(222 67% 16%), hsl(222 50% 22%))" }} className="text-white p-6 text-center relative">
-              <div className="absolute inset-0 opacity-5 flex items-center justify-center text-[10rem] font-playfair font-bold select-none pointer-events-none">अ</div>
+              <img src={logo} alt="" className="absolute inset-0 m-auto w-32 h-32 opacity-5 select-none pointer-events-none" />
               <img src={logo} alt="Logo" className="w-14 h-14 mx-auto mb-2 rounded-full bg-white p-1 relative z-10" />
               <h2 className="font-playfair text-lg md:text-xl font-bold relative z-10 mb-1">{ORG_NAME}</h2>
               <p className="text-amber-400 font-semibold relative z-10 text-sm tracking-wider">{tr.admitCard.title}</p>
@@ -76,7 +76,7 @@ const AdmitCard = () => {
 
             {/* Body */}
             <div className="p-6 md:p-8 relative">
-              <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] text-[12rem] font-playfair font-bold select-none pointer-events-none">अ</div>
+              <img src={logo} alt="" className="absolute inset-0 m-auto w-48 h-48 opacity-[0.04] select-none pointer-events-none" />
 
               <div className="flex flex-col md:flex-row gap-6 relative z-10">
                 <div className="flex-1 space-y-3.5">

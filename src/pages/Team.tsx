@@ -3,7 +3,7 @@ import { Phone, User, Briefcase, Crown, Shield, Star } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { TEAM_MEMBERS } from "@/lib/team-data";
 import { useLang } from "@/lib/i18n";
-import avatarPlaceholder from "@/assets/avatar-placeholder.jpg";
+
 
 const roleIcon = (role: string) => {
   if (role === "President") return Crown;
@@ -54,7 +54,7 @@ const Team = () => {
                   <div className="h-1 bg-gradient-to-r from-secondary to-accent" />
                   <div className="p-6 text-center">
                     <div className="relative w-20 h-20 mx-auto mb-4">
-                      <img src={avatarPlaceholder} alt={member.name} className="w-full h-full rounded-full object-cover border-2 border-border group-hover:border-secondary transition-colors duration-500" />
+                      <img src={member.photo} alt={member.name} className="w-full h-full rounded-full object-cover border-2 border-border group-hover:border-secondary transition-colors duration-500" />
                       <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-secondary flex items-center justify-center shadow-md">
                         <Icon size={12} className="text-white" />
                       </div>
@@ -95,7 +95,7 @@ const Team = () => {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
             {members.map((member, i) => (
               <motion.div key={member.name} className="bg-card rounded-xl p-5 flex items-start gap-4 premium-shadow border border-border card-hover" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.5 }}>
-                <img src={avatarPlaceholder} alt={member.name} className="w-14 h-14 rounded-full object-cover border border-border shrink-0" />
+                <img src={member.photo} alt={member.name} className="w-14 h-14 rounded-full object-cover border border-border shrink-0" />
                 <div className="min-w-0">
                   <h3 className="font-playfair text-base font-bold text-foreground leading-tight">{member.name}</h3>
                   <p className="text-xs text-secondary font-semibold mb-1.5">{member.role}</p>
