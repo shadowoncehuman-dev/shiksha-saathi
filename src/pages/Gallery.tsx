@@ -3,16 +3,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ZoomIn } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { useLang } from "@/lib/i18n";
-import galleryMeeting from "@/assets/gallery-meeting.jpg";
-import galleryShields from "@/assets/gallery-shields.jpg";
+import eventMeeting from "@/assets/gallery/event-meeting.jpg";
+import eventAwards from "@/assets/gallery/event-awards.jpg";
+import eventGroup from "@/assets/gallery/event-group.jpg";
+import eventExam from "@/assets/gallery/event-exam.jpg";
 
 const Gallery = () => {
   const [lightbox, setLightbox] = useState<string | null>(null);
   const { tr } = useLang();
 
   const galleries = [
-    { title: "Meeting 2025", images: [galleryMeeting] },
-    { title: "Shields 2024", images: [galleryShields] },
+    { title: "Annual Meeting 2025", images: [eventMeeting, eventGroup] },
+    { title: "Awards & Examination", images: [eventAwards, eventExam] },
   ];
 
   return (
