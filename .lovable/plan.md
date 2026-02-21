@@ -1,78 +1,62 @@
 
 
-# 🏛️ Bharat Ratan Baba Sahib Dr. Bhimrao Ambedkar Ji Shiksha Sudhar Samiti — Examination Portal
+# Feature Enhancement Plan: Making the Examination Portal Best-in-Class
 
-## Overview
-A premium, government-standard examination website for organizing and facilitating student examinations. Built with React, Tailwind CSS, Supabase (external), and Framer Motion.
+## 1. Dark/Light Mode Toggle
+Add a theme switcher using `next-themes` (already installed) so users can toggle between dark and light modes. A sun/moon icon will appear next to the language toggle in the header.
 
----
+## 2. FAQ Accordion Section on Home Page
+Add an interactive FAQ section with common questions about the exam (registration process, exam dates, result checking, exam center info, etc.) using the existing Accordion component. Fully translated in both EN and HI.
 
-## 🎨 Design & Branding
-- **Color scheme**: Royal Blue (#0B3D91), Deep Saffron (#F4A300), White, Soft Gray, Gold accents
-- **Typography**: Playfair Display for headings, Poppins for body text
-- **Visual elements**: Glassmorphism cards, gold borders, constitution manuscript texture overlay, Dr. B.R. Ambedkar silhouette watermark, elegant dividers, soft shadows
-- **Animations**: Framer Motion for smooth page transitions, hover effects, and micro-interactions
+## 3. Testimonials/Social Proof Section on Home Page
+Add an auto-scrolling testimonial carousel featuring student success stories and parent feedback, using the existing Embla Carousel. Builds trust and engagement.
 
----
+## 4. WhatsApp Share Button on Admit Card and Result
+Add a "Share on WhatsApp" button so students can quickly share their admit card details or results with family. Very relevant for the target rural audience.
 
-## 📄 Pages & Features
+## 5. Duplicate Registration Prevention
+Before registering, check if a student with the same name + father's name + class already exists. Show a warning if duplicate found, preventing accidental double registrations.
 
-### 1. Home Page (`/`)
-- **Hero section** with premium background, organization name, tagline, and two animated CTA buttons (View Exam Details, Register Now)
-- **Exam Groups section** clearly displaying Group 1 (Classes 6-8, 2 hrs) and Group 2 (Classes 9-12, 3 hrs)
-- **Exam date**: 10–14 April 2026
-- **About section** with organizational information
-- Premium footer with contact details and copyright
+## 6. Student Search/Filter in Admin Panel
+Add a search bar in the Students tab so admins can quickly filter students by name, roll number, or village instead of scrolling through the entire list.
 
-### 2. Registration Page (`/register`)
-- Checks `registration_status` from `site_settings` before showing the form
-- Shows appropriate messages for "Not Started" or "Closed" states
-- Premium centered card form with fields: Name, Father's Name, Class (6-12 dropdown), Phone (10-digit validation), Village (dropdown with predefined villages + Others)
-- On submit: saves data, auto-generates roll number via Supabase edge function, redirects to admit card
+## 7. Bulk Marks Entry in Admin Panel
+Add a "Bulk Marks" tab where the admin can see all students without marks and quickly enter marks for multiple students in a table format, speeding up data entry.
 
-### 3. Admit Card Page (`/admit-card`)
-- Government hall ticket design with royal blue header, gold frame border, Dr. Ambedkar watermark
-- Displays: Samiti name, Group, Student Name, Father's Name, Class, Roll Number (large & bold), Exam Date, Duration, Office address, Contact info
-- QR code encoding full student details (name, roll, class, etc.)
-- Warning message to save/download the admit card
-- Buttons: Download PDF, Download Image, Print
+## 8. Dashboard Stats Cards in Admin Panel
+Show summary statistics at the top of the admin dashboard: total registrations, total results entered, pass/fail ratio, and registration status -- giving a quick overview.
 
-### 4. Result Page (`/result`)
-- Search by Roll Number OR Name + Father's Name
-- Checks `result_status`, `result_publish_date`, and `result_expiry_date` before showing results
-- Shows appropriate messages for "Not Declared" or "Viewing Period Ended" states
-- **Result card**: Student Name, Roll Number, Class, Subject-wise Marks (Subject 1-4), Total, Percentage, Grade, PASS/FAIL badge (green/red), official watermark
+## 9. Animated 404 Page
+Redesign the NotFound page with the premium design system, logo watermark, and animated elements consistent with the rest of the site.
 
-### 5. Admin Panel (`/admin`)
-- **Password-protected** via Supabase edge function (admin password stored as a Supabase secret)
-- **Dashboard features**:
-  - Registration control (Not Started / Open / Closed dropdown)
-  - Result control (Not Declared / Available / Viewing Period Ended dropdown) with publish & expiry date pickers
-  - Add marks: search student by roll number, enter Subject 1-4 marks, auto-calculate total/percentage/grade, save
-  - Manage students: view all registrations, edit, delete, export CSV
-  - Upload section: syllabus PDFs and gallery images (using Supabase Storage)
+## 10. Contact Us / Help Section in Footer
+Add a "Need Help?" floating button or a small contact section that links to WhatsApp directly for quick student support.
 
 ---
 
-## 🗄️ Database (Supabase)
+## Technical Details
 
-### Tables
-- **registrations**: id, roll_number, name, father_name, class, group, phone, village, created_at
-- **roll_counters**: class (PK), last_number — for sequential roll number generation per class
-- **results**: id, roll_number, subject1-4 marks, total, percentage, grade, status
-- **site_settings**: registration_status, result_status, result_publish_date, result_expiry_date
+### Files to Create
+- `src/components/ThemeToggle.tsx` -- Theme switcher component
+- `src/components/FAQSection.tsx` -- FAQ accordion for home page
+- `src/components/TestimonialsSection.tsx` -- Testimonial carousel
 
-### Edge Functions
-- **validate-admin**: Validates admin password against stored secret
-- **generate-roll-number**: Atomically increments roll counter and returns new roll number for a given class
+### Files to Modify
+- `src/pages/Index.tsx` -- Add FAQ and Testimonials sections
+- `src/pages/NotFound.tsx` -- Premium redesign
+- `src/pages/Admin.tsx` -- Add search filter, dashboard stats, bulk marks tab
+- `src/pages/Register.tsx` -- Add duplicate check before submission
+- `src/pages/AdmitCard.tsx` -- Add WhatsApp share button
+- `src/pages/ResultDetail.tsx` -- Add WhatsApp share button
+- `src/components/layout/Header.tsx` -- Add dark/light mode toggle
+- `src/lib/i18n.tsx` -- Add translations for all new features (FAQ, testimonials, etc.)
+- `src/index.css` -- Add dark mode CSS variables and theme styles
+- `tailwind.config.ts` -- Ensure dark mode class strategy is configured
 
-### Roll Number Format
-- `{class}{sequential 3-digit number}` — e.g., 6001, 7001, 10001, 12001
-
----
-
-## 🌐 Responsive & SEO
-- Fully responsive design for mobile, tablet, and desktop
-- SEO-optimized with proper meta tags, structured headings, and semantic HTML
-- Fast loading with optimized assets
+### Key Technical Considerations
+- Dark mode will use `class` strategy via `next-themes` for SSR compatibility
+- Duplicate registration check uses an efficient Supabase query with `.ilike()` matching
+- Admin search uses client-side filtering for instant results
+- WhatsApp share uses the `https://wa.me/?text=` URL scheme (works on mobile and desktop)
+- All new text content will have both English and Hindi translations
 
