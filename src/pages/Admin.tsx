@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save } from "lucide-react";
+import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,12 +10,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { type Registration, type SiteSettings } from "@/lib/supabase";
 import { getGrade, formatIndianDateTime } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
+import { useLang } from "@/lib/i18n";
 
 const Admin = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [verifying, setVerifying] = useState(false);
   const { toast } = useToast();
+  const { tr } = useLang();
 
   const [settings, setSettings] = useState<SiteSettings>({
     registration_status: "Not Started", result_status: "Not Declared",
@@ -24,17 +26,21 @@ const Admin = () => {
 
   const [students, setStudents] = useState<Registration[]>([]);
   const [loadingStudents, setLoadingStudents] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [markRoll, setMarkRoll] = useState("");
   const [markStudent, setMarkStudent] = useState<Registration | null>(null);
   const [totalMarks, setTotalMarks] = useState("");
   const [savingMarks, setSavingMarks] = useState(false);
+
+  // Dashboard stats
+  const [resultStats, setResultStats] = useState({ total: 0, pass: 0, fail: 0 });
 
   const handleLogin = async () => {
     setVerifying(true);
     try {
       const { data, error } = await supabase.functions.invoke("validate-admin", { body: { password } });
       if (error || !data?.valid) toast({ title: "Access Denied", description: "Invalid password.", variant: "destructive" });
-      else { setAuthenticated(true); fetchSettings(); fetchStudents(); }
+      else { setAuthenticated(true); fetchSettings(); fetchStudents(); fetchResultStats(); }
     } catch { toast({ title: "Error", description: "Failed to verify.", variant: "destructive" }); }
     setVerifying(false);
   };
@@ -58,6 +64,17 @@ const Admin = () => {
     setLoadingStudents(false);
   };
 
+  const fetchResultStats = async () => {
+    const { data } = await supabase.from("results").select("status");
+    if (data) {
+      setResultStats({
+        total: data.length,
+        pass: data.filter(r => r.status === "PASS").length,
+        fail: data.filter(r => r.status === "FAIL").length,
+      });
+    }
+  };
+
   const deleteStudent = async (id: string) => {
     await supabase.from("registrations").delete().eq("id", id);
     setStudents((prev) => prev.filter((s) => s.id !== id));
@@ -76,6 +93,17 @@ const Admin = () => {
     link.download = "students.csv";
     link.click();
   };
+
+  const filteredStudents = useMemo(() => {
+    if (!searchQuery.trim()) return students;
+    const q = searchQuery.toLowerCase().trim();
+    return students.filter(s =>
+      s.name.toLowerCase().includes(q) ||
+      s.roll_number.toLowerCase().includes(q) ||
+      s.village.toLowerCase().includes(q) ||
+      s.father_name.toLowerCase().includes(q)
+    );
+  }, [students, searchQuery]);
 
   const searchStudentForMarks = async () => {
     if (!markRoll.trim()) return;
@@ -103,7 +131,7 @@ const Admin = () => {
       { onConflict: "roll_number" }
     );
     if (error) toast({ title: "Error saving marks", variant: "destructive" });
-    else toast({ title: "Marks Saved", description: `Total: ${total}, Grade: ${grade}, ${status}` });
+    else { toast({ title: "Marks Saved", description: `Total: ${total}, Grade: ${grade}, ${status}` }); fetchResultStats(); }
     setSavingMarks(false);
   };
 
@@ -136,8 +164,31 @@ const Admin = () => {
       <section className="pt-24 pb-12 md:pt-28 md:pb-16">
         <div className="container mx-auto px-4">
           <div className="mb-8">
-            <h2 className="font-playfair text-2xl md:text-3xl font-bold text-foreground">Admin Dashboard</h2>
+            <h2 className="font-playfair text-2xl md:text-3xl font-bold text-foreground">{tr.admin.title}</h2>
             <p className="text-muted-foreground text-sm mt-1">Manage registrations, results, and settings</p>
+          </div>
+
+          {/* Dashboard Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            {[
+              { icon: UserCheck, label: tr.admin.totalRegistrations, value: students.length, color: "text-primary" },
+              { icon: BarChart3, label: tr.admin.totalResults, value: resultStats.total, color: "text-secondary" },
+              { icon: CheckCircle, label: tr.admin.passCount, value: resultStats.pass, color: "text-emerald-600" },
+              { icon: XCircle, label: tr.admin.failCount, value: resultStats.fail, color: "text-destructive" },
+            ].map((stat) => (
+              <motion.div
+                key={stat.label}
+                className="bg-card rounded-2xl p-5 premium-shadow border border-border"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <stat.icon size={18} className={stat.color} />
+                  <span className="text-xs text-muted-foreground font-medium">{stat.label}</span>
+                </div>
+                <p className="font-playfair text-2xl font-bold text-foreground">{stat.value}</p>
+              </motion.div>
+            ))}
           </div>
 
           <Tabs defaultValue="settings">
@@ -218,9 +269,20 @@ const Admin = () => {
 
             <TabsContent value="students">
               <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
-                <div className="flex justify-between items-center mb-5">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-5">
                   <h3 className="font-playfair text-lg font-semibold">Registered Students ({students.length})</h3>
-                  <Button variant="outline" onClick={exportCSV} size="sm" className="rounded-xl"><Download size={14} className="mr-1.5" /> Export CSV</Button>
+                  <div className="flex gap-2 w-full sm:w-auto">
+                    <div className="relative flex-1 sm:w-64">
+                      <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        placeholder={tr.admin.searchPlaceholder}
+                        className="h-9 rounded-lg pl-9 text-sm"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                    </div>
+                    <Button variant="outline" onClick={exportCSV} size="sm" className="rounded-lg shrink-0"><Download size={14} className="mr-1.5" /> CSV</Button>
+                  </div>
                 </div>
                 {loadingStudents ? (
                   <div className="flex justify-center py-8"><Loader2 className="animate-spin text-primary" size={28} /></div>
@@ -239,7 +301,7 @@ const Admin = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {students.map((s) => (
+                        {filteredStudents.map((s) => (
                           <tr key={s.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
                             <td className="py-2.5 px-2 font-mono font-bold text-primary text-xs">{s.roll_number}</td>
                             <td className="py-2.5 px-2 text-xs">{s.name}</td>
@@ -256,7 +318,7 @@ const Admin = () => {
                         ))}
                       </tbody>
                     </table>
-                    {!students.length && <p className="text-center py-8 text-muted-foreground text-sm">No registrations yet.</p>}
+                    {!filteredStudents.length && <p className="text-center py-8 text-muted-foreground text-sm">{searchQuery ? "No matching students found." : "No registrations yet."}</p>}
                   </div>
                 )}
               </div>

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, UserPlus } from "lucide-react";
+import { Loader2, UserPlus, AlertTriangle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +29,7 @@ const Register = () => {
   const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [duplicateWarning, setDuplicateWarning] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { tr } = useLang();
@@ -48,6 +49,34 @@ const Register = () => {
     };
     fetchStatus();
   }, []);
+
+  const checkDuplicate = async (name: string, fatherName: string, studentClass: string) => {
+    if (!name || !fatherName || !studentClass) return;
+    const { data } = await supabase
+      .from("registrations")
+      .select("id")
+      .ilike("name", name.trim())
+      .ilike("father_name", fatherName.trim())
+      .eq("class", parseInt(studentClass))
+      .limit(1);
+    setDuplicateWarning(!!(data && data.length > 0));
+  };
+
+  // Watch fields for duplicate check
+  const watchName = form.watch("name");
+  const watchFather = form.watch("father_name");
+  const watchClass = form.watch("student_class");
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (watchName.length >= 2 && watchFather.length >= 2 && watchClass) {
+        checkDuplicate(watchName, watchFather, watchClass);
+      } else {
+        setDuplicateWarning(false);
+      }
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [watchName, watchFather, watchClass]);
 
   const onSubmit = async (values: FormData) => {
     setSubmitting(true);
@@ -120,6 +149,17 @@ const Register = () => {
             className="bg-card rounded-2xl p-8 premium-shadow border border-border"
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           >
+            {duplicateWarning && (
+              <motion.div
+                className="flex items-start gap-3 p-4 mb-5 bg-destructive/5 rounded-xl border border-destructive/20"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+              >
+                <AlertTriangle className="text-destructive shrink-0 mt-0.5" size={16} />
+                <p className="text-sm text-destructive">{tr.register.duplicateWarning}</p>
+              </motion.div>
+            )}
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                 <FormField control={form.control} name="name" render={({ field }) => (

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Download, Printer, ArrowLeft, Award } from "lucide-react";
+import { Download, Printer, ArrowLeft, Award, MessageCircle } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Layout from "@/components/layout/Layout";
@@ -36,6 +36,8 @@ const ResultDetail = () => {
 
   if (!data) return null;
 
+  const isPass = data.status === "PASS";
+
   const handleDownloadPDF = async () => {
     if (!cardRef.current) return;
     const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: "#ffffff" });
@@ -56,7 +58,11 @@ const ResultDetail = () => {
     link.click();
   };
 
-  const isPass = data.status === "PASS";
+  const handleWhatsAppShare = () => {
+    const emoji = isPass ? "🎉" : "📋";
+    const text = `${emoji} *EXAMINATION RESULT*\n\n🏫 ${ORG_NAME}\n\n👤 Name: ${data.name || "N/A"}\n📝 Roll No: ${data.roll_number}\n📊 Total: ${data.total}/400\n📈 Percentage: ${data.percentage}%\n🏅 Grade: ${data.grade}\n${isPass ? "✅ PASS" : "❌ FAIL"}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+  };
 
   return (
     <Layout>
@@ -141,6 +147,13 @@ const ResultDetail = () => {
             </Button>
             <Button onClick={() => window.print()} variant="outline" className="flex-1 h-11 rounded-xl">
               <Printer size={16} className="mr-2" /> {tr.resultDetail.print}
+            </Button>
+          </motion.div>
+
+          {/* WhatsApp Share */}
+          <motion.div className="mt-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+            <Button onClick={handleWhatsAppShare} className="w-full h-11 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white">
+              <MessageCircle size={16} className="mr-2" /> {tr.whatsapp.shareResult}
             </Button>
           </motion.div>
         </div>

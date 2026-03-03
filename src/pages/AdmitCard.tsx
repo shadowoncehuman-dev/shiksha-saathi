@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
-import { Download, Printer, AlertTriangle, Image as ImageIcon } from "lucide-react";
+import { Download, Printer, AlertTriangle, Image as ImageIcon, MessageCircle } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Layout from "@/components/layout/Layout";
@@ -59,6 +59,11 @@ const AdmitCard = () => {
     link.download = `AdmitCard_${data.roll_number}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
+  };
+
+  const handleWhatsAppShare = () => {
+    const text = `📋 *ADMIT CARD*\n\n🏫 ${ORG_NAME}\n\n👤 Name: ${data.name}\n👨 Father: ${data.father_name}\n📝 Roll No: ${data.roll_number}\n📚 Class: ${data.class} (${data.group})\n📅 Exam Date: ${EXAM_DATE}\n🏫 Center: ${EXAM_CENTER}\n⏱ Duration: ${data.duration}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   return (
@@ -133,6 +138,13 @@ const AdmitCard = () => {
             </Button>
             <Button onClick={() => window.print()} variant="outline" className="flex-1 h-11 rounded-xl">
               <Printer size={16} className="mr-2" /> {tr.admitCard.print}
+            </Button>
+          </motion.div>
+
+          {/* WhatsApp Share */}
+          <motion.div className="mt-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
+            <Button onClick={handleWhatsAppShare} className="w-full h-11 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white">
+              <MessageCircle size={16} className="mr-2" /> {tr.whatsapp.shareAdmitCard}
             </Button>
           </motion.div>
         </div>
