@@ -9,6 +9,9 @@ import logo from "@/assets/logo.png";
 import galleryMeeting from "@/assets/gallery-meeting.jpg";
 import galleryShields from "@/assets/gallery-shields.jpg";
 import { useRef, useEffect, useState } from "react";
+import CountdownTimer from "@/components/CountdownTimer";
+import FAQSection from "@/components/FAQSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
 
 const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: string }) => {
   const [count, setCount] = useState(0);
@@ -120,6 +123,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Countdown Timer */}
+      <CountdownTimer />
+
       {/* Exam Groups */}
       <section className="py-20 md:py-32">
         <div className="container mx-auto px-4">
@@ -193,8 +199,11 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Testimonials */}
+      <TestimonialsSection />
+
       {/* Gallery Preview */}
-      <section className="py-20 md:py-32">
+      <section className="py-20 md:py-32 bg-muted/30">
         <div className="container mx-auto px-4">
           <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">{tr.index.moments}</span>
@@ -227,6 +236,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* FAQ */}
+      <FAQSection />
 
       {/* CTA */}
       <section className="py-20 md:py-32 hero-gradient text-white relative overflow-hidden">

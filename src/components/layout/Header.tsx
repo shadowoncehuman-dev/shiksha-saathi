@@ -4,6 +4,7 @@ import { Menu, X, Languages } from "lucide-react";
 import { useState } from "react";
 import logo from "@/assets/logo.png";
 import { useLang } from "@/lib/i18n";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -73,7 +74,8 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center gap-2">
-            {/* Language Toggle */}
+            <ThemeToggle />
+
             <button
               onClick={() => setLang(lang === "en" ? "hi" : "en")}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-all border border-white/10 hover:border-white/20"

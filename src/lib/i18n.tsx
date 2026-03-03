@@ -51,6 +51,52 @@ const t = {
       readyDesc: "Join thousands of students in the Dr. B.R. Ambedkar examination. Registration is quick and easy.",
       meetTeam: "Meet Our Team",
     },
+    // Countdown
+    countdown: {
+      title: "Exam Countdown",
+      heading: "Time Until Examination",
+      days: "Days",
+      hours: "Hours",
+      minutes: "Minutes",
+      seconds: "Seconds",
+    },
+    // FAQ
+    faq: {
+      badge: "Common Questions",
+      title: "Frequently Asked Questions",
+      items: [
+        { q: "Who can register for the examination?", a: "Students from Class 6 to Class 12 from the listed villages can register. Registration is open to all eligible students regardless of their school." },
+        { q: "What is the registration process?", a: "Go to the Register page, fill in your details (name, father's name, class, phone, village), and submit. You will receive a roll number and admit card instantly." },
+        { q: "What are the exam dates?", a: "The examination is scheduled for 10–14 April 2026 at Govt. School, Nayagaon." },
+        { q: "How can I check my result?", a: "Visit the Result page and enter your roll number or search by name. Results will be available once declared by the committee." },
+        { q: "What is the total marks for the exam?", a: "The examination is out of 400 marks total. Students need at least 33% to pass." },
+        { q: "Can I download my admit card?", a: "Yes! After registration, you can download your admit card as PDF or image. Keep it safe for the examination day." },
+        { q: "What if I lose my roll number?", a: "You can search your result by name and father's name on the Result page. For further help, contact us on WhatsApp." },
+      ],
+    },
+    // Testimonials
+    testimonials: {
+      badge: "What People Say",
+      title: "Voices of Our Community",
+      items: [
+        { name: "Rahul Kumar", role: "Student, Class 10", text: "The registration process was so smooth! I got my admit card instantly. This is the best organized exam I've ever seen." },
+        { name: "Sunita Devi", role: "Parent", text: "I'm so proud that our village children get such a well-organized platform. The committee is doing amazing work for education." },
+        { name: "Amit Singh", role: "Student, Class 12", text: "The online result checking saved me so much time. I could share my result with my family on WhatsApp right away!" },
+        { name: "Meera Kumari", role: "Student, Class 8", text: "I was nervous about my first big exam, but the process was easy to understand. Thank you BBDBASS!" },
+        { name: "Rajesh Verma", role: "Village Elder", text: "Dr. Ambedkar's vision of education for all is being fulfilled through this initiative. Keep up the great work!" },
+      ],
+    },
+    // WhatsApp
+    whatsapp: {
+      shareAdmitCard: "Share on WhatsApp",
+      shareResult: "Share on WhatsApp",
+    },
+    // 404
+    notFound: {
+      title: "Page Not Found",
+      subtitle: "The page you're looking for doesn't exist or has been moved.",
+      goHome: "Go Back Home",
+    },
     // Exam Details
     examDetails: {
       badge: "Dr. B.R. Ambedkar Examination",
@@ -80,6 +126,7 @@ const t = {
       notStartedMsg: "Registration has not started yet. Please check back later.",
       closed: "Registration Closed",
       closedMsg: "Registration is currently closed. Thank you for your interest.",
+      duplicateWarning: "A student with the same name, father's name and class already exists. Please check before submitting.",
     },
     // Result
     result: {
@@ -172,6 +219,11 @@ const t = {
     // Admin
     admin: {
       title: "Admin Panel",
+      totalRegistrations: "Total Registrations",
+      totalResults: "Results Entered",
+      passCount: "Passed",
+      failCount: "Failed",
+      searchPlaceholder: "Search by name, roll no, or village...",
     },
   },
 
@@ -223,6 +275,52 @@ const t = {
       readyDesc: "डॉ. बी.आर. अम्बेडकर परीक्षा में हजारों छात्रों के साथ जुड़ें। पंजीकरण त्वरित और आसान है।",
       meetTeam: "हमारी टीम से मिलें",
     },
+    // Countdown
+    countdown: {
+      title: "परीक्षा उलटी गिनती",
+      heading: "परीक्षा तक शेष समय",
+      days: "दिन",
+      hours: "घंटे",
+      minutes: "मिनट",
+      seconds: "सेकंड",
+    },
+    // FAQ
+    faq: {
+      badge: "सामान्य प्रश्न",
+      title: "अक्सर पूछे जाने वाले प्रश्न",
+      items: [
+        { q: "परीक्षा के लिए कौन पंजीकरण कर सकता है?", a: "सूचीबद्ध गाँवों के कक्षा 6 से कक्षा 12 तक के छात्र पंजीकरण कर सकते हैं। पंजीकरण सभी योग्य छात्रों के लिए खुला है।" },
+        { q: "पंजीकरण की प्रक्रिया क्या है?", a: "पंजीकरण पृष्ठ पर जाएं, अपना विवरण भरें (नाम, पिता का नाम, कक्षा, फोन, गाँव) और सबमिट करें। आपको तुरंत रोल नंबर और प्रवेश पत्र मिल जाएगा।" },
+        { q: "परीक्षा की तिथि क्या है?", a: "परीक्षा 10-14 अप्रैल 2026 को सरकारी स्कूल, नयागांव में आयोजित की जाएगी।" },
+        { q: "मैं अपना परिणाम कैसे देख सकता हूं?", a: "परिणाम पृष्ठ पर जाएं और अपना रोल नंबर दर्ज करें या नाम से खोजें। परिणाम समिति द्वारा घोषित होने पर उपलब्ध होंगे।" },
+        { q: "परीक्षा में कुल कितने अंक हैं?", a: "परीक्षा कुल 400 अंकों की है। पास होने के लिए कम से कम 33% अंक आवश्यक हैं।" },
+        { q: "क्या मैं अपना प्रवेश पत्र डाउनलोड कर सकता हूं?", a: "हां! पंजीकरण के बाद, आप अपना प्रवेश पत्र PDF या छवि के रूप में डाउनलोड कर सकते हैं।" },
+        { q: "अगर मैं अपना रोल नंबर भूल गया तो?", a: "आप परिणाम पृष्ठ पर नाम और पिता के नाम से खोज सकते हैं। अधिक सहायता के लिए WhatsApp पर संपर्क करें।" },
+      ],
+    },
+    // Testimonials
+    testimonials: {
+      badge: "लोग क्या कहते हैं",
+      title: "हमारे समुदाय की आवाज़",
+      items: [
+        { name: "राहुल कुमार", role: "छात्र, कक्षा 10", text: "पंजीकरण प्रक्रिया बहुत आसान थी! मुझे तुरंत प्रवेश पत्र मिल गया। यह सबसे अच्छी संगठित परीक्षा है।" },
+        { name: "सुनीता देवी", role: "अभिभावक", text: "मुझे गर्व है कि हमारे गाँव के बच्चों को इतना अच्छा मंच मिला है। समिति शिक्षा के लिए अद्भुत काम कर रही है।" },
+        { name: "अमित सिंह", role: "छात्र, कक्षा 12", text: "ऑनलाइन परिणाम जांच ने मेरा बहुत समय बचाया। मैंने तुरंत WhatsApp पर परिवार को परिणाम भेज दिया!" },
+        { name: "मीरा कुमारी", role: "छात्र, कक्षा 8", text: "मैं अपनी पहली बड़ी परीक्षा को लेकर घबराई हुई थी, लेकिन प्रक्रिया समझने में आसान थी। धन्यवाद!" },
+        { name: "राजेश वर्मा", role: "गाँव के बुजुर्ग", text: "डॉ. अम्बेडकर की सभी के लिए शिक्षा की दृष्टि इस पहल से पूरी हो रही है। शानदार काम जारी रखें!" },
+      ],
+    },
+    // WhatsApp
+    whatsapp: {
+      shareAdmitCard: "WhatsApp पर शेयर करें",
+      shareResult: "WhatsApp पर शेयर करें",
+    },
+    // 404
+    notFound: {
+      title: "पृष्ठ नहीं मिला",
+      subtitle: "आप जो पृष्ठ खोज रहे हैं वह मौजूद नहीं है या स्थानांतरित कर दिया गया है।",
+      goHome: "होम पर वापस जाएं",
+    },
     // Exam Details
     examDetails: {
       badge: "डॉ. बी.आर. अम्बेडकर परीक्षा",
@@ -252,6 +350,7 @@ const t = {
       notStartedMsg: "पंजीकरण अभी शुरू नहीं हुआ है। कृपया बाद में जाँचें।",
       closed: "पंजीकरण बंद है",
       closedMsg: "पंजीकरण वर्तमान में बंद है। आपकी रुचि के लिए धन्यवाद।",
+      duplicateWarning: "इसी नाम, पिता के नाम और कक्षा का एक छात्र पहले से पंजीकृत है। कृपया सबमिट करने से पहले जांचें।",
     },
     // Result
     result: {
@@ -344,6 +443,11 @@ const t = {
     // Admin
     admin: {
       title: "व्यवस्थापक पैनल",
+      totalRegistrations: "कुल पंजीकरण",
+      totalResults: "परिणाम दर्ज",
+      passCount: "उत्तीर्ण",
+      failCount: "अनुत्तीर्ण",
+      searchPlaceholder: "नाम, रोल नंबर या गाँव से खोजें...",
     },
   },
 };
