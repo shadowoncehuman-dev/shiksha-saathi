@@ -17,6 +17,9 @@ import Team from "./pages/Team";
 import Gallery from "./pages/Gallery";
 import ExamDetails from "./pages/ExamDetails";
 import NotFound from "./pages/NotFound";
+import Forbidden from "./pages/Forbidden";
+import ServerError from "./pages/ServerError";
+import ServiceUnavailable from "./pages/ServiceUnavailable";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +42,9 @@ const App = () => (
               <Route path="/team" element={<Team />} />
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/exam-details" element={<ExamDetails />} />
+              <Route path="/forbidden" element={<Forbidden />} />
+              <Route path="/server-error" element={<ServerError />} />
+              <Route path="/service-unavailable" element={<ServiceUnavailable />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <WhatsAppButton />
