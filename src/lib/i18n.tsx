@@ -97,6 +97,27 @@ const t = {
       subtitle: "The page you're looking for doesn't exist or has been moved.",
       goHome: "Go Back Home",
     },
+    // Error pages
+    errors: {
+      goHome: "Go Back Home",
+      retry: "Try Again",
+      notFound: {
+        title: "Page Not Found",
+        subtitle: "The page you're looking for has vanished into the digital void. It may have been moved or deleted.",
+      },
+      forbidden: {
+        title: "Access Denied",
+        subtitle: "You don't have permission to access this page. Please contact the administrator if you think this is a mistake.",
+      },
+      serverError: {
+        title: "Server Error",
+        subtitle: "Something went wrong on our end. Our team has been notified and we're working to fix it!",
+      },
+      serviceUnavailable: {
+        title: "Service Unavailable",
+        subtitle: "Our servers are temporarily down for maintenance. Please try again in a few minutes.",
+      },
+    },
     // Exam Details
     examDetails: {
       badge: "Dr. B.R. Ambedkar Examination",
@@ -320,6 +341,27 @@ const t = {
       title: "पृष्ठ नहीं मिला",
       subtitle: "आप जो पृष्ठ खोज रहे हैं वह मौजूद नहीं है या स्थानांतरित कर दिया गया है।",
       goHome: "होम पर वापस जाएं",
+    },
+    // Error pages
+    errors: {
+      goHome: "होम पर वापस जाएं",
+      retry: "फिर से कोशिश करें",
+      notFound: {
+        title: "पृष्ठ नहीं मिला",
+        subtitle: "आप जो पृष्ठ खोज रहे हैं वह डिजिटल शून्य में गायब हो गया है। हो सकता है कि इसे हटा दिया गया हो या स्थानांतरित कर दिया गया हो।",
+      },
+      forbidden: {
+        title: "पहुँच अस्वीकृत",
+        subtitle: "आपको इस पृष्ठ तक पहुँचने की अनुमति नहीं है। अगर आपको लगता है कि यह गलती है तो कृपया व्यवस्थापक से संपर्क करें।",
+      },
+      serverError: {
+        title: "सर्वर त्रुटि",
+        subtitle: "हमारी ओर से कुछ गड़बड़ हो गई। हमारी टीम को सूचित कर दिया गया है और हम इसे ठीक करने पर काम कर रहे हैं!",
+      },
+      serviceUnavailable: {
+        title: "सेवा अनुपलब्ध",
+        subtitle: "हमारे सर्वर अस्थायी रूप से रखरखाव के लिए बंद हैं। कृपया कुछ मिनट बाद पुनः प्रयास करें।",
+      },
     },
     // Exam Details
     examDetails: {
