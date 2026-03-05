@@ -91,7 +91,7 @@ const Index = () => {
                 <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 font-semibold text-sm px-8 h-12 backdrop-blur-sm rounded-xl">
+            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold text-sm px-8 h-12 rounded-xl shadow-lg shadow-accent/20">
               <Link to="/register">{tr.hero.registerNow}</Link>
             </Button>
           </motion.div>
@@ -254,7 +254,7 @@ const Index = () => {
             <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-4 text-shadow">{tr.index.readyToRegister}</h2>
             <p className="text-white/40 max-w-lg mx-auto mb-10 text-sm leading-relaxed">{tr.index.readyDesc}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-secondary text-white hover:bg-secondary/90 font-semibold px-10 h-12 shadow-lg shadow-secondary/20 rounded-xl">
+              <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-10 h-12 shadow-lg shadow-accent/20 rounded-xl">
                 <Link to="/register">{tr.hero.registerNow}</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 backdrop-blur-sm h-12 rounded-xl">
