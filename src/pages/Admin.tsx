@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
-import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck } from "lucide-react";
+import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { type Registration, type SiteSettings } from "@/lib/supabase";
 import { getGrade, formatIndianDateTime } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 import { useLang } from "@/lib/i18n";
+import { exportStudentsToExcel, parseExcelFile, buildResultsFromParsed } from "@/lib/excel-utils";
 
 const Admin = () => {
   const [authenticated, setAuthenticated] = useState(false);
@@ -34,6 +35,8 @@ const Admin = () => {
 
   // Dashboard stats
   const [resultStats, setResultStats] = useState({ total: 0, pass: 0, fail: 0 });
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogin = async () => {
     setVerifying(true);
@@ -81,17 +84,31 @@ const Admin = () => {
     toast({ title: "Student Deleted" });
   };
 
-  const exportCSV = () => {
-    if (!students.length) return;
-    const headers = ["Roll Number", "Name", "Father Name", "Class", "Group", "Phone", "Village", "Registered At"];
-    const rows = students.map((s) => [s.roll_number, s.name, s.father_name, s.class, s.group, s.phone, s.village, s.created_at ? formatIndianDateTime(s.created_at) : ""]);
-    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "students.csv";
-    link.click();
+  const exportExcel = () => exportStudentsToExcel(students);
+
+  const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const parsed = await parseExcelFile(file);
+      if (!parsed.length) {
+        toast({ title: "No marks found", description: "Fill the 'Total Marks (out of 400)' column in the Excel file.", variant: "destructive" });
+        setUploading(false);
+        return;
+      }
+      const results = buildResultsFromParsed(parsed);
+      const { error } = await supabase.from("results").upsert(results, { onConflict: "roll_number" });
+      if (error) toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      else {
+        toast({ title: "Marks Uploaded", description: `${results.length} student(s) updated successfully.` });
+        fetchResultStats();
+      }
+    } catch {
+      toast({ title: "Error", description: "Failed to parse Excel file.", variant: "destructive" });
+    }
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const filteredStudents = useMemo(() => {
@@ -281,7 +298,11 @@ const Admin = () => {
                         onChange={(e) => setSearchQuery(e.target.value)}
                       />
                     </div>
-                    <Button variant="outline" onClick={exportCSV} size="sm" className="rounded-lg shrink-0"><Download size={14} className="mr-1.5" /> CSV</Button>
+                    <Button variant="outline" onClick={exportExcel} size="sm" className="rounded-lg shrink-0"><Download size={14} className="mr-1.5" /> Excel</Button>
+                    <input type="file" accept=".xlsx,.xls" ref={fileInputRef} onChange={handleExcelUpload} className="hidden" />
+                    <Button variant="outline" onClick={() => fileInputRef.current?.click()} size="sm" className="rounded-lg shrink-0" disabled={uploading}>
+                      {uploading ? <Loader2 size={14} className="animate-spin mr-1.5" /> : <Upload size={14} className="mr-1.5" />} Upload Marks
+                    </Button>
                   </div>
                 </div>
                 {loadingStudents ? (
