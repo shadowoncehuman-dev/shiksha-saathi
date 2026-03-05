@@ -257,7 +257,7 @@ const Index = () => {
               <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-10 h-12 shadow-lg shadow-accent/20 rounded-xl">
                 <Link to="/register">{tr.hero.registerNow}</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 backdrop-blur-sm h-12 rounded-xl">
+              <Button asChild size="lg" variant="outline" className="border-accent/40 text-accent hover:bg-accent/10 backdrop-blur-sm h-12 rounded-xl font-semibold">
                 <Link to="/team">{tr.index.meetTeam}</Link>
               </Button>
             </div>
