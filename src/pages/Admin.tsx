@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload } from "lucide-react";
+import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload, Image, UsersRound, Plus, Edit, Phone, Briefcase } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,32 @@ import { getGrade, formatIndianDateTime } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 import { useLang } from "@/lib/i18n";
 import { exportStudentsToExcel, parseExcelFile, buildResultsFromParsed } from "@/lib/excel-utils";
+
+const SUPABASE_URL = "https://qukzclnrxscrrhindgsz.supabase.co";
+
+type TeamMemberDB = {
+  id: string;
+  name: string;
+  role: string;
+  father_name: string;
+  post: string;
+  phone: string;
+  photo_url: string | null;
+  sort_order: number;
+};
+
+type GalleryImageDB = {
+  id: string;
+  title: string;
+  category: string;
+  image_url: string;
+  sort_order: number;
+};
+
+type MarksConfig = {
+  class: number;
+  total_out_of: number;
+};
 
 const Admin = () => {
   const [authenticated, setAuthenticated] = useState(false);
@@ -33,20 +59,46 @@ const Admin = () => {
   const [totalMarks, setTotalMarks] = useState("");
   const [savingMarks, setSavingMarks] = useState(false);
 
-  // Dashboard stats
   const [resultStats, setResultStats] = useState({ total: 0, pass: 0, fail: 0 });
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Marks config
+  const [marksConfig, setMarksConfig] = useState<MarksConfig[]>([]);
+  const marksConfigMap = useMemo(() => {
+    const map: Record<number, number> = {};
+    marksConfig.forEach(c => { map[c.class] = c.total_out_of; });
+    return map;
+  }, [marksConfig]);
+
+  // Team
+  const [teamMembers, setTeamMembers] = useState<TeamMemberDB[]>([]);
+  const [teamForm, setTeamForm] = useState({ name: "", role: "Member", father_name: "", post: "", phone: "" });
+  const [editingTeamId, setEditingTeamId] = useState<string | null>(null);
+  const [teamPhotoFile, setTeamPhotoFile] = useState<File | null>(null);
+  const [savingTeam, setSavingTeam] = useState(false);
+  const teamPhotoRef = useRef<HTMLInputElement>(null);
+
+  // Gallery
+  const [galleryImages, setGalleryImages] = useState<GalleryImageDB[]>([]);
+  const [galleryForm, setGalleryForm] = useState({ title: "", category: "General" });
+  const [galleryPhotoFile, setGalleryPhotoFile] = useState<File | null>(null);
+  const [savingGallery, setSavingGallery] = useState(false);
+  const galleryPhotoRef = useRef<HTMLInputElement>(null);
 
   const handleLogin = async () => {
     setVerifying(true);
     try {
       const { data, error } = await supabase.functions.invoke("validate-admin", { body: { password } });
       if (error || !data?.valid) toast({ title: "Access Denied", description: "Invalid password.", variant: "destructive" });
-      else { setAuthenticated(true); fetchSettings(); fetchStudents(); fetchResultStats(); }
+      else { setAuthenticated(true); fetchAll(); }
     } catch { toast({ title: "Error", description: "Failed to verify.", variant: "destructive" }); }
     setVerifying(false);
   };
+
+  const fetchAll = useCallback(() => {
+    fetchSettings(); fetchStudents(); fetchResultStats(); fetchMarksConfig(); fetchTeam(); fetchGallery();
+  }, []);
 
   const fetchSettings = async () => {
     const { data } = await supabase.from("site_settings").select("*").single();
@@ -78,26 +130,135 @@ const Admin = () => {
     }
   };
 
+  const fetchMarksConfig = async () => {
+    const { data } = await supabase.from("marks_config").select("*").order("class");
+    if (data) setMarksConfig(data as MarksConfig[]);
+  };
+
+  const updateMarksConfig = async (cls: number, outOf: number) => {
+    await supabase.from("marks_config").update({ total_out_of: outOf }).eq("class", cls);
+    setMarksConfig(prev => prev.map(c => c.class === cls ? { ...c, total_out_of: outOf } : c));
+    toast({ title: `Class ${cls} marks updated to ${outOf}` });
+  };
+
+  // Team CRUD
+  const fetchTeam = async () => {
+    const { data } = await supabase.from("team_members").select("*").order("sort_order");
+    if (data) setTeamMembers(data as TeamMemberDB[]);
+  };
+
+  const uploadPhoto = async (file: File, bucket: string): Promise<string> => {
+    const ext = file.name.split(".").pop();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await supabase.storage.from(bucket).upload(path, file);
+    if (error) throw error;
+    return `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
+  };
+
+  const saveTeamMember = async () => {
+    setSavingTeam(true);
+    try {
+      let photo_url: string | null = null;
+      if (teamPhotoFile) {
+        photo_url = await uploadPhoto(teamPhotoFile, "team-photos");
+      }
+
+      if (editingTeamId) {
+        const updates: any = { ...teamForm };
+        if (photo_url) updates.photo_url = photo_url;
+        await supabase.from("team_members").update(updates).eq("id", editingTeamId);
+        toast({ title: "Team member updated" });
+      } else {
+        await supabase.from("team_members").insert({
+          ...teamForm,
+          photo_url,
+          sort_order: teamMembers.length,
+        });
+        toast({ title: "Team member added" });
+      }
+      resetTeamForm();
+      fetchTeam();
+    } catch {
+      toast({ title: "Error saving team member", variant: "destructive" });
+    }
+    setSavingTeam(false);
+  };
+
+  const editTeamMember = (m: TeamMemberDB) => {
+    setEditingTeamId(m.id);
+    setTeamForm({ name: m.name, role: m.role, father_name: m.father_name, post: m.post, phone: m.phone });
+    setTeamPhotoFile(null);
+  };
+
+  const deleteTeamMember = async (id: string) => {
+    await supabase.from("team_members").delete().eq("id", id);
+    setTeamMembers(prev => prev.filter(m => m.id !== id));
+    toast({ title: "Team member deleted" });
+  };
+
+  const resetTeamForm = () => {
+    setEditingTeamId(null);
+    setTeamForm({ name: "", role: "Member", father_name: "", post: "", phone: "" });
+    setTeamPhotoFile(null);
+    if (teamPhotoRef.current) teamPhotoRef.current.value = "";
+  };
+
+  // Gallery CRUD
+  const fetchGallery = async () => {
+    const { data } = await supabase.from("gallery_images").select("*").order("sort_order");
+    if (data) setGalleryImages(data as GalleryImageDB[]);
+  };
+
+  const saveGalleryImage = async () => {
+    if (!galleryPhotoFile) {
+      toast({ title: "Please select a photo", variant: "destructive" });
+      return;
+    }
+    setSavingGallery(true);
+    try {
+      const image_url = await uploadPhoto(galleryPhotoFile, "gallery-photos");
+      await supabase.from("gallery_images").insert({
+        ...galleryForm,
+        image_url,
+        sort_order: galleryImages.length,
+      });
+      toast({ title: "Gallery image added" });
+      setGalleryForm({ title: "", category: "General" });
+      setGalleryPhotoFile(null);
+      if (galleryPhotoRef.current) galleryPhotoRef.current.value = "";
+      fetchGallery();
+    } catch {
+      toast({ title: "Error saving gallery image", variant: "destructive" });
+    }
+    setSavingGallery(false);
+  };
+
+  const deleteGalleryImage = async (id: string) => {
+    await supabase.from("gallery_images").delete().eq("id", id);
+    setGalleryImages(prev => prev.filter(g => g.id !== id));
+    toast({ title: "Gallery image deleted" });
+  };
+
   const deleteStudent = async (id: string) => {
     await supabase.from("registrations").delete().eq("id", id);
     setStudents((prev) => prev.filter((s) => s.id !== id));
     toast({ title: "Student Deleted" });
   };
 
-  const exportExcel = () => exportStudentsToExcel(students);
+  const exportExcel = () => exportStudentsToExcel(students, marksConfigMap);
 
   const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
     try {
-      const parsed = await parseExcelFile(file);
+      const parsed = await parseExcelFile(file, marksConfigMap);
       if (!parsed.length) {
-        toast({ title: "No marks found", description: "Fill the 'Total Marks (out of 400)' column in the Excel file.", variant: "destructive" });
+        toast({ title: "No marks found", description: "Fill the marks column in the Excel file.", variant: "destructive" });
         setUploading(false);
         return;
       }
-      const results = buildResultsFromParsed(parsed);
+      const results = buildResultsFromParsed(parsed, marksConfigMap);
       const { error } = await supabase.from("results").upsert(results, { onConflict: "roll_number" });
       if (error) toast({ title: "Upload failed", description: error.message, variant: "destructive" });
       else {
@@ -139,7 +300,8 @@ const Admin = () => {
   const saveMarks = async () => {
     if (!markStudent) return;
     const total = parseInt(totalMarks) || 0;
-    const percentage = Math.round((total / 400) * 100);
+    const outOf = marksConfigMap[markStudent.class] || 400;
+    const percentage = Math.round((total / outOf) * 100);
     const grade = getGrade(percentage);
     const status = percentage >= 33 ? "PASS" : "FAIL";
     setSavingMarks(true);
@@ -148,7 +310,7 @@ const Admin = () => {
       { onConflict: "roll_number" }
     );
     if (error) toast({ title: "Error saving marks", variant: "destructive" });
-    else { toast({ title: "Marks Saved", description: `Total: ${total}, Grade: ${grade}, ${status}` }); fetchResultStats(); }
+    else { toast({ title: "Marks Saved", description: `Total: ${total}/${outOf}, Grade: ${grade}, ${status}` }); fetchResultStats(); }
     setSavingMarks(false);
   };
 
@@ -176,13 +338,15 @@ const Admin = () => {
     );
   }
 
+  const currentOutOf = markStudent ? (marksConfigMap[markStudent.class] || 400) : 400;
+
   return (
     <Layout>
       <section className="pt-24 pb-12 md:pt-28 md:pb-16">
         <div className="container mx-auto px-4">
           <div className="mb-8">
             <h2 className="font-playfair text-2xl md:text-3xl font-bold text-foreground">{tr.admin.title}</h2>
-            <p className="text-muted-foreground text-sm mt-1">Manage registrations, results, and settings</p>
+            <p className="text-muted-foreground text-sm mt-1">Manage registrations, results, team, and gallery</p>
           </div>
 
           {/* Dashboard Stats */}
@@ -193,12 +357,7 @@ const Admin = () => {
               { icon: CheckCircle, label: tr.admin.passCount, value: resultStats.pass, color: "text-emerald-600" },
               { icon: XCircle, label: tr.admin.failCount, value: resultStats.fail, color: "text-destructive" },
             ].map((stat) => (
-              <motion.div
-                key={stat.label}
-                className="bg-card rounded-2xl p-5 premium-shadow border border-border"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
+              <motion.div key={stat.label} className="bg-card rounded-2xl p-5 premium-shadow border border-border" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
                 <div className="flex items-center gap-3 mb-2">
                   <stat.icon size={18} className={stat.color} />
                   <span className="text-xs text-muted-foreground font-medium">{stat.label}</span>
@@ -211,10 +370,13 @@ const Admin = () => {
           <Tabs defaultValue="settings">
             <TabsList className="mb-6 flex-wrap h-auto gap-1 bg-muted p-1 rounded-xl">
               <TabsTrigger value="settings" className="rounded-lg text-sm"><Settings size={14} className="mr-1.5" /> Settings</TabsTrigger>
-              <TabsTrigger value="marks" className="rounded-lg text-sm"><BookOpen size={14} className="mr-1.5" /> Add Marks</TabsTrigger>
+              <TabsTrigger value="marks" className="rounded-lg text-sm"><BookOpen size={14} className="mr-1.5" /> Marks</TabsTrigger>
               <TabsTrigger value="students" className="rounded-lg text-sm"><Users size={14} className="mr-1.5" /> Students</TabsTrigger>
+              <TabsTrigger value="team" className="rounded-lg text-sm"><UsersRound size={14} className="mr-1.5" /> Team</TabsTrigger>
+              <TabsTrigger value="gallery" className="rounded-lg text-sm"><Image size={14} className="mr-1.5" /> Gallery</TabsTrigger>
             </TabsList>
 
+            {/* SETTINGS TAB */}
             <TabsContent value="settings">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
@@ -247,9 +409,33 @@ const Admin = () => {
                     <Input type="datetime-local" className="h-11 rounded-xl" value={settings.result_expiry_date || ""} onChange={(e) => updateSetting("result_expiry_date", e.target.value || null)} />
                   </div>
                 </div>
+
+                {/* Marks Config */}
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border md:col-span-2">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">Marks Configuration (Per Class)</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {marksConfig.map(c => (
+                      <div key={c.class} className="bg-muted/50 rounded-xl p-3">
+                        <label className="text-xs text-muted-foreground font-medium block mb-1.5">Class {c.class} — Out of</label>
+                        <Input
+                          type="number"
+                          min={50}
+                          max={1000}
+                          className="h-9 rounded-lg text-sm"
+                          defaultValue={c.total_out_of}
+                          onBlur={(e) => {
+                            const val = parseInt(e.target.value) || 400;
+                            if (val !== c.total_out_of) updateMarksConfig(c.class, val);
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </TabsContent>
 
+            {/* MARKS TAB */}
             <TabsContent value="marks">
               <div className="bg-card rounded-2xl p-6 max-w-lg premium-shadow border border-border">
                 <h3 className="font-playfair text-lg font-semibold mb-4">Add / Update Marks</h3>
@@ -264,15 +450,15 @@ const Admin = () => {
                       <p className="text-xs text-muted-foreground">Father: {markStudent.father_name}</p>
                     </div>
                     <div>
-                      <label className="text-sm text-muted-foreground block mb-1.5">Total Marks (out of 400)</label>
-                      <Input type="number" min={0} max={400} placeholder="Enter total marks" className="h-11 rounded-xl" value={totalMarks} onChange={(e) => setTotalMarks(e.target.value)} />
+                      <label className="text-sm text-muted-foreground block mb-1.5">Total Marks (out of {currentOutOf})</label>
+                      <Input type="number" min={0} max={currentOutOf} placeholder="Enter total marks" className="h-11 rounded-xl" value={totalMarks} onChange={(e) => setTotalMarks(e.target.value)} />
                     </div>
                     {totalMarks && (
                       <div className="bg-muted/50 rounded-xl p-3 text-sm">
                         {(() => {
                           const total = parseInt(totalMarks) || 0;
-                          const pct = Math.round((total / 400) * 100);
-                          return <p>Total: <strong>{total}/400</strong> | Percentage: <strong>{pct}%</strong> | Grade: <strong>{getGrade(pct)}</strong> | {pct >= 33 ? "✅ PASS" : "❌ FAIL"}</p>;
+                          const pct = Math.round((total / currentOutOf) * 100);
+                          return <p>Total: <strong>{total}/{currentOutOf}</strong> | Percentage: <strong>{pct}%</strong> | Grade: <strong>{getGrade(pct)}</strong> | {pct >= 33 ? "✅ PASS" : "❌ FAIL"}</p>;
                         })()}
                       </div>
                     )}
@@ -284,6 +470,7 @@ const Admin = () => {
               </div>
             </TabsContent>
 
+            {/* STUDENTS TAB */}
             <TabsContent value="students">
               <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-5">
@@ -291,12 +478,7 @@ const Admin = () => {
                   <div className="flex gap-2 w-full sm:w-auto">
                     <div className="relative flex-1 sm:w-64">
                       <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                      <Input
-                        placeholder={tr.admin.searchPlaceholder}
-                        className="h-9 rounded-lg pl-9 text-sm"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                      />
+                      <Input placeholder={tr.admin.searchPlaceholder} className="h-9 rounded-lg pl-9 text-sm" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                     </div>
                     <Button variant="outline" onClick={exportExcel} size="sm" className="rounded-lg shrink-0"><Download size={14} className="mr-1.5" /> Excel</Button>
                     <input type="file" accept=".xlsx,.xls" ref={fileInputRef} onChange={handleExcelUpload} className="hidden" />
@@ -342,6 +524,115 @@ const Admin = () => {
                     {!filteredStudents.length && <p className="text-center py-8 text-muted-foreground text-sm">{searchQuery ? "No matching students found." : "No registrations yet."}</p>}
                   </div>
                 )}
+              </div>
+            </TabsContent>
+
+            {/* TEAM TAB */}
+            <TabsContent value="team">
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Add/Edit Form */}
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">{editingTeamId ? "Edit" : "Add"} Team Member</h3>
+                  <div className="space-y-3">
+                    <Input placeholder="Name" className="h-10 rounded-xl" value={teamForm.name} onChange={e => setTeamForm(f => ({ ...f, name: e.target.value }))} />
+                    <Select value={teamForm.role} onValueChange={v => setTeamForm(f => ({ ...f, role: v }))}>
+                      <SelectTrigger className="h-10 rounded-xl"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {["President", "Vice President", "Secretary", "Cashier", "Co-ordinator", "Member"].map(r => (
+                          <SelectItem key={r} value={r}>{r}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Input placeholder="Father's Name" className="h-10 rounded-xl" value={teamForm.father_name} onChange={e => setTeamForm(f => ({ ...f, father_name: e.target.value }))} />
+                    <Input placeholder="Post / Designation" className="h-10 rounded-xl" value={teamForm.post} onChange={e => setTeamForm(f => ({ ...f, post: e.target.value }))} />
+                    <Input placeholder="Phone Number" className="h-10 rounded-xl" value={teamForm.phone} onChange={e => setTeamForm(f => ({ ...f, phone: e.target.value }))} />
+                    <div>
+                      <label className="text-sm text-muted-foreground block mb-1.5">Photo</label>
+                      <input type="file" accept="image/*" ref={teamPhotoRef} onChange={e => setTeamPhotoFile(e.target.files?.[0] || null)} className="text-sm" />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={saveTeamMember} className="flex-1 bg-primary h-10 rounded-xl" disabled={savingTeam || !teamForm.name}>
+                        {savingTeam ? <Loader2 className="animate-spin mr-2" size={14} /> : <Save size={14} className="mr-2" />}
+                        {editingTeamId ? "Update" : "Add Member"}
+                      </Button>
+                      {editingTeamId && (
+                        <Button variant="outline" onClick={resetTeamForm} className="rounded-xl h-10">Cancel</Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Team List */}
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">Team Members ({teamMembers.length})</h3>
+                  <div className="space-y-3 max-h-[500px] overflow-y-auto">
+                    {teamMembers.map(m => (
+                      <div key={m.id} className="flex items-center gap-3 bg-muted/50 rounded-xl p-3">
+                        {m.photo_url ? (
+                          <img src={m.photo_url} alt={m.name} className="w-10 h-10 rounded-full object-cover border border-border shrink-0" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                            <Users size={16} className="text-primary" />
+                          </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-foreground truncate">{m.name}</p>
+                          <p className="text-xs text-muted-foreground">{m.role} • {m.post}</p>
+                        </div>
+                        <div className="flex gap-1 shrink-0">
+                          <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg" onClick={() => editTeamMember(m)}>
+                            <Edit size={12} />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive rounded-lg" onClick={() => deleteTeamMember(m.id)}>
+                            <Trash2 size={12} />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    {!teamMembers.length && <p className="text-center py-4 text-muted-foreground text-sm">No team members yet.</p>}
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* GALLERY TAB */}
+            <TabsContent value="gallery">
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Upload Form */}
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">Add Gallery Image</h3>
+                  <div className="space-y-3">
+                    <Input placeholder="Image title" className="h-10 rounded-xl" value={galleryForm.title} onChange={e => setGalleryForm(f => ({ ...f, title: e.target.value }))} />
+                    <Input placeholder="Category (e.g., Annual Meeting 2025)" className="h-10 rounded-xl" value={galleryForm.category} onChange={e => setGalleryForm(f => ({ ...f, category: e.target.value }))} />
+                    <div>
+                      <label className="text-sm text-muted-foreground block mb-1.5">Photo</label>
+                      <input type="file" accept="image/*" ref={galleryPhotoRef} onChange={e => setGalleryPhotoFile(e.target.files?.[0] || null)} className="text-sm" />
+                    </div>
+                    <Button onClick={saveGalleryImage} className="w-full bg-primary h-10 rounded-xl" disabled={savingGallery || !galleryPhotoFile}>
+                      {savingGallery ? <Loader2 className="animate-spin mr-2" size={14} /> : <Upload size={14} className="mr-2" />}
+                      Upload Image
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Gallery Grid */}
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">Gallery ({galleryImages.length})</h3>
+                  <div className="grid grid-cols-2 gap-3 max-h-[500px] overflow-y-auto">
+                    {galleryImages.map(g => (
+                      <div key={g.id} className="relative group rounded-xl overflow-hidden aspect-[4/3]">
+                        <img src={g.image_url} alt={g.title} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex flex-col items-center justify-center">
+                          <p className="text-white text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity mb-1 px-2 text-center">{g.title || g.category}</p>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive" onClick={() => deleteGalleryImage(g.id)}>
+                            <Trash2 size={12} />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    {!galleryImages.length && <p className="col-span-2 text-center py-4 text-muted-foreground text-sm">No gallery images yet.</p>}
+                  </div>
+                </div>
               </div>
             </TabsContent>
           </Tabs>
