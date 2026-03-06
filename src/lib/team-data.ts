@@ -108,4 +108,13 @@ export const TEAM_MEMBERS: TeamMember[] = [
     phone: "9457738032",
     photo: member11,
   },
+  // Example auditor entry (add or replace with real data as needed)
+  {
+    name: "Auditor Name",
+    role: "Auditor",
+    fatherName: "Father Name",
+    post: "Auditor",
+    phone: "0000000000",
+    photo: member1,
+  },
 ];

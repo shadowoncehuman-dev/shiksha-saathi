@@ -538,7 +538,7 @@ const Admin = () => {
                     <Select value={teamForm.role} onValueChange={v => setTeamForm(f => ({ ...f, role: v }))}>
                       <SelectTrigger className="h-10 rounded-xl"><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        {["President", "Vice President", "Secretary", "Cashier", "Co-ordinator", "Member"].map(r => (
+                        {["President", "Vice President", "Secretary", "Cashier", "Co-ordinator", "Auditor", "Member"].map(r => (
                           <SelectItem key={r} value={r}>{r}</SelectItem>
                         ))}
                       </SelectContent>

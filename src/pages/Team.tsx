@@ -20,7 +20,8 @@ type TeamMemberDB = {
 const roleIcon = (role: string) => {
   if (role === "President") return Crown;
   if (role === "Vice President") return Shield;
-  if (role.includes("Secretary") || role.includes("Cashier") || role.includes("Co-ordinator")) return Star;
+  // Auditor gets the same star icon used for other executive positions
+  if (role.includes("Secretary") || role.includes("Cashier") || role.includes("Co-ordinator") || role === "Auditor") return Star;
   return User;
 };
 
@@ -50,7 +51,7 @@ const Team = () => {
       }))
     : TEAM_MEMBERS;
 
-  const leaders = members.filter(m => ["President", "Vice President", "Secretary", "Cashier", "Co-ordinator"].includes(m.role));
+  const leaders = members.filter(m => ["President", "Vice President", "Secretary", "Cashier", "Co-ordinator", "Auditor"].includes(m.role));
   const regularMembers = members.filter(m => m.role === "Member");
 
   if (loading) {
