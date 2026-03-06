@@ -1,21 +1,68 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ZoomIn } from "lucide-react";
+import { X, ZoomIn, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import { supabase } from "@/integrations/supabase/client";
 import { useLang } from "@/lib/i18n";
+
+// Static fallback imports
 import eventMeeting from "@/assets/gallery/event-meeting.jpg";
 import eventAwards from "@/assets/gallery/event-awards.jpg";
 import eventGroup from "@/assets/gallery/event-group.jpg";
 import eventExam from "@/assets/gallery/event-exam.jpg";
 
+type GalleryImageDB = {
+  id: string;
+  title: string;
+  category: string;
+  image_url: string;
+  sort_order: number;
+};
+
+const staticGalleries = [
+  { title: "Annual Meeting 2025", images: [eventMeeting, eventGroup] },
+  { title: "Awards & Examination", images: [eventAwards, eventExam] },
+];
+
 const Gallery = () => {
   const [lightbox, setLightbox] = useState<string | null>(null);
   const { tr } = useLang();
+  const [dbImages, setDbImages] = useState<GalleryImageDB[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const galleries = [
-    { title: "Annual Meeting 2025", images: [eventMeeting, eventGroup] },
-    { title: "Awards & Examination", images: [eventAwards, eventExam] },
-  ];
+  useEffect(() => {
+    const fetchGallery = async () => {
+      const { data } = await supabase.from("gallery_images").select("*").order("sort_order");
+      if (data && data.length > 0) setDbImages(data as GalleryImageDB[]);
+      setLoading(false);
+    };
+    fetchGallery();
+  }, []);
+
+  const dbGalleries = useMemo(() => {
+    const map = new Map<string, GalleryImageDB[]>();
+    dbImages.forEach(img => {
+      const list = map.get(img.category) || [];
+      list.push(img);
+      map.set(img.category, list);
+    });
+    return Array.from(map.entries()).map(([title, images]) => ({
+      title,
+      images: images.map(i => i.image_url),
+    }));
+  }, [dbImages]);
+
+  const galleries = dbGalleries.length > 0 ? dbGalleries : staticGalleries;
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[60vh] pt-20">
+          <Loader2 className="animate-spin text-primary" size={32} />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -37,7 +84,6 @@ const Gallery = () => {
         </div>
       </section>
 
-      {/* Gallery Sections */}
       {galleries.map((gallery, gi) => (
         <section key={gallery.title} className={`py-16 md:py-24 ${gi % 2 === 1 ? 'bg-muted/30' : ''}`}>
           <div className="container mx-auto px-4">
@@ -60,7 +106,6 @@ const Gallery = () => {
         </section>
       ))}
 
-      {/* Lightbox */}
       <AnimatePresence>
         {lightbox && (
           <motion.div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setLightbox(null)}>

@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      gallery_images: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          image_url: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          image_url: string
+          sort_order?: number
+          title?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          image_url?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      marks_config: {
+        Row: {
+          class: number
+          total_out_of: number
+        }
+        Insert: {
+          class: number
+          total_out_of?: number
+        }
+        Update: {
+          class?: number
+          total_out_of?: number
+        }
+        Relationships: []
+      }
       registrations: {
         Row: {
           class: number
@@ -125,6 +167,42 @@ export type Database = {
           result_expiry_date?: string | null
           result_publish_date?: string | null
           result_status?: string
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          created_at: string
+          father_name: string
+          id: string
+          name: string
+          phone: string
+          photo_url: string | null
+          post: string
+          role: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          father_name?: string
+          id?: string
+          name: string
+          phone?: string
+          photo_url?: string | null
+          post?: string
+          role?: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          father_name?: string
+          id?: string
+          name?: string
+          phone?: string
+          photo_url?: string | null
+          post?: string
+          role?: string
+          sort_order?: number
         }
         Relationships: []
       }

@@ -1,9 +1,21 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Phone, User, Briefcase, Crown, Shield, Star } from "lucide-react";
+import { Phone, User, Briefcase, Crown, Shield, Star, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { TEAM_MEMBERS } from "@/lib/team-data";
+import { supabase } from "@/integrations/supabase/client";
 import { useLang } from "@/lib/i18n";
 
+type TeamMemberDB = {
+  id: string;
+  name: string;
+  role: string;
+  father_name: string;
+  post: string;
+  phone: string;
+  photo_url: string | null;
+  sort_order: number;
+};
 
 const roleIcon = (role: string) => {
   if (role === "President") return Crown;
@@ -14,8 +26,42 @@ const roleIcon = (role: string) => {
 
 const Team = () => {
   const { tr } = useLang();
-  const leaders = TEAM_MEMBERS.filter(m => ["President", "Vice President", "Secretary", "Cashier", "Co-ordinator"].includes(m.role));
-  const members = TEAM_MEMBERS.filter(m => m.role === "Member");
+  const [dbMembers, setDbMembers] = useState<TeamMemberDB[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      const { data } = await supabase.from("team_members").select("*").order("sort_order");
+      if (data && data.length > 0) setDbMembers(data as TeamMemberDB[]);
+      setLoading(false);
+    };
+    fetchTeam();
+  }, []);
+
+  // Use DB members if available, otherwise fall back to static data
+  const members = dbMembers.length > 0
+    ? dbMembers.map(m => ({
+        name: m.name,
+        role: m.role,
+        fatherName: m.father_name,
+        post: m.post,
+        phone: m.phone,
+        photo: m.photo_url || "",
+      }))
+    : TEAM_MEMBERS;
+
+  const leaders = members.filter(m => ["President", "Vice President", "Secretary", "Cashier", "Co-ordinator"].includes(m.role));
+  const regularMembers = members.filter(m => m.role === "Member");
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[60vh] pt-20">
+          <Loader2 className="animate-spin text-primary" size={32} />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -54,7 +100,13 @@ const Team = () => {
                   <div className="h-1 bg-gradient-to-r from-secondary to-accent" />
                   <div className="p-6 text-center">
                     <div className="relative w-20 h-20 mx-auto mb-4">
-                      <img src={member.photo} alt={member.name} className="w-full h-full rounded-full object-cover border-2 border-border group-hover:border-secondary transition-colors duration-500" />
+                      {member.photo ? (
+                        <img src={member.photo} alt={member.name} className="w-full h-full rounded-full object-cover border-2 border-border group-hover:border-secondary transition-colors duration-500" />
+                      ) : (
+                        <div className="w-full h-full rounded-full bg-primary/10 flex items-center justify-center border-2 border-border">
+                          <User size={28} className="text-primary" />
+                        </div>
+                      )}
                       <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-secondary flex items-center justify-center shadow-md">
                         <Icon size={12} className="text-white" />
                       </div>
@@ -84,32 +136,40 @@ const Team = () => {
       </section>
 
       {/* Members */}
-      <section className="py-20 md:py-28 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">{tr.team.extendedTeam}</span>
-            <h2 className="font-playfair text-3xl font-bold text-foreground mt-3 mb-4">{tr.team.members}</h2>
-            <div className="section-divider" />
-          </motion.div>
+      {regularMembers.length > 0 && (
+        <section className="py-20 md:py-28 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">{tr.team.extendedTeam}</span>
+              <h2 className="font-playfair text-3xl font-bold text-foreground mt-3 mb-4">{tr.team.members}</h2>
+              <div className="section-divider" />
+            </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
-            {members.map((member, i) => (
-              <motion.div key={member.name} className="bg-card rounded-xl p-5 flex items-start gap-4 premium-shadow border border-border card-hover" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.5 }}>
-                <img src={member.photo} alt={member.name} className="w-14 h-14 rounded-full object-cover border border-border shrink-0" />
-                <div className="min-w-0">
-                  <h3 className="font-playfair text-base font-bold text-foreground leading-tight">{member.name}</h3>
-                  <p className="text-xs text-secondary font-semibold mb-1.5">{member.role}</p>
-                  <p className="text-xs text-muted-foreground">{tr.team.fatherName}: {member.fatherName}</p>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1"><Briefcase size={10} /> {member.post}</p>
-                  <a href={`tel:${member.phone}`} className="text-xs text-primary flex items-center gap-1 mt-1 hover:text-secondary transition-colors">
-                    <Phone size={10} /> {member.phone}
-                  </a>
-                </div>
-              </motion.div>
-            ))}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
+              {regularMembers.map((member, i) => (
+                <motion.div key={member.name} className="bg-card rounded-xl p-5 flex items-start gap-4 premium-shadow border border-border card-hover" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.5 }}>
+                  {member.photo ? (
+                    <img src={member.photo} alt={member.name} className="w-14 h-14 rounded-full object-cover border border-border shrink-0" />
+                  ) : (
+                    <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center border border-border shrink-0">
+                      <User size={20} className="text-primary" />
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <h3 className="font-playfair text-base font-bold text-foreground leading-tight">{member.name}</h3>
+                    <p className="text-xs text-secondary font-semibold mb-1.5">{member.role}</p>
+                    <p className="text-xs text-muted-foreground">{tr.team.fatherName}: {member.fatherName}</p>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1"><Briefcase size={10} /> {member.post}</p>
+                    <a href={`tel:${member.phone}`} className="text-xs text-primary flex items-center gap-1 mt-1 hover:text-secondary transition-colors">
+                      <Phone size={10} /> {member.phone}
+                    </a>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </Layout>
   );
 };
