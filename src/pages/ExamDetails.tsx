@@ -13,8 +13,9 @@ const ExamDetails = () => {
     {
       name: "Group 1",
       classes: "Class 6 – 8",
-      duration: "2 Hours",
-      date: `Between ${EXAM_DATE}`,
+      // show the actual slot rather than generic hours
+      duration: "11:00–12:30",
+      date: EXAM_DATE,
       topics: [
         "Early Life of Dr. Ambedkar",
         "Educational Journey",
@@ -27,8 +28,8 @@ const ExamDetails = () => {
     {
       name: "Group 2",
       classes: "Class 9 – 12",
-      duration: "3 Hours",
-      date: `Between ${EXAM_DATE}`,
+      duration: "14:00–16:00",
+      date: EXAM_DATE,
       topics: [
         "Constitutional Contributions",
         "Social Justice Movement",

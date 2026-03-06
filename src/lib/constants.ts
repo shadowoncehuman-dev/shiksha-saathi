@@ -9,19 +9,22 @@ export const CONTACT = {
   office: "Pradhan Office, Nayagaon",
 };
 
-export const EXAM_DATE = "10–14 April 2026";
+export const EXAM_DATE = "12 April 2026";
 export const EXAM_CENTER = "Govt. School, Nayagaon";
 
+// times have changed: both groups take the exam on the same day with distinct slots
 export const EXAM_GROUPS = [
   {
     name: "Group 1",
     classes: [6, 7, 8],
-    duration: "2 Hours",
+    // morning slot 11:00 - 12:30
+    duration: "11:00–12:30",
   },
   {
     name: "Group 2",
     classes: [9, 10, 11, 12],
-    duration: "3 Hours",
+    // afternoon slot 14:00 - 16:00
+    duration: "14:00–16:00",
   },
 ];
 

@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import { Timer } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 
-const TARGET_DATE = new Date("2026-04-10T09:00:00+05:30").getTime();
+// countdown should fire at the start of first group on 12 April
+const TARGET_DATE = new Date("2026-04-12T11:00:00+05:30").getTime();
 
 const CountdownTimer = () => {
   const { tr } = useLang();

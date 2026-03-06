@@ -67,7 +67,7 @@ const t = {
       items: [
         { q: "Who can register for the examination?", a: "Students from Class 6 to Class 12 from the listed villages can register. Registration is open to all eligible students regardless of their school." },
         { q: "What is the registration process?", a: "Go to the Register page, fill in your details (name, father's name, class, phone, village), and submit. You will receive a roll number and admit card instantly." },
-        { q: "What are the exam dates?", a: "The examination is scheduled for 10–14 April 2026 at Govt. School, Nayagaon." },
+        { q: "What are the exam dates?", a: "The examination is scheduled for 12 April 2026 at Govt. School, Nayagaon. Group A (classes 6–8) will be held 11:00–12:30 and Group B (classes 9–12) 14:00–16:00." },
         { q: "How can I check my result?", a: "Visit the Result page and enter your roll number or search by name. Results will be available once declared by the committee." },
         { q: "What is the total marks for the exam?", a: "The examination is out of 400 marks total. Students need at least 33% to pass." },
         { q: "Can I download my admit card?", a: "Yes! After registration, you can download your admit card as PDF or image. Keep it safe for the examination day." },
@@ -312,7 +312,7 @@ const t = {
       items: [
         { q: "परीक्षा के लिए कौन पंजीकरण कर सकता है?", a: "सूचीबद्ध गाँवों के कक्षा 6 से कक्षा 12 तक के छात्र पंजीकरण कर सकते हैं। पंजीकरण सभी योग्य छात्रों के लिए खुला है।" },
         { q: "पंजीकरण की प्रक्रिया क्या है?", a: "पंजीकरण पृष्ठ पर जाएं, अपना विवरण भरें (नाम, पिता का नाम, कक्षा, फोन, गाँव) और सबमिट करें। आपको तुरंत रोल नंबर और प्रवेश पत्र मिल जाएगा।" },
-        { q: "परीक्षा की तिथि क्या है?", a: "परीक्षा 10-14 अप्रैल 2026 को सरकारी स्कूल, नयागांव में आयोजित की जाएगी।" },
+        { q: "परीक्षा की तिथि क्या है?", a: "परीक्षा 12 अप्रैल 2026 को सरकारी स्कूल, नयागांव में आयोजित की जाएगी। समूह A (कक्षा 6–8) सुबह 11:00–12:30 और समूह B (कक्षा 9–12) दोपहर 14:00–16:00 होगा।" },
         { q: "मैं अपना परिणाम कैसे देख सकता हूं?", a: "परिणाम पृष्ठ पर जाएं और अपना रोल नंबर दर्ज करें या नाम से खोजें। परिणाम समिति द्वारा घोषित होने पर उपलब्ध होंगे।" },
         { q: "परीक्षा में कुल कितने अंक हैं?", a: "परीक्षा कुल 400 अंकों की है। पास होने के लिए कम से कम 33% अंक आवश्यक हैं।" },
         { q: "क्या मैं अपना प्रवेश पत्र डाउनलोड कर सकता हूं?", a: "हां! पंजीकरण के बाद, आप अपना प्रवेश पत्र PDF या छवि के रूप में डाउनलोड कर सकते हैं।" },
