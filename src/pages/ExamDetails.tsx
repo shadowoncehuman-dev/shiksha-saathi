@@ -97,20 +97,7 @@ const ExamDetails = () => {
                     </div>
                   </div>
 
-                  {/* Downloads */}
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2 text-sm">
-                      <Download size={14} className="text-secondary" /> {tr.examDetails.downloads}
-                    </h4>
-                    <div className="flex gap-3">
-                      <a href={`/downloads/${group.slug}-syllabus.pdf`} download className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary/[0.03] border border-primary/10 text-xs font-medium text-primary hover:bg-primary/[0.06] transition-colors">
-                        <FileText size={14} /> {tr.examDetails.syllabus}
-                      </a>
-                      <a href={`/downloads/${group.slug}-template.pdf`} download className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-secondary/[0.03] border border-secondary/10 text-xs font-medium text-secondary hover:bg-secondary/[0.06] transition-colors">
-                        <FileText size={14} /> {tr.examDetails.template}
-                      </a>
-                    </div>
-                  </div>
+                  {/* Downloads section removed per update request */}
 
                   {/* Topics */}
                   <div>

@@ -122,10 +122,8 @@ const t = {
     examDetails: {
       badge: "Dr. B.R. Ambedkar Examination",
       title: "Examination Groups",
-      subtitle: "Detailed information about examination groups, syllabus, and templates",
-      downloads: "Downloads",
-      syllabus: "Syllabus",
-      template: "Template",
+      subtitle: "Detailed information about examination groups",
+      // download strings removed
       topics: "Topics",
       registerNow: "Register Now",
       classes: "Classes",
@@ -368,9 +366,7 @@ const t = {
       badge: "डॉ. बी.आर. अम्बेडकर परीक्षा",
       title: "परीक्षा समूह",
       subtitle: "परीक्षा समूहों, पाठ्यक्रम और टेम्पलेट के बारे में विस्तृत जानकारी",
-      downloads: "डाउनलोड",
-      syllabus: "पाठ्यक्रम",
-      template: "टेम्पलेट",
+      // download strings removed
       topics: "विषय",
       registerNow: "अभी पंजीकरण करें",
       classes: "कक्षाएं",
