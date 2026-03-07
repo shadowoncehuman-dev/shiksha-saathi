@@ -10,6 +10,7 @@ import Admin from "@/pages/Admin";
 import Team from "@/pages/Team";
 import Gallery from "@/pages/Gallery";
 import ExamDetails from "@/pages/ExamDetails";
+import Downloads from "@/pages/Downloads";
 import NotFound from "@/pages/NotFound";
 import Forbidden from "@/pages/Forbidden";
 import ServerError from "@/pages/ServerError";
@@ -30,6 +31,7 @@ const AnimatedRoutes = () => {
         <Route path="/team" element={<PageTransition><Team /></PageTransition>} />
         <Route path="/gallery" element={<PageTransition><Gallery /></PageTransition>} />
         <Route path="/exam-details" element={<PageTransition><ExamDetails /></PageTransition>} />
+        <Route path="/downloads" element={<PageTransition><Downloads /></PageTransition>} />
         <Route path="/forbidden" element={<PageTransition><Forbidden /></PageTransition>} />
         <Route path="/server-error" element={<PageTransition><ServerError /></PageTransition>} />
         <Route path="/service-unavailable" element={<PageTransition><ServiceUnavailable /></PageTransition>} />

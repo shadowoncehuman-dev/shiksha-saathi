@@ -56,6 +56,39 @@ export type Database = {
         }
         Relationships: []
       }
+      pdfs: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          file_name: string
+          file_url: string
+          id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string
+          file_name?: string
+          file_url: string
+          id?: string
+          sort_order?: number
+          title?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          file_name?: string
+          file_url?: string
+          id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: []
+      }
       registrations: {
         Row: {
           class: number

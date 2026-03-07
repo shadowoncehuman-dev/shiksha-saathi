@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload, Image, UsersRound, Plus, Edit, Phone, Briefcase } from "lucide-react";
+import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload, Image, UsersRound, Plus, Edit, Phone, Briefcase, FileText } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -86,6 +86,14 @@ const Admin = () => {
   const [savingGallery, setSavingGallery] = useState(false);
   const galleryPhotoRef = useRef<HTMLInputElement>(null);
 
+  // PDFs
+  type PdfDB = { id: string; title: string; description: string; file_url: string; file_name: string; category: string; sort_order: number };
+  const [pdfFiles, setPdfFiles] = useState<PdfDB[]>([]);
+  const [pdfForm, setPdfForm] = useState({ title: "", description: "", category: "General" });
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [savingPdf, setSavingPdf] = useState(false);
+  const pdfFileRef = useRef<HTMLInputElement>(null);
+
   const handleLogin = async () => {
     setVerifying(true);
     try {
@@ -97,7 +105,7 @@ const Admin = () => {
   };
 
   const fetchAll = useCallback(() => {
-    fetchSettings(); fetchStudents(); fetchResultStats(); fetchMarksConfig(); fetchTeam(); fetchGallery();
+    fetchSettings(); fetchStudents(); fetchResultStats(); fetchMarksConfig(); fetchTeam(); fetchGallery(); fetchPdfs();
   }, []);
 
   const fetchSettings = async () => {
@@ -239,6 +247,46 @@ const Admin = () => {
     toast({ title: "Gallery image deleted" });
   };
 
+  // PDF functions
+  const fetchPdfs = async () => {
+    const { data } = await supabase.from("pdfs").select("*").order("sort_order", { ascending: true });
+    if (data) setPdfFiles(data as PdfDB[]);
+  };
+
+  const savePdfFile = async () => {
+    if (!pdfFile) return;
+    setSavingPdf(true);
+    try {
+      const ext = pdfFile.name.split(".").pop();
+      const path = `${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("pdf-files").upload(path, pdfFile);
+      if (uploadError) throw uploadError;
+      const file_url = `${SUPABASE_URL}/storage/v1/object/public/pdf-files/${path}`;
+      await supabase.from("pdfs").insert({
+        title: pdfForm.title || pdfFile.name,
+        description: pdfForm.description,
+        file_url,
+        file_name: pdfFile.name,
+        category: pdfForm.category || "General",
+        sort_order: pdfFiles.length,
+      });
+      toast({ title: "PDF uploaded" });
+      setPdfForm({ title: "", description: "", category: "General" });
+      setPdfFile(null);
+      if (pdfFileRef.current) pdfFileRef.current.value = "";
+      fetchPdfs();
+    } catch {
+      toast({ title: "Error uploading PDF", variant: "destructive" });
+    }
+    setSavingPdf(false);
+  };
+
+  const deletePdf = async (id: string) => {
+    await supabase.from("pdfs").delete().eq("id", id);
+    setPdfFiles(prev => prev.filter(p => p.id !== id));
+    toast({ title: "PDF deleted" });
+  };
+
   const deleteStudent = async (id: string) => {
     await supabase.from("registrations").delete().eq("id", id);
     setStudents((prev) => prev.filter((s) => s.id !== id));
@@ -374,6 +422,7 @@ const Admin = () => {
               <TabsTrigger value="students" className="rounded-lg text-sm"><Users size={14} className="mr-1.5" /> Students</TabsTrigger>
               <TabsTrigger value="team" className="rounded-lg text-sm"><UsersRound size={14} className="mr-1.5" /> Team</TabsTrigger>
               <TabsTrigger value="gallery" className="rounded-lg text-sm"><Image size={14} className="mr-1.5" /> Gallery</TabsTrigger>
+              <TabsTrigger value="pdfs" className="rounded-lg text-sm"><FileText size={14} className="mr-1.5" /> PDFs</TabsTrigger>
             </TabsList>
 
             {/* SETTINGS TAB */}
@@ -631,6 +680,54 @@ const Admin = () => {
                       </div>
                     ))}
                     {!galleryImages.length && <p className="col-span-2 text-center py-4 text-muted-foreground text-sm">No gallery images yet.</p>}
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* PDFs TAB */}
+            <TabsContent value="pdfs">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">Upload PDF</h3>
+                  <div className="space-y-3">
+                    <Input placeholder="Title" className="h-10 rounded-xl" value={pdfForm.title} onChange={e => setPdfForm(f => ({ ...f, title: e.target.value }))} />
+                    <Input placeholder="Description (optional)" className="h-10 rounded-xl" value={pdfForm.description} onChange={e => setPdfForm(f => ({ ...f, description: e.target.value }))} />
+                    <Input placeholder="Category (e.g., Syllabus)" className="h-10 rounded-xl" value={pdfForm.category} onChange={e => setPdfForm(f => ({ ...f, category: e.target.value }))} />
+                    <div>
+                      <label className="text-sm text-muted-foreground block mb-1.5">PDF File</label>
+                      <input type="file" accept=".pdf" ref={pdfFileRef} onChange={e => setPdfFile(e.target.files?.[0] || null)} className="text-sm" />
+                    </div>
+                    <Button onClick={savePdfFile} className="w-full bg-primary h-10 rounded-xl" disabled={savingPdf || !pdfFile}>
+                      {savingPdf ? <Loader2 className="animate-spin mr-2" size={14} /> : <Upload size={14} className="mr-2" />}
+                      Upload PDF
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">Uploaded PDFs ({pdfFiles.length})</h3>
+                  <div className="space-y-3 max-h-[500px] overflow-y-auto">
+                    {pdfFiles.map(p => (
+                      <div key={p.id} className="flex items-center gap-3 bg-muted/50 rounded-xl p-3">
+                        <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
+                          <FileText size={16} className="text-destructive" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-foreground truncate">{p.title || p.file_name}</p>
+                          <p className="text-xs text-muted-foreground">{p.category}</p>
+                        </div>
+                        <div className="flex gap-1 shrink-0">
+                          <a href={p.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center h-7 w-7 rounded-lg hover:bg-muted transition-colors">
+                            <Download size={12} />
+                          </a>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive rounded-lg" onClick={() => deletePdf(p.id)}>
+                            <Trash2 size={12} />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    {!pdfFiles.length && <p className="text-center py-4 text-muted-foreground text-sm">No PDFs uploaded yet.</p>}
                   </div>
                 </div>
               </div>

@@ -12,6 +12,7 @@ const Header = () => {
   const location = useLocation();
   const { scrollY } = useScroll();
   const { lang, setLang, tr } = useLang();
+  const isHome = location.pathname === "/";
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 20);
@@ -22,6 +23,7 @@ const Header = () => {
     { label: tr.nav.examDetails, path: "/exam-details" },
     { label: tr.nav.register, path: "/register" },
     { label: tr.nav.result, path: "/result" },
+    { label: tr.nav.downloads, path: "/downloads" },
     { label: tr.nav.team, path: "/team" },
     { label: tr.nav.gallery, path: "/gallery" },
   ];
@@ -29,7 +31,7 @@ const Header = () => {
   return (
     <motion.header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
+        scrolled || !isHome
           ? "bg-primary/95 backdrop-blur-xl shadow-lg shadow-primary/10"
           : "bg-transparent"
       }`}
