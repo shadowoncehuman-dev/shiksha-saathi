@@ -12,6 +12,7 @@ const Header = () => {
   const location = useLocation();
   const { scrollY } = useScroll();
   const { lang, setLang, tr } = useLang();
+  const isHome = location.pathname === "/";
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 20);
