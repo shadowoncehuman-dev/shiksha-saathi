@@ -86,6 +86,14 @@ const Admin = () => {
   const [savingGallery, setSavingGallery] = useState(false);
   const galleryPhotoRef = useRef<HTMLInputElement>(null);
 
+  // PDFs
+  type PdfDB = { id: string; title: string; description: string; file_url: string; file_name: string; category: string; sort_order: number };
+  const [pdfFiles, setPdfFiles] = useState<PdfDB[]>([]);
+  const [pdfForm, setPdfForm] = useState({ title: "", description: "", category: "General" });
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [savingPdf, setSavingPdf] = useState(false);
+  const pdfFileRef = useRef<HTMLInputElement>(null);
+
   const handleLogin = async () => {
     setVerifying(true);
     try {
