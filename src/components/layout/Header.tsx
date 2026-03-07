@@ -30,7 +30,7 @@ const Header = () => {
   return (
     <motion.header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
+        scrolled || !isHome
           ? "bg-primary/95 backdrop-blur-xl shadow-lg shadow-primary/10"
           : "bg-transparent"
       }`}
