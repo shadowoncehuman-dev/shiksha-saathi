@@ -247,6 +247,46 @@ const Admin = () => {
     toast({ title: "Gallery image deleted" });
   };
 
+  // PDF functions
+  const fetchPdfs = async () => {
+    const { data } = await supabase.from("pdfs").select("*").order("sort_order", { ascending: true });
+    if (data) setPdfFiles(data as PdfDB[]);
+  };
+
+  const savePdfFile = async () => {
+    if (!pdfFile) return;
+    setSavingPdf(true);
+    try {
+      const ext = pdfFile.name.split(".").pop();
+      const path = `${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("pdf-files").upload(path, pdfFile);
+      if (uploadError) throw uploadError;
+      const file_url = `${SUPABASE_URL}/storage/v1/object/public/pdf-files/${path}`;
+      await supabase.from("pdfs").insert({
+        title: pdfForm.title || pdfFile.name,
+        description: pdfForm.description,
+        file_url,
+        file_name: pdfFile.name,
+        category: pdfForm.category || "General",
+        sort_order: pdfFiles.length,
+      });
+      toast({ title: "PDF uploaded" });
+      setPdfForm({ title: "", description: "", category: "General" });
+      setPdfFile(null);
+      if (pdfFileRef.current) pdfFileRef.current.value = "";
+      fetchPdfs();
+    } catch {
+      toast({ title: "Error uploading PDF", variant: "destructive" });
+    }
+    setSavingPdf(false);
+  };
+
+  const deletePdf = async (id: string) => {
+    await supabase.from("pdfs").delete().eq("id", id);
+    setPdfFiles(prev => prev.filter(p => p.id !== id));
+    toast({ title: "PDF deleted" });
+  };
+
   const deleteStudent = async (id: string) => {
     await supabase.from("registrations").delete().eq("id", id);
     setStudents((prev) => prev.filter((s) => s.id !== id));
