@@ -684,6 +684,54 @@ const Admin = () => {
                 </div>
               </div>
             </TabsContent>
+
+            {/* PDFs TAB */}
+            <TabsContent value="pdfs">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">Upload PDF</h3>
+                  <div className="space-y-3">
+                    <Input placeholder="Title" className="h-10 rounded-xl" value={pdfForm.title} onChange={e => setPdfForm(f => ({ ...f, title: e.target.value }))} />
+                    <Input placeholder="Description (optional)" className="h-10 rounded-xl" value={pdfForm.description} onChange={e => setPdfForm(f => ({ ...f, description: e.target.value }))} />
+                    <Input placeholder="Category (e.g., Syllabus)" className="h-10 rounded-xl" value={pdfForm.category} onChange={e => setPdfForm(f => ({ ...f, category: e.target.value }))} />
+                    <div>
+                      <label className="text-sm text-muted-foreground block mb-1.5">PDF File</label>
+                      <input type="file" accept=".pdf" ref={pdfFileRef} onChange={e => setPdfFile(e.target.files?.[0] || null)} className="text-sm" />
+                    </div>
+                    <Button onClick={savePdfFile} className="w-full bg-primary h-10 rounded-xl" disabled={savingPdf || !pdfFile}>
+                      {savingPdf ? <Loader2 className="animate-spin mr-2" size={14} /> : <Upload size={14} className="mr-2" />}
+                      Upload PDF
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">Uploaded PDFs ({pdfFiles.length})</h3>
+                  <div className="space-y-3 max-h-[500px] overflow-y-auto">
+                    {pdfFiles.map(p => (
+                      <div key={p.id} className="flex items-center gap-3 bg-muted/50 rounded-xl p-3">
+                        <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
+                          <FileText size={16} className="text-destructive" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-foreground truncate">{p.title || p.file_name}</p>
+                          <p className="text-xs text-muted-foreground">{p.category}</p>
+                        </div>
+                        <div className="flex gap-1 shrink-0">
+                          <a href={p.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center h-7 w-7 rounded-lg hover:bg-muted transition-colors">
+                            <Download size={12} />
+                          </a>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive rounded-lg" onClick={() => deletePdf(p.id)}>
+                            <Trash2 size={12} />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    {!pdfFiles.length && <p className="text-center py-4 text-muted-foreground text-sm">No PDFs uploaded yet.</p>}
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
           </Tabs>
         </div>
       </section>
