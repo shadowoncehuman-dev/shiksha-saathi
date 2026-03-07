@@ -10,6 +10,7 @@ import Admin from "@/pages/Admin";
 import Team from "@/pages/Team";
 import Gallery from "@/pages/Gallery";
 import ExamDetails from "@/pages/ExamDetails";
+import Downloads from "@/pages/Downloads";
 import NotFound from "@/pages/NotFound";
 import Forbidden from "@/pages/Forbidden";
 import ServerError from "@/pages/ServerError";
