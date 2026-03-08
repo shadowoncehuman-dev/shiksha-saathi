@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FileText, Download, Loader2, FolderOpen } from "lucide-react";
+import { FileText, Download, Loader2, FolderOpen, Eye, X } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { useLang } from "@/lib/i18n";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 
 type PdfFile = {
   id: string;
@@ -18,6 +19,7 @@ type PdfFile = {
 const Downloads = () => {
   const [pdfs, setPdfs] = useState<PdfFile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [previewPdf, setPreviewPdf] = useState<PdfFile | null>(null);
   const { lang } = useLang();
 
   useEffect(() => {
@@ -88,12 +90,8 @@ const Downloads = () => {
                   </h2>
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {files.map((pdf, i) => (
-                      <motion.a
+                      <motion.div
                         key={pdf.id}
-                        href={pdf.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        download
                         className="group bg-card rounded-2xl p-5 border border-border hover:border-primary/20 hover:shadow-lg transition-all duration-300"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -110,13 +108,28 @@ const Downloads = () => {
                             {pdf.description && (
                               <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{pdf.description}</p>
                             )}
-                            <div className="flex items-center gap-1.5 mt-2 text-xs text-primary font-medium">
-                              <Download size={12} />
-                              <span>{lang === "hi" ? "डाउनलोड करें" : "Download PDF"}</span>
+                            <div className="flex items-center gap-3 mt-2">
+                              <button
+                                onClick={() => setPreviewPdf(pdf)}
+                                className="flex items-center gap-1.5 text-xs text-primary font-medium hover:underline"
+                              >
+                                <Eye size={12} />
+                                <span>{lang === "hi" ? "देखें" : "Preview"}</span>
+                              </button>
+                              <a
+                                href={pdf.file_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download
+                                className="flex items-center gap-1.5 text-xs text-secondary font-medium hover:underline"
+                              >
+                                <Download size={12} />
+                                <span>{lang === "hi" ? "डाउनलोड" : "Download"}</span>
+                              </a>
                             </div>
                           </div>
                         </div>
-                      </motion.a>
+                      </motion.div>
                     ))}
                   </div>
                 </motion.div>
@@ -125,6 +138,38 @@ const Downloads = () => {
           )}
         </div>
       </section>
+
+      {/* PDF Preview Modal */}
+      <Dialog open={!!previewPdf} onOpenChange={(open) => !open && setPreviewPdf(null)}>
+        <DialogContent className="max-w-4xl w-[95vw] h-[85vh] p-0 gap-0 flex flex-col">
+          <DialogHeader className="px-5 py-3 border-b border-border flex-shrink-0">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-sm font-semibold truncate pr-8">
+                {previewPdf?.title || previewPdf?.file_name}
+              </DialogTitle>
+              <a
+                href={previewPdf?.file_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                className="flex items-center gap-1.5 text-xs text-primary font-medium hover:underline shrink-0"
+              >
+                <Download size={14} />
+                {lang === "hi" ? "डाउनलोड" : "Download"}
+              </a>
+            </div>
+          </DialogHeader>
+          <div className="flex-1 min-h-0">
+            {previewPdf && (
+              <iframe
+                src={`${previewPdf.file_url}#toolbar=1&navpanes=0`}
+                className="w-full h-full border-0 rounded-b-lg"
+                title={previewPdf.title || previewPdf.file_name}
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };
