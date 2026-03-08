@@ -98,8 +98,8 @@ const Downloads = () => {
                         transition={{ delay: ci * 0.1 + i * 0.05 }}
                       >
                         <div className="flex items-start gap-4">
-                          <div className="w-11 h-11 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
-                            <FileText size={20} className="text-destructive" />
+                          <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
+                            <FileDown size={20} className="text-primary" />
                           </div>
                           <div className="min-w-0 flex-1">
                             <h3 className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors truncate">
