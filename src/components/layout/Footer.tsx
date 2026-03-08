@@ -16,7 +16,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="md:col-span-5">
             <div className="flex items-center gap-3 mb-5">
-              <img src={logo} alt="Logo" className="w-11 h-11 rounded-full object-contain bg-white p-0.5" />
+              <img src={logo} alt="Logo" className="w-11 h-11 rounded-full object-contain bg-white p-0.5 ring-2 ring-accent/20" />
               <h3 className="font-playfair text-lg font-bold text-white">BBDBASS</h3>
             </div>
             <p className="text-white/40 text-sm leading-relaxed max-w-sm mb-6">{tr.footer.tagline}</p>
@@ -49,20 +49,20 @@ const Footer = () => {
           <div className="md:col-span-4">
             <h4 className="text-xs font-semibold mb-5 text-secondary uppercase tracking-[0.2em]">{tr.footer.getInTouch}</h4>
             <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 mt-0.5">
+              <li className="flex items-start gap-3 group">
+                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-secondary/10 transition-colors">
                   <MapPin size={14} className="text-secondary" />
                 </div>
                 <span className="text-white/40 text-sm">{CONTACT.office}</span>
               </li>
-              <li className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
+              <li className="flex items-center gap-3 group">
+                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-secondary/10 transition-colors">
                   <Phone size={14} className="text-secondary" />
                 </div>
                 <a href={`tel:${CONTACT.phone}`} className="text-white/40 hover:text-secondary transition-colors text-sm">{CONTACT.phone}</a>
               </li>
-              <li className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
+              <li className="flex items-center gap-3 group">
+                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-secondary/10 transition-colors">
                   <Mail size={14} className="text-secondary" />
                 </div>
                 <a href={`mailto:${CONTACT.email}`} className="text-white/40 hover:text-secondary transition-colors break-all text-sm">{CONTACT.email}</a>
@@ -71,7 +71,16 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-14 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-3">
+        {/* Gold ornament divider */}
+        <div className="mt-14 mb-6 flex items-center justify-center gap-3">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent to-accent/20" />
+          <div className="w-2 h-2 rounded-full bg-accent/30" />
+          <div className="w-1.5 h-1.5 rounded-full bg-secondary/40" />
+          <div className="w-2 h-2 rounded-full bg-accent/30" />
+          <div className="h-px flex-1 bg-gradient-to-l from-transparent to-accent/20" />
+        </div>
+
+        <div className="flex flex-col md:flex-row justify-between items-center gap-3">
           <p className="text-xs text-white/20">© 2026 {ORG_NAME}. {tr.footer.allRights}</p>
           <p className="text-xs text-white/20">{tr.footer.builtWith}</p>
         </div>

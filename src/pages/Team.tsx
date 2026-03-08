@@ -20,7 +20,6 @@ type TeamMemberDB = {
 const roleIcon = (role: string) => {
   if (role === "President") return Crown;
   if (role === "Vice President") return Shield;
-  // Auditor gets the same star icon used for other executive positions
   if (role.includes("Secretary") || role.includes("Cashier") || role.includes("Co-ordinator") || role === "Auditor") return Star;
   return User;
 };
@@ -39,7 +38,6 @@ const Team = () => {
     fetchTeam();
   }, []);
 
-  // Use DB members if available, otherwise fall back to static data
   const members = dbMembers.length > 0
     ? dbMembers.map(m => ({
         name: m.name,
@@ -70,6 +68,7 @@ const Team = () => {
       <section className="hero-gradient text-white pt-28 pb-16 md:pt-36 md:pb-24 relative overflow-hidden">
         <div className="absolute inset-0 grain-overlay" />
         <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full border border-white/[0.03]" />
+        <div className="absolute bottom-10 -left-10 w-60 h-60 rounded-full border border-secondary/[0.05]" />
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             {tr.team.peopleBehind}
@@ -102,18 +101,18 @@ const Team = () => {
                   <div className="p-6 text-center">
                     <div className="relative w-20 h-20 mx-auto mb-4">
                       {member.photo ? (
-                        <img src={member.photo} alt={member.name} className="w-full h-full rounded-full object-cover border-2 border-border group-hover:border-secondary transition-colors duration-500" />
+                        <img src={member.photo} alt={member.name} className="w-full h-full rounded-full object-cover border-2 border-border group-hover:border-secondary transition-colors duration-500 gold-frame" />
                       ) : (
-                        <div className="w-full h-full rounded-full bg-primary/10 flex items-center justify-center border-2 border-border">
+                        <div className="w-full h-full rounded-full bg-gradient-to-br from-primary/10 to-secondary/5 flex items-center justify-center border-2 border-border gold-frame">
                           <User size={28} className="text-primary" />
                         </div>
                       )}
-                      <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-secondary flex items-center justify-center shadow-md">
+                      <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center shadow-md">
                         <Icon size={12} className="text-white" />
                       </div>
                     </div>
                     <h3 className="font-playfair text-lg font-bold text-foreground mb-0.5">{member.name}</h3>
-                    <span className="inline-block px-3 py-0.5 rounded-full bg-primary/5 text-primary text-xs font-semibold mb-3">{member.role}</span>
+                    <span className="inline-block px-3 py-0.5 rounded-full bg-gradient-to-r from-primary/5 to-secondary/5 text-primary text-xs font-semibold mb-3">{member.role}</span>
                     <div className="space-y-2 text-sm text-muted-foreground">
                       <p className="flex items-center justify-center gap-2">
                         <User size={13} className="text-secondary/60" />
@@ -148,11 +147,11 @@ const Team = () => {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
               {regularMembers.map((member, i) => (
-                <motion.div key={member.name} className="bg-card rounded-xl p-5 flex items-start gap-4 premium-shadow border border-border card-hover" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.5 }}>
+                <motion.div key={member.name} className="bg-card rounded-xl p-5 flex items-start gap-4 premium-shadow border border-border card-hover group" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.5 }}>
                   {member.photo ? (
-                    <img src={member.photo} alt={member.name} className="w-14 h-14 rounded-full object-cover border border-border shrink-0" />
+                    <img src={member.photo} alt={member.name} className="w-14 h-14 rounded-full object-cover border border-border shrink-0 group-hover:border-secondary/50 transition-colors gold-frame" />
                   ) : (
-                    <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center border border-border shrink-0">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/10 to-secondary/5 flex items-center justify-center border border-border shrink-0">
                       <User size={20} className="text-primary" />
                     </div>
                   )}

@@ -41,18 +41,25 @@ const TestimonialsSection = () => {
           <div className="flex gap-6">
             {tr.testimonials.items.map((item: { name: string; role: string; text: string }, i: number) => (
               <div key={i} className="flex-none w-[300px] md:w-[380px]">
-                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border h-full">
-                  <Quote size={24} className="text-secondary/30 mb-4" />
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-                    "{item.text}"
-                  </p>
-                  <div className="flex items-center gap-1 mb-3">
-                    {[...Array(5)].map((_, j) => (
-                      <Star key={j} size={12} className="fill-accent text-accent" />
-                    ))}
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border h-full relative overflow-hidden group card-hover">
+                  {/* Gold left accent */}
+                  <div className="absolute left-0 top-4 bottom-4 w-[3px] rounded-full bg-gradient-to-b from-secondary to-accent opacity-40 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <div className="pl-3">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-secondary/10 to-accent/10 flex items-center justify-center mb-4">
+                      <Quote size={16} className="text-secondary" />
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+                      "{item.text}"
+                    </p>
+                    <div className="flex items-center gap-1 mb-3">
+                      {[...Array(5)].map((_, j) => (
+                        <Star key={j} size={12} className="fill-accent text-accent" />
+                      ))}
+                    </div>
+                    <p className="font-semibold text-sm text-foreground">{item.name}</p>
+                    <p className="text-xs text-muted-foreground">{item.role}</p>
                   </div>
-                  <p className="font-semibold text-sm text-foreground">{item.name}</p>
-                  <p className="text-xs text-muted-foreground">{item.role}</p>
                 </div>
               </div>
             ))}

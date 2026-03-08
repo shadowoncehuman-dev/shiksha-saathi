@@ -32,10 +32,12 @@ const FAQSection = () => {
         >
           <Accordion type="single" collapsible className="space-y-1">
             {tr.faq.items.map((item: { q: string; a: string }, i: number) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="border-b border-border/50">
-                <AccordionTrigger className="text-left text-sm md:text-base font-medium hover:no-underline py-4">
+              <AccordionItem key={i} value={`faq-${i}`} className="border-b border-border/50 data-[state=open]:border-secondary/20">
+                <AccordionTrigger className="text-left text-sm md:text-base font-medium hover:no-underline py-4 group">
                   <div className="flex items-center gap-3">
-                    <HelpCircle size={16} className="text-secondary shrink-0" />
+                    <span className="w-6 h-6 rounded-full bg-gradient-to-br from-secondary/10 to-accent/10 flex items-center justify-center shrink-0 text-[10px] font-bold text-secondary group-data-[state=open]:from-secondary/20 group-data-[state=open]:to-accent/20 transition-colors">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
                     <span>{item.q}</span>
                   </div>
                 </AccordionTrigger>

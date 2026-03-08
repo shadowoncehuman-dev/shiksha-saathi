@@ -87,6 +87,10 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
@@ -94,6 +98,16 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', serif;
+  }
+
+  ::selection {
+    background: hsl(30 100% 52% / 0.2);
+    color: hsl(222 67% 16%);
+  }
+
+  .dark ::selection {
+    background: hsl(43 96% 56% / 0.3);
+    color: hsl(48 100% 96%);
   }
 }
 
@@ -106,8 +120,39 @@
     @apply bg-card/90 backdrop-blur-xl border border-border/50 shadow-lg;
   }
 
+  .glass-morphism {
+    background: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .premium-gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(30 100% 52%), hsl(43 96% 56%), hsl(30 100% 52%));
+    background-size: 200% auto;
+    animation: shimmer 4s linear infinite;
+  }
+
   .gold-border {
     border: 2px solid hsl(var(--accent));
+  }
+
+  .luxury-border {
+    position: relative;
+    overflow: hidden;
+  }
+  .luxury-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(30 100% 52% / 0.4), hsl(43 96% 56% / 0.6), hsl(30 100% 52% / 0.2));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
   }
 
   .text-gradient {
@@ -141,6 +186,34 @@
       0 12px 24px hsl(222 67% 16% / 0.03);
   }
 
+  .dark .premium-shadow {
+    box-shadow:
+      0 1px 2px hsl(0 0% 0% / 0.2),
+      0 4px 12px hsl(222 67% 16% / 0.15),
+      0 12px 32px hsl(222 67% 16% / 0.1),
+      0 0 0 1px hsl(222 20% 18% / 0.5);
+  }
+
+  .premium-card {
+    @apply bg-card rounded-2xl border border-border card-hover;
+    box-shadow:
+      0 1px 2px hsl(222 67% 16% / 0.06),
+      0 4px 8px hsl(222 67% 16% / 0.04),
+      0 12px 24px hsl(222 67% 16% / 0.03);
+  }
+
+  .premium-card:hover {
+    box-shadow:
+      0 4px 8px hsl(222 67% 16% / 0.08),
+      0 8px 16px hsl(222 67% 16% / 0.06),
+      0 20px 40px hsl(222 67% 16% / 0.05),
+      0 0 0 1px hsl(30 100% 52% / 0.1);
+  }
+
+  .gold-frame {
+    box-shadow: 0 0 0 3px hsl(43 96% 56% / 0.15), 0 0 0 6px hsl(43 96% 56% / 0.05);
+  }
+
   .shimmer-border {
     position: relative;
   }
@@ -153,6 +226,17 @@
     background-size: 200% 100%;
     animation: shimmer 3s linear infinite;
     z-index: -1;
+  }
+
+  .whatsapp-pulse {
+    box-shadow: 0 0 0 0 hsl(142 70% 49% / 0.4);
+    animation: wa-pulse 2s infinite;
+  }
+
+  @keyframes wa-pulse {
+    0% { box-shadow: 0 0 0 0 hsl(142 70% 49% / 0.4); }
+    70% { box-shadow: 0 0 0 12px hsl(142 70% 49% / 0); }
+    100% { box-shadow: 0 0 0 0 hsl(142 70% 49% / 0); }
   }
 
   @keyframes shimmer {
@@ -168,5 +252,40 @@
   @keyframes pulse-glow {
     0%, 100% { box-shadow: 0 0 20px hsl(43 96% 56% / 0.1); }
     50% { box-shadow: 0 0 40px hsl(43 96% 56% / 0.3); }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { text-shadow: 0 0 10px hsl(30 100% 52% / 0.1); }
+    50% { text-shadow: 0 0 25px hsl(30 100% 52% / 0.3); }
+  }
+
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Nav link underline animation */
+  .nav-link-underline {
+    position: relative;
+  }
+  .nav-link-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, hsl(30 100% 52%), hsl(43 96% 56%));
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+  }
+  .nav-link-underline:hover::after {
+    width: 70%;
   }
 }
