@@ -51,16 +51,16 @@ const Downloads = () => {
             animate={{ opacity: 1, y: 0 }}
           >
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-xs font-semibold text-primary mb-4">
-              <FileText size={14} />
-              {lang === "hi" ? "डाउनलोड" : "Downloads"}
+              <BookOpen size={14} />
+              {lang === "hi" ? "दस्तावेज़" : "Documents"}
             </span>
             <h1 className="font-playfair text-3xl md:text-4xl font-bold text-foreground">
               {lang === "hi" ? "दस्तावेज़ और फ़ाइलें" : "Documents & Files"}
             </h1>
             <p className="text-muted-foreground mt-2 max-w-lg mx-auto text-sm">
               {lang === "hi"
-                ? "पाठ्यक्रम, टेम्पलेट और अन्य महत्वपूर्ण दस्तावेज़ डाउनलोड करें"
-                : "Download syllabus, templates, and other important documents"}
+                ? "पाठ्यक्रम, टेम्पलेट और अन्य महत्वपूर्ण दस्तावेज़ यहाँ देखें"
+                : "Browse syllabi, templates, and other important documents"}
             </p>
           </motion.div>
 
