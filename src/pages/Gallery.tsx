@@ -5,7 +5,6 @@ import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { useLang } from "@/lib/i18n";
 
-// Static fallback imports
 import eventMeeting from "@/assets/gallery/event-meeting.jpg";
 import eventAwards from "@/assets/gallery/event-awards.jpg";
 import eventGroup from "@/assets/gallery/event-group.jpg";
@@ -70,6 +69,7 @@ const Gallery = () => {
       <section className="hero-gradient text-white pt-28 pb-16 md:pt-36 md:pb-24 relative overflow-hidden">
         <div className="absolute inset-0 grain-overlay" />
         <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full border border-white/[0.03]" />
+        <div className="absolute bottom-10 -left-10 w-60 h-60 rounded-full border border-secondary/[0.05]" />
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             {tr.gallery.capturedMoments}
@@ -97,7 +97,9 @@ const Gallery = () => {
                 <motion.div key={i} className="relative group rounded-2xl overflow-hidden premium-shadow cursor-pointer card-hover aspect-[4/3]" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }} onClick={() => setLightbox(img)}>
                   <img src={img} alt={`${gallery.title} ${i + 1}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
                   <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/40 transition-colors duration-500 flex items-center justify-center">
-                    <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-lg" size={28} />
+                    <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100">
+                      <ZoomIn className="text-white drop-shadow-lg" size={22} />
+                    </div>
                   </div>
                 </motion.div>
               ))}
@@ -108,9 +110,9 @@ const Gallery = () => {
 
       <AnimatePresence>
         {lightbox && (
-          <motion.div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setLightbox(null)}>
-            <motion.img src={lightbox} alt="Gallery" className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl" initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} />
-            <button className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors" onClick={() => setLightbox(null)}>
+          <motion.div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setLightbox(null)}>
+            <motion.img src={lightbox} alt="Gallery" className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl ring-1 ring-white/10" initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} />
+            <button className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors" onClick={() => setLightbox(null)}>
               <X size={20} />
             </button>
           </motion.div>

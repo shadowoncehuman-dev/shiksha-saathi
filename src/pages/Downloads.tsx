@@ -43,27 +43,29 @@ const Downloads = () => {
 
   return (
     <Layout>
-      <section className="pt-24 pb-16 md:pt-28 md:pb-20">
-        <div className="container mx-auto px-4">
-          <motion.div
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-xs font-semibold text-primary mb-4">
-              <BookOpen size={14} />
-              {lang === "hi" ? "दस्तावेज़" : "Documents"}
-            </span>
-            <h1 className="font-playfair text-3xl md:text-4xl font-bold text-foreground">
-              {lang === "hi" ? "दस्तावेज़ और फ़ाइलें" : "Documents & Files"}
-            </h1>
-            <p className="text-muted-foreground mt-2 max-w-lg mx-auto text-sm">
-              {lang === "hi"
-                ? "पाठ्यक्रम, टेम्पलेट और अन्य महत्वपूर्ण दस्तावेज़ यहाँ देखें"
-                : "Browse syllabi, templates, and other important documents"}
-            </p>
+      {/* Hero */}
+      <section className="hero-gradient text-white pt-28 pb-16 md:pt-36 md:pb-24 relative overflow-hidden">
+        <div className="absolute inset-0 grain-overlay" />
+        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full border border-white/[0.03]" />
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <motion.div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.06] text-secondary text-xs font-semibold mb-6 border border-white/[0.08] luxury-border" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+            <BookOpen size={14} />
+            {lang === "hi" ? "दस्तावेज़" : "Documents"}
           </motion.div>
+          <motion.h1 className="font-playfair text-4xl md:text-5xl font-bold mb-4 text-shadow" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            {lang === "hi" ? "दस्तावेज़ और फ़ाइलें" : "Documents & Files"}
+          </motion.h1>
+          <motion.div className="section-divider mb-5" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.3 }} />
+          <motion.p className="text-white/40 max-w-md mx-auto text-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+            {lang === "hi"
+              ? "पाठ्यक्रम, टेम्पलेट और अन्य महत्वपूर्ण दस्तावेज़ यहाँ देखें"
+              : "Browse syllabi, templates, and other important documents"}
+          </motion.p>
+        </div>
+      </section>
 
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
           {loading ? (
             <div className="flex justify-center py-16">
               <Loader2 className="animate-spin text-primary" size={32} />
@@ -92,13 +94,13 @@ const Downloads = () => {
                     {files.map((pdf, i) => (
                       <motion.div
                         key={pdf.id}
-                        className="group bg-card rounded-2xl p-5 border border-border hover:border-primary/20 hover:shadow-lg transition-all duration-300"
+                        className="group bg-card rounded-2xl p-5 border border-border hover:border-secondary/20 premium-shadow card-hover"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: ci * 0.1 + i * 0.05 }}
                       >
                         <div className="flex items-start gap-4">
-                          <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
+                          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/5 flex items-center justify-center shrink-0 group-hover:from-primary/15 group-hover:to-secondary/10 transition-colors">
                             <FileDown size={20} className="text-primary" />
                           </div>
                           <div className="min-w-0 flex-1">
