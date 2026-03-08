@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FileText, Download, Loader2, FolderOpen, Eye, X } from "lucide-react";
+import { FileText, Download, Loader2, FolderOpen, Eye, BookOpen, FileDown, ArrowDownToLine } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { useLang } from "@/lib/i18n";
@@ -51,16 +51,16 @@ const Downloads = () => {
             animate={{ opacity: 1, y: 0 }}
           >
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-xs font-semibold text-primary mb-4">
-              <FileText size={14} />
-              {lang === "hi" ? "डाउनलोड" : "Downloads"}
+              <BookOpen size={14} />
+              {lang === "hi" ? "दस्तावेज़" : "Documents"}
             </span>
             <h1 className="font-playfair text-3xl md:text-4xl font-bold text-foreground">
               {lang === "hi" ? "दस्तावेज़ और फ़ाइलें" : "Documents & Files"}
             </h1>
             <p className="text-muted-foreground mt-2 max-w-lg mx-auto text-sm">
               {lang === "hi"
-                ? "पाठ्यक्रम, टेम्पलेट और अन्य महत्वपूर्ण दस्तावेज़ डाउनलोड करें"
-                : "Download syllabus, templates, and other important documents"}
+                ? "पाठ्यक्रम, टेम्पलेट और अन्य महत्वपूर्ण दस्तावेज़ यहाँ देखें"
+                : "Browse syllabi, templates, and other important documents"}
             </p>
           </motion.div>
 
@@ -98,8 +98,8 @@ const Downloads = () => {
                         transition={{ delay: ci * 0.1 + i * 0.05 }}
                       >
                         <div className="flex items-start gap-4">
-                          <div className="w-11 h-11 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
-                            <FileText size={20} className="text-destructive" />
+                          <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
+                            <FileDown size={20} className="text-primary" />
                           </div>
                           <div className="min-w-0 flex-1">
                             <h3 className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors truncate">
@@ -123,7 +123,7 @@ const Downloads = () => {
                                 download
                                 className="flex items-center gap-1.5 text-xs text-secondary font-medium hover:underline"
                               >
-                                <Download size={12} />
+                                <ArrowDownToLine size={12} />
                                 <span>{lang === "hi" ? "डाउनलोड" : "Download"}</span>
                               </a>
                             </div>
