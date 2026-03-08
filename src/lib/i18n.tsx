@@ -254,7 +254,7 @@ const t = {
       examDetails: "परीक्षा विवरण",
       register: "पंजीकरण",
       result: "परिणाम",
-      downloads: "डाउनलोड",
+      documents: "दस्तावेज़",
       team: "टीम",
       gallery: "गैलरी",
     },
