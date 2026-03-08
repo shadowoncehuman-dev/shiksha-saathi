@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FileText, Download, Loader2, FolderOpen, Eye, X } from "lucide-react";
+import { FileText, Download, Loader2, FolderOpen, Eye, BookOpen, FileDown, ArrowDownToLine } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { useLang } from "@/lib/i18n";
