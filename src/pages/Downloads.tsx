@@ -123,7 +123,7 @@ const Downloads = () => {
                                 download
                                 className="flex items-center gap-1.5 text-xs text-secondary font-medium hover:underline"
                               >
-                                <Download size={12} />
+                                <ArrowDownToLine size={12} />
                                 <span>{lang === "hi" ? "डाउनलोड" : "Download"}</span>
                               </a>
                             </div>
