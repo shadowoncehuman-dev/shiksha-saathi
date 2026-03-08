@@ -50,6 +50,10 @@ const Index = () => {
       {/* Hero */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0 hero-gradient" />
+        {/* Gradient mesh overlay */}
+        <div className="absolute inset-0 opacity-30" style={{
+          background: "radial-gradient(ellipse at 20% 50%, hsl(30 100% 52% / 0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, hsl(43 96% 56% / 0.06) 0%, transparent 50%), radial-gradient(ellipse at 50% 80%, hsl(222 67% 40% / 0.1) 0%, transparent 60%)"
+        }} />
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full border border-white/[0.03]" />
           <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full border border-white/[0.05]" />
@@ -62,11 +66,11 @@ const Index = () => {
 
         <div className="container mx-auto px-4 relative z-10 text-center pt-28 pb-20 md:pt-36 md:pb-32">
           <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
-            <motion.img src={logo} alt="Logo" className="w-20 h-20 md:w-24 md:h-24 mx-auto mb-8 rounded-full bg-white/95 p-1.5 shadow-2xl" style={{ animation: "pulse-glow 3s ease-in-out infinite" }} />
+            <motion.img src={logo} alt="Logo" className="w-20 h-20 md:w-24 md:h-24 mx-auto mb-8 rounded-full bg-white/95 p-1.5 shadow-2xl ring-4 ring-accent/10" style={{ animation: "pulse-glow 3s ease-in-out infinite" }} />
           </motion.div>
 
           <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.06] backdrop-blur-sm text-secondary text-xs font-semibold mb-8 border border-white/[0.08]">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.06] backdrop-blur-sm text-secondary text-xs font-semibold mb-8 border border-white/[0.08] luxury-border">
               <Sparkles size={14} />
               <span>{tr.hero.examBadge}: {EXAM_DATE}</span>
             </div>
@@ -85,13 +89,13 @@ const Index = () => {
           </motion.p>
 
           <motion.div className="flex flex-col sm:flex-row gap-4 justify-center" initial="hidden" animate="visible" variants={fadeUp} custom={5}>
-            <Button asChild size="lg" className="bg-secondary text-white hover:bg-secondary/90 font-semibold text-sm px-8 h-12 shadow-lg shadow-secondary/20 group rounded-xl">
+            <Button asChild size="lg" className="bg-secondary text-white hover:bg-secondary/90 font-semibold text-sm px-8 h-12 shadow-lg shadow-secondary/20 group rounded-xl hover:shadow-secondary/30 hover:shadow-xl transition-all">
               <Link to="/exam-details">
                 {tr.hero.viewExam}
                 <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold text-sm px-8 h-12 rounded-xl shadow-lg shadow-accent/20">
+            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold text-sm px-8 h-12 rounded-xl shadow-lg shadow-accent/20 hover:shadow-accent/30 hover:shadow-xl transition-all">
               <Link to="/register">{tr.hero.registerNow}</Link>
             </Button>
           </motion.div>
@@ -112,8 +116,8 @@ const Index = () => {
               { label: tr.stats.villages, value: 7, suffix: "+" },
               { label: tr.stats.students, value: 500, suffix: "+" },
             ].map((stat, i) => (
-              <motion.div key={stat.label} className={`py-8 md:py-10 text-center ${i < 3 ? "border-r border-border" : ""}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }}>
-                <p className="font-playfair text-3xl md:text-4xl font-bold text-primary">
+              <motion.div key={stat.label} className={`py-8 md:py-10 text-center relative ${i < 3 ? "border-r border-border" : ""}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }}>
+                <p className="font-playfair text-3xl md:text-4xl font-bold text-gradient">
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} />
                 </p>
                 <p className="text-xs text-muted-foreground mt-2 uppercase tracking-wider font-medium">{stat.label}</p>
@@ -138,7 +142,7 @@ const Index = () => {
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {EXAM_GROUPS.map((group, i) => (
-              <motion.div key={group.name} className="rounded-2xl overflow-hidden premium-shadow bg-card border border-border card-hover" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.6 }}>
+              <motion.div key={group.name} className="rounded-2xl overflow-hidden premium-card shimmer-border" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.6 }}>
                 <div className={`p-6 ${i === 0 ? 'hero-gradient' : 'bg-gradient-to-br from-secondary to-accent'} text-white`}>
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm">
@@ -159,7 +163,7 @@ const Index = () => {
                     <Calendar size={15} className="text-secondary" />
                     <span>{tr.index.date}: <span className="font-semibold text-foreground">{EXAM_DATE}</span></span>
                   </div>
-                  <Button asChild variant="outline" className="w-full group rounded-xl h-11 mt-2">
+                  <Button asChild variant="outline" className="w-full group rounded-xl h-11 mt-2 hover:border-secondary/30">
                     <Link to="/exam-details">
                       {tr.index.viewDetails}
                       <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
@@ -187,9 +191,10 @@ const Index = () => {
               { icon: Users, title: tr.index.inclusivity, desc: tr.index.inclusivityDesc },
               { icon: Shield, title: tr.index.integrity, desc: tr.index.integrityDesc },
             ].map((item, i) => (
-              <motion.div key={item.title} className="bg-card rounded-2xl p-8 text-center premium-shadow border border-border card-hover" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.6 }}>
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-secondary/10 to-accent/10 flex items-center justify-center mx-auto mb-6">
-                  <item.icon className="text-secondary" size={24} />
+              <motion.div key={item.title} className="bg-card rounded-2xl p-8 text-center premium-shadow border border-border card-hover group" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.6 }}>
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-secondary/10 to-accent/10 flex items-center justify-center mx-auto mb-6 group-hover:from-secondary/20 group-hover:to-accent/20 transition-all duration-500 relative">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-secondary/5 to-accent/5 blur-xl group-hover:blur-2xl transition-all" />
+                  <item.icon className="text-secondary relative z-10" size={24} />
                 </div>
                 <h3 className="font-playfair text-xl font-bold text-foreground mb-3">{item.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
@@ -216,10 +221,11 @@ const Index = () => {
               { img: galleryMeeting, title: "Meeting 2025" },
               { img: galleryShields, title: "Shields 2024" },
             ].map((item, i) => (
-              <motion.div key={item.title} className="relative rounded-2xl overflow-hidden group cursor-pointer card-hover aspect-[4/3]" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.6 }}>
+              <motion.div key={item.title} className="relative rounded-2xl overflow-hidden group cursor-pointer card-hover aspect-[4/3] premium-shadow" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.6 }}>
                 <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent" />
-                <div className="absolute bottom-5 left-5">
+                <div className="absolute bottom-5 left-5 right-5">
+                  <div className="w-8 h-[2px] bg-gradient-to-r from-secondary to-accent mb-2 rounded-full" />
                   <p className="text-white font-playfair text-lg font-bold">{item.title}</p>
                 </div>
               </motion.div>
@@ -227,7 +233,7 @@ const Index = () => {
           </div>
 
           <div className="text-center">
-            <Button asChild variant="outline" size="lg" className="group rounded-xl h-12">
+            <Button asChild variant="outline" size="lg" className="group rounded-xl h-12 hover:border-secondary/30">
               <Link to="/gallery">
                 {tr.index.viewFullGallery}
                 <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
@@ -245,16 +251,19 @@ const Index = () => {
         <div className="absolute inset-0 grain-overlay" />
         <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full border border-white/[0.03]" />
         <div className="absolute bottom-10 -left-10 w-60 h-60 rounded-full border border-secondary/[0.05]" />
+        {/* Decorative ornaments */}
+        <div className="absolute top-1/2 left-10 w-20 h-[1px] bg-gradient-to-r from-secondary/20 to-transparent hidden md:block" />
+        <div className="absolute top-1/2 right-10 w-20 h-[1px] bg-gradient-to-l from-secondary/20 to-transparent hidden md:block" />
 
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-8 luxury-border">
               <GraduationCap size={32} className="text-secondary" />
             </div>
             <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-4 text-shadow">{tr.index.readyToRegister}</h2>
             <p className="text-white/40 max-w-lg mx-auto mb-10 text-sm leading-relaxed">{tr.index.readyDesc}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-10 h-12 shadow-lg shadow-accent/20 rounded-xl">
+              <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-10 h-12 shadow-lg shadow-accent/20 rounded-xl hover:shadow-accent/30 hover:shadow-xl transition-all">
                 <Link to="/register">{tr.hero.registerNow}</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-accent/40 text-accent hover:bg-accent/10 backdrop-blur-sm h-12 rounded-xl font-semibold">
