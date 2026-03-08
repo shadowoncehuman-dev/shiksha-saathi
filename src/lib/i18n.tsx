@@ -10,7 +10,7 @@ const t = {
       examDetails: "Exam Details",
       register: "Register",
       result: "Result",
-      downloads: "Downloads",
+      documents: "Documents",
       team: "Team",
       gallery: "Gallery",
     },
