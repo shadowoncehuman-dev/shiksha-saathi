@@ -195,19 +195,62 @@
   }
 
   .premium-card {
-    @apply bg-card rounded-2xl border border-border card-hover;
+    @apply bg-card rounded-2xl border border-border card-hover relative;
     box-shadow:
       0 1px 2px hsl(222 67% 16% / 0.06),
       0 4px 8px hsl(222 67% 16% / 0.04),
       0 12px 24px hsl(222 67% 16% / 0.03);
+    background-image: linear-gradient(
+      to bottom right,
+      hsl(var(--card)),
+      hsl(var(--card)),
+      hsl(var(--muted) / 0.3)
+    );
   }
 
   .premium-card:hover {
     box-shadow:
       0 4px 8px hsl(222 67% 16% / 0.08),
       0 8px 16px hsl(222 67% 16% / 0.06),
-      0 20px 40px hsl(222 67% 16% / 0.05),
-      0 0 0 1px hsl(30 100% 52% / 0.1);
+      0 24px 48px hsl(222 67% 16% / 0.06),
+      0 0 0 1px hsl(30 100% 52% / 0.15);
+    border-color: hsl(var(--border));
+  }
+
+  .dark .premium-card {
+    background-image: linear-gradient(
+      145deg,
+      hsl(var(--card)),
+      hsl(var(--card)),
+      hsl(222 47% 8%)
+    );
+    box-shadow:
+      0 1px 2px hsl(0 0% 0% / 0.2),
+      0 4px 12px hsl(222 67% 6% / 0.15),
+      0 0 0 1px hsl(222 20% 15% / 0.3),
+      inset 0 1px 0 hsl(222 20% 22% / 0.3);
+  }
+  .dark .premium-card:hover {
+    box-shadow:
+      0 4px 8px hsl(0 0% 0% / 0.3),
+      0 12px 24px hsl(222 67% 6% / 0.2),
+      0 0 0 1px hsl(30 100% 52% / 0.12),
+      inset 0 1px 0 hsl(222 20% 25% / 0.4);
+  }
+
+  .card-inner-glow {
+    position: relative;
+    overflow: hidden;
+  }
+  .card-inner-glow::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--border)), transparent);
+    opacity: 0.5;
   }
 
   .gold-frame {
