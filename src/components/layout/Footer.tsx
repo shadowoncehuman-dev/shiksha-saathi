@@ -19,8 +19,8 @@ const Footer = () => {
               <img src={logo} alt="Logo" className="w-11 h-11 rounded-full object-contain bg-white p-0.5 ring-2 ring-accent/20" />
               <h3 className="font-playfair text-lg font-bold text-white">BBDBASS</h3>
             </div>
-            <p className="text-white/40 text-sm leading-relaxed max-w-sm mb-6">{tr.footer.tagline}</p>
-            <p className="text-xs text-white/20">{tr.footer.vision}</p>
+            <p className="text-white/60 text-sm leading-relaxed max-w-sm mb-6">{tr.footer.tagline}</p>
+            <p className="text-xs text-white/40">{tr.footer.vision}</p>
           </div>
 
           {/* Links */}
