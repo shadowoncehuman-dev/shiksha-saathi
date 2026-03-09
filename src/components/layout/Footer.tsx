@@ -59,7 +59,7 @@ const Footer = () => {
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-secondary/10 transition-colors">
                   <Phone size={14} className="text-secondary" />
                 </div>
-                <a href={`tel:${CONTACT.phone}`} className="text-white/40 hover:text-secondary transition-colors text-sm">{CONTACT.phone}</a>
+                <a href={`tel:${CONTACT.phone}`} className="text-white/60 hover:text-secondary transition-colors text-sm">{CONTACT.phone}</a>
               </li>
               <li className="flex items-center gap-3 group">
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-secondary/10 transition-colors">
