@@ -6,6 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, UserPlus, AlertTriangle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
@@ -136,6 +137,7 @@ const Register = () => {
 
   return (
     <Layout>
+      <SEOHead title="Register for Exam — BBDBASS" description="Register for the Dr. B.R. Ambedkar annual examination. Fill the form with student details to get your roll number." path="/register" />
       <section className="pt-28 pb-16 md:pt-36 md:pb-24">
         <div className="container mx-auto px-4 max-w-lg">
           <motion.div className="text-center mb-10" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

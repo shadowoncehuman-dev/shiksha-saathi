@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, Loader2, Award } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -95,6 +96,7 @@ const ResultPage = () => {
 
   return (
     <Layout>
+      <SEOHead title="Check Results — BBDBASS" description="Search and view your examination results by roll number or name." path="/result" />
       <section className="pt-28 pb-16 md:pt-36 md:pb-24">
         <div className="container mx-auto px-4 max-w-xl">
           <motion.div className="text-center mb-10" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

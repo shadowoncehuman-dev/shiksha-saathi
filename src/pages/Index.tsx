@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { BookOpen, Clock, Calendar, Award, Users, Shield, ArrowRight, ChevronDown, GraduationCap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/SEOHead";
 import { ORG_NAME, EXAM_DATE, EXAM_GROUPS } from "@/lib/constants";
 import { useLang } from "@/lib/i18n";
 import logo from "@/assets/logo.png";
@@ -47,6 +48,11 @@ const Index = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title="BBDBASS — Empowering Education Through Excellence"
+        description="Official examination portal of BBDBASS — Register for exams, download admit cards, check results. Bharat Ratan Baba Sahib Dr. Bhimrao Ambedkar Ji Shiksha Sudhar Samiti."
+        path="/"
+      />
       {/* Hero */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0 hero-gradient" />

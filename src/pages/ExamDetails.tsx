@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { BookOpen, Clock, Calendar, GraduationCap, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/SEOHead";
 import { EXAM_DATE } from "@/lib/constants";
 import { useLang } from "@/lib/i18n";
 
@@ -42,6 +43,7 @@ const ExamDetails = () => {
 
   return (
     <Layout>
+      <SEOHead title="Exam Details — BBDBASS" description="View examination groups, schedules, topics and timings for the Dr. B.R. Ambedkar annual examination." path="/exam-details" />
       {/* Hero */}
       <section className="hero-gradient text-white pt-28 pb-16 md:pt-36 md:pb-24 relative overflow-hidden">
         <div className="absolute inset-0 grain-overlay" />

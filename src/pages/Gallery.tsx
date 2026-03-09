@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ZoomIn, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { useLang } from "@/lib/i18n";
 
@@ -65,6 +66,7 @@ const Gallery = () => {
 
   return (
     <Layout>
+      <SEOHead title="Gallery — BBDBASS" description="Browse photos from BBDBASS events, meetings, and award ceremonies." path="/gallery" />
       {/* Hero */}
       <section className="hero-gradient text-white pt-28 pb-16 md:pt-36 md:pb-24 relative overflow-hidden">
         <div className="absolute inset-0 grain-overlay" />

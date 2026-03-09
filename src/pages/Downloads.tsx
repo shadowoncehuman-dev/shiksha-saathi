@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FileText, Download, Loader2, FolderOpen, Eye, BookOpen, FileDown, ArrowDownToLine } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { useLang } from "@/lib/i18n";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
@@ -43,6 +44,7 @@ const Downloads = () => {
 
   return (
     <Layout>
+      <SEOHead title="Documents — BBDBASS" description="Download syllabi, templates, and important documents for the BBDBASS examination." path="/downloads" />
       {/* Hero */}
       <section className="hero-gradient text-white pt-28 pb-16 md:pt-36 md:pb-24 relative overflow-hidden">
         <div className="absolute inset-0 grain-overlay" />
