@@ -46,6 +46,26 @@ const fadeUp = {
 
 const Index = () => {
   const { tr } = useLang();
+  const [galleryImages, setGalleryImages] = useState<{ img: string; title: string }[]>([]);
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      const { data } = await supabase
+        .from("gallery_images")
+        .select("title, image_url")
+        .order("sort_order")
+        .limit(4);
+      if (data && data.length > 0) {
+        setGalleryImages(data.map(d => ({ img: d.image_url, title: d.title })));
+      } else {
+        setGalleryImages([
+          { img: galleryMeeting, title: "Meeting 2025" },
+          { img: galleryShields, title: "Shields 2024" },
+        ]);
+      }
+    };
+    fetchGallery();
+  }, []);
 
   return (
     <Layout>
