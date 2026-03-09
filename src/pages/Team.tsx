@@ -96,7 +96,8 @@ const Team = () => {
             {leaders.map((member, i) => {
               const Icon = roleIcon(member.role);
               return (
-                <motion.div key={member.name} className="bg-card rounded-2xl overflow-hidden premium-shadow border border-border card-hover group" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.6 }}>
+                <motion.div key={member.name} className="bg-card rounded-2xl overflow-hidden premium-shadow border border-border card-hover group card-inner-glow relative" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.6 }}
+                  whileHover={{ y: -6, transition: { duration: 0.3 } }}>
                   <div className="h-1 bg-gradient-to-r from-secondary to-accent" />
                   <div className="p-6 text-center">
                     <div className="relative w-20 h-20 mx-auto mb-4">
@@ -147,7 +148,8 @@ const Team = () => {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
               {regularMembers.map((member, i) => (
-                <motion.div key={member.name} className="bg-card rounded-xl p-5 flex items-start gap-4 premium-shadow border border-border card-hover group" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.5 }}>
+                <motion.div key={member.name} className="bg-card rounded-xl p-5 flex items-start gap-4 premium-shadow border border-border card-hover group card-inner-glow relative overflow-hidden" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.5 }}
+                  whileHover={{ y: -4, transition: { duration: 0.3 } }}>
                   {member.photo ? (
                     <img src={member.photo} alt={member.name} className="w-14 h-14 rounded-full object-cover border border-border shrink-0 group-hover:border-secondary/50 transition-colors gold-frame" />
                   ) : (

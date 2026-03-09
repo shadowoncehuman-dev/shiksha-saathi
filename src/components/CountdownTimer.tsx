@@ -49,7 +49,7 @@ const CountdownTimer = () => {
           <div className="flex justify-center items-center gap-2 md:gap-4">
             {units.map((unit, i) => (
               <div key={unit.label} className="flex items-center gap-2 md:gap-4">
-                <div className="glass-morphism rounded-2xl p-4 md:p-6 min-w-[70px] md:min-w-[110px] luxury-border">
+                <div className="glass-morphism rounded-2xl p-4 md:p-6 min-w-[70px] md:min-w-[110px] luxury-border card-inner-glow relative overflow-hidden hover:scale-105 transition-transform duration-300">
                   <motion.p
                     key={unit.value}
                     className="font-playfair text-3xl md:text-5xl font-bold text-gradient"

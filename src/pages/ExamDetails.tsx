@@ -69,11 +69,13 @@ const ExamDetails = () => {
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {groups.map((group, i) => (
-              <motion.div key={group.name} className="bg-card rounded-2xl overflow-hidden premium-shadow border border-border card-hover shimmer-border" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.6 }}>
+              <motion.div key={group.name} className="bg-card rounded-2xl overflow-hidden premium-card shimmer-border card-inner-glow" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.6 }}
+                whileHover={{ y: -6, transition: { duration: 0.3 } }}>
                 {/* Header */}
-                <div className={`${group.gradient} p-6 text-white`}>
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm">
+                <div className={`${group.gradient} p-6 text-white relative overflow-hidden`}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent" />
+                  <div className="flex items-center gap-4 relative z-10">
+                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm border border-white/10">
                       <BookOpen size={22} />
                     </div>
                     <div>

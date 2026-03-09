@@ -142,10 +142,12 @@ const Index = () => {
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {EXAM_GROUPS.map((group, i) => (
-              <motion.div key={group.name} className="rounded-2xl overflow-hidden premium-card shimmer-border" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.6 }}>
-                <div className={`p-6 ${i === 0 ? 'hero-gradient' : 'bg-gradient-to-br from-secondary to-accent'} text-white`}>
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm">
+              <motion.div key={group.name} className="rounded-2xl overflow-hidden premium-card shimmer-border card-inner-glow" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.6 }}
+                whileHover={{ y: -6, transition: { duration: 0.3 } }}>
+                <div className={`p-6 ${i === 0 ? 'hero-gradient' : 'bg-gradient-to-br from-secondary to-accent'} text-white relative overflow-hidden`}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent" />
+                  <div className="flex items-center gap-4 relative z-10">
+                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm border border-white/10">
                       <BookOpen size={22} />
                     </div>
                     <div>
@@ -156,14 +158,18 @@ const Index = () => {
                 </div>
                 <div className="p-6 space-y-4">
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <Clock size={15} className="text-secondary" />
+                    <div className="w-8 h-8 rounded-lg bg-secondary/5 flex items-center justify-center">
+                      <Clock size={15} className="text-secondary" />
+                    </div>
                     <span>{tr.index.duration}: <span className="font-semibold text-foreground">{group.duration}</span></span>
                   </div>
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <Calendar size={15} className="text-secondary" />
+                    <div className="w-8 h-8 rounded-lg bg-secondary/5 flex items-center justify-center">
+                      <Calendar size={15} className="text-secondary" />
+                    </div>
                     <span>{tr.index.date}: <span className="font-semibold text-foreground">{EXAM_DATE}</span></span>
                   </div>
-                  <Button asChild variant="outline" className="w-full group rounded-xl h-11 mt-2 hover:border-secondary/30">
+                  <Button asChild variant="outline" className="w-full group rounded-xl h-11 mt-2 hover:border-secondary/30 hover:bg-secondary/5 transition-all">
                     <Link to="/exam-details">
                       {tr.index.viewDetails}
                       <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
@@ -191,8 +197,9 @@ const Index = () => {
               { icon: Users, title: tr.index.inclusivity, desc: tr.index.inclusivityDesc },
               { icon: Shield, title: tr.index.integrity, desc: tr.index.integrityDesc },
             ].map((item, i) => (
-              <motion.div key={item.title} className="bg-card rounded-2xl p-8 text-center premium-shadow border border-border card-hover group" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.6 }}>
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-secondary/10 to-accent/10 flex items-center justify-center mx-auto mb-6 group-hover:from-secondary/20 group-hover:to-accent/20 transition-all duration-500 relative">
+              <motion.div key={item.title} className="bg-card rounded-2xl p-8 text-center premium-shadow border border-border card-hover group card-inner-glow" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.6 }}
+                whileHover={{ y: -6, transition: { duration: 0.3 } }}>
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-secondary/10 to-accent/10 flex items-center justify-center mx-auto mb-6 group-hover:from-secondary/20 group-hover:to-accent/20 transition-all duration-500 relative border border-secondary/10">
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-secondary/5 to-accent/5 blur-xl group-hover:blur-2xl transition-all" />
                   <item.icon className="text-secondary relative z-10" size={24} />
                 </div>
