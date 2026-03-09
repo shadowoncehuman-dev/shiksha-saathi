@@ -250,12 +250,9 @@ const Index = () => {
             <div className="section-divider" />
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
-            {[
-              { img: galleryMeeting, title: "Meeting 2025" },
-              { img: galleryShields, title: "Shields 2024" },
-            ].map((item, i) => (
-              <motion.div key={item.title} className="relative rounded-2xl overflow-hidden group cursor-pointer card-hover aspect-[4/3] premium-shadow" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.6 }}>
+          <div className={`grid ${galleryImages.length > 2 ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2'} gap-6 max-w-5xl mx-auto mb-12`}>
+            {galleryImages.map((item, i) => (
+              <motion.div key={item.title + i} className="relative rounded-2xl overflow-hidden group cursor-pointer card-hover aspect-[4/3] premium-shadow" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.6 }}>
                 <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent" />
                 <div className="absolute bottom-5 left-5 right-5">
