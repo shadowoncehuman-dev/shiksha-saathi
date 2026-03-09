@@ -48,6 +48,11 @@ const Index = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title="BBDBASS — Empowering Education Through Excellence"
+        description="Official examination portal of BBDBASS — Register for exams, download admit cards, check results. Bharat Ratan Baba Sahib Dr. Bhimrao Ambedkar Ji Shiksha Sudhar Samiti."
+        path="/"
+      />
       {/* Hero */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0 hero-gradient" />

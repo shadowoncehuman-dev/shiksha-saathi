@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Phone, User, Briefcase, Crown, Shield, Star, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/SEOHead";
 import { TEAM_MEMBERS } from "@/lib/team-data";
 import { supabase } from "@/integrations/supabase/client";
 import { useLang } from "@/lib/i18n";
