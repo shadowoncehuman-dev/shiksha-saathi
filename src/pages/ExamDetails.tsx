@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { BookOpen, Clock, Calendar, GraduationCap, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/SEOHead";
 import { EXAM_DATE } from "@/lib/constants";
 import { useLang } from "@/lib/i18n";
 
