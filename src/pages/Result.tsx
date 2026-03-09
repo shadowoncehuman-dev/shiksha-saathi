@@ -96,6 +96,7 @@ const ResultPage = () => {
 
   return (
     <Layout>
+      <SEOHead title="Check Results — BBDBASS" description="Search and view your examination results by roll number or name." path="/result" />
       <section className="pt-28 pb-16 md:pt-36 md:pb-24">
         <div className="container mx-auto px-4 max-w-xl">
           <motion.div className="text-center mb-10" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

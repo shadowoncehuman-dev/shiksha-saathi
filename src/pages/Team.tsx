@@ -65,6 +65,7 @@ const Team = () => {
 
   return (
     <Layout>
+      <SEOHead title="Our Team — BBDBASS" description="Meet the dedicated leadership and members of BBDBASS working towards educational excellence." path="/team" />
       {/* Hero */}
       <section className="hero-gradient text-white pt-28 pb-16 md:pt-36 md:pb-24 relative overflow-hidden">
         <div className="absolute inset-0 grain-overlay" />
