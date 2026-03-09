@@ -19,8 +19,8 @@ const Footer = () => {
               <img src={logo} alt="Logo" className="w-11 h-11 rounded-full object-contain bg-white p-0.5 ring-2 ring-accent/20" />
               <h3 className="font-playfair text-lg font-bold text-white">BBDBASS</h3>
             </div>
-            <p className="text-white/40 text-sm leading-relaxed max-w-sm mb-6">{tr.footer.tagline}</p>
-            <p className="text-xs text-white/20">{tr.footer.vision}</p>
+            <p className="text-white/60 text-sm leading-relaxed max-w-sm mb-6">{tr.footer.tagline}</p>
+            <p className="text-xs text-white/40">{tr.footer.vision}</p>
           </div>
 
           {/* Links */}
@@ -36,7 +36,7 @@ const Footer = () => {
                 { label: tr.footer.links.gallery, path: "/gallery" },
               ].map(link => (
                 <li key={link.path}>
-                  <Link to={link.path} className="text-white/40 hover:text-secondary transition-colors duration-300 flex items-center gap-1.5 group text-sm">
+                  <Link to={link.path} className="text-white/60 hover:text-secondary transition-colors duration-300 flex items-center gap-1.5 group text-sm">
                     {link.label}
                     <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </Link>
@@ -53,19 +53,19 @@ const Footer = () => {
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-secondary/10 transition-colors">
                   <MapPin size={14} className="text-secondary" />
                 </div>
-                <span className="text-white/40 text-sm">{CONTACT.office}</span>
+                <span className="text-white/60 text-sm">{CONTACT.office}</span>
               </li>
               <li className="flex items-center gap-3 group">
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-secondary/10 transition-colors">
                   <Phone size={14} className="text-secondary" />
                 </div>
-                <a href={`tel:${CONTACT.phone}`} className="text-white/40 hover:text-secondary transition-colors text-sm">{CONTACT.phone}</a>
+                <a href={`tel:${CONTACT.phone}`} className="text-white/60 hover:text-secondary transition-colors text-sm">{CONTACT.phone}</a>
               </li>
               <li className="flex items-center gap-3 group">
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-secondary/10 transition-colors">
                   <Mail size={14} className="text-secondary" />
                 </div>
-                <a href={`mailto:${CONTACT.email}`} className="text-white/40 hover:text-secondary transition-colors break-all text-sm">{CONTACT.email}</a>
+                <a href={`mailto:${CONTACT.email}`} className="text-white/60 hover:text-secondary transition-colors break-all text-sm">{CONTACT.email}</a>
               </li>
             </ul>
           </div>
@@ -81,8 +81,8 @@ const Footer = () => {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-3">
-          <p className="text-xs text-white/20">© 2026 {ORG_NAME}. {tr.footer.allRights}</p>
-          <p className="text-xs text-white/20">{tr.footer.builtWith}</p>
+          <p className="text-xs text-white/40">© 2026 {ORG_NAME}. {tr.footer.allRights}</p>
+          <p className="text-xs text-white/40">{tr.footer.builtWith}</p>
         </div>
       </div>
     </footer>
