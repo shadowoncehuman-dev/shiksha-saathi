@@ -65,7 +65,7 @@ const Footer = () => {
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-secondary/10 transition-colors">
                   <Mail size={14} className="text-secondary" />
                 </div>
-                <a href={`mailto:${CONTACT.email}`} className="text-white/40 hover:text-secondary transition-colors break-all text-sm">{CONTACT.email}</a>
+                <a href={`mailto:${CONTACT.email}`} className="text-white/60 hover:text-secondary transition-colors break-all text-sm">{CONTACT.email}</a>
               </li>
             </ul>
           </div>
