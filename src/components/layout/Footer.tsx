@@ -36,7 +36,7 @@ const Footer = () => {
                 { label: tr.footer.links.gallery, path: "/gallery" },
               ].map(link => (
                 <li key={link.path}>
-                  <Link to={link.path} className="text-white/40 hover:text-secondary transition-colors duration-300 flex items-center gap-1.5 group text-sm">
+                  <Link to={link.path} className="text-white/60 hover:text-secondary transition-colors duration-300 flex items-center gap-1.5 group text-sm">
                     {link.label}
                     <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </Link>
