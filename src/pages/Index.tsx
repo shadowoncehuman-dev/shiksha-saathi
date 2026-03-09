@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { BookOpen, Clock, Calendar, Award, Users, Shield, ArrowRight, ChevronDown, GraduationCap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
+import SEOHead from "@/components/SEOHead";
 import { ORG_NAME, EXAM_DATE, EXAM_GROUPS } from "@/lib/constants";
 import { useLang } from "@/lib/i18n";
 import logo from "@/assets/logo.png";
