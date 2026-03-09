@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 
 const SITE_URL = "https://shiksha-suvidha-portal.lovable.app";
-const OG_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/ejWD4Waj80Tlw3r5HM2OGAo0k8J3/social-images/social-1772251122129-8bfd800a-974e-4a74-a68e-70c2b4d83c2b.webp";
+const OG_IMAGE = "https://shiksha-suvidha-portal.lovable.app/og-image.png";
 
 interface SEOHeadProps {
   title?: string;
