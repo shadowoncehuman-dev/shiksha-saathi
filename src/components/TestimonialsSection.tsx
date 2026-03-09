@@ -41,7 +41,7 @@ const TestimonialsSection = () => {
           <div className="flex gap-6">
             {tr.testimonials.items.map((item: { name: string; role: string; text: string }, i: number) => (
               <div key={i} className="flex-none w-[300px] md:w-[380px]">
-                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border h-full relative overflow-hidden group card-hover">
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border h-full relative overflow-hidden group card-hover card-inner-glow hover:-translate-y-1 transition-transform duration-300">
                   {/* Gold left accent */}
                   <div className="absolute left-0 top-4 bottom-4 w-[3px] rounded-full bg-gradient-to-b from-secondary to-accent opacity-40 group-hover:opacity-100 transition-opacity duration-500" />
 

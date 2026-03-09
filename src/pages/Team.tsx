@@ -148,7 +148,8 @@ const Team = () => {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
               {regularMembers.map((member, i) => (
-                <motion.div key={member.name} className="bg-card rounded-xl p-5 flex items-start gap-4 premium-shadow border border-border card-hover group" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.5 }}>
+                <motion.div key={member.name} className="bg-card rounded-xl p-5 flex items-start gap-4 premium-shadow border border-border card-hover group card-inner-glow relative overflow-hidden" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.5 }}
+                  whileHover={{ y: -4, transition: { duration: 0.3 } }}>
                   {member.photo ? (
                     <img src={member.photo} alt={member.name} className="w-14 h-14 rounded-full object-cover border border-border shrink-0 group-hover:border-secondary/50 transition-colors gold-frame" />
                   ) : (

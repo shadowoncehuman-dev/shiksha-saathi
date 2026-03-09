@@ -25,7 +25,7 @@ const FAQSection = () => {
         </motion.div>
 
         <motion.div
-          className="bg-card rounded-2xl premium-shadow border border-border p-6 md:p-8"
+          className="bg-card rounded-2xl premium-shadow border border-border p-6 md:p-8 card-inner-glow relative overflow-hidden"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

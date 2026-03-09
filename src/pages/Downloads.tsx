@@ -94,10 +94,11 @@ const Downloads = () => {
                     {files.map((pdf, i) => (
                       <motion.div
                         key={pdf.id}
-                        className="group bg-card rounded-2xl p-5 border border-border hover:border-secondary/20 premium-shadow card-hover"
+                        className="group bg-card rounded-2xl p-5 border border-border hover:border-secondary/20 premium-shadow card-hover card-inner-glow relative overflow-hidden"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: ci * 0.1 + i * 0.05 }}
+                        whileHover={{ y: -4, transition: { duration: 0.3 } }}
                       >
                         <div className="flex items-start gap-4">
                           <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/5 flex items-center justify-center shrink-0 group-hover:from-primary/15 group-hover:to-secondary/10 transition-colors">

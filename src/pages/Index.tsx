@@ -197,8 +197,9 @@ const Index = () => {
               { icon: Users, title: tr.index.inclusivity, desc: tr.index.inclusivityDesc },
               { icon: Shield, title: tr.index.integrity, desc: tr.index.integrityDesc },
             ].map((item, i) => (
-              <motion.div key={item.title} className="bg-card rounded-2xl p-8 text-center premium-shadow border border-border card-hover group" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.6 }}>
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-secondary/10 to-accent/10 flex items-center justify-center mx-auto mb-6 group-hover:from-secondary/20 group-hover:to-accent/20 transition-all duration-500 relative">
+              <motion.div key={item.title} className="bg-card rounded-2xl p-8 text-center premium-shadow border border-border card-hover group card-inner-glow" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.6 }}
+                whileHover={{ y: -6, transition: { duration: 0.3 } }}>
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-secondary/10 to-accent/10 flex items-center justify-center mx-auto mb-6 group-hover:from-secondary/20 group-hover:to-accent/20 transition-all duration-500 relative border border-secondary/10">
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-secondary/5 to-accent/5 blur-xl group-hover:blur-2xl transition-all" />
                   <item.icon className="text-secondary relative z-10" size={24} />
                 </div>
