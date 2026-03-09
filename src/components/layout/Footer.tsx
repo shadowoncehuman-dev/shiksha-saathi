@@ -53,7 +53,7 @@ const Footer = () => {
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-secondary/10 transition-colors">
                   <MapPin size={14} className="text-secondary" />
                 </div>
-                <span className="text-white/40 text-sm">{CONTACT.office}</span>
+                <span className="text-white/60 text-sm">{CONTACT.office}</span>
               </li>
               <li className="flex items-center gap-3 group">
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-secondary/10 transition-colors">
