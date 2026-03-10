@@ -25,6 +25,7 @@ const Header = () => {
     { label: tr.nav.result, path: "/result" },
     { label: tr.nav.team, path: "/team" },
     { label: tr.nav.gallery, path: "/gallery" },
+    { label: "Winners", path: "/winners" },
     { label: tr.nav.documents, path: "/downloads" },
   ];
 
