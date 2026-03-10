@@ -239,6 +239,48 @@ export type Database = {
         }
         Relationships: []
       }
+      winners: {
+        Row: {
+          class: number
+          created_at: string
+          father_name: string
+          group_name: string
+          id: string
+          name: string
+          percentage: number
+          photo_url: string | null
+          rank: number
+          roll_number: string
+          year: number
+        }
+        Insert: {
+          class: number
+          created_at?: string
+          father_name?: string
+          group_name?: string
+          id?: string
+          name: string
+          percentage?: number
+          photo_url?: string | null
+          rank: number
+          roll_number?: string
+          year: number
+        }
+        Update: {
+          class?: number
+          created_at?: string
+          father_name?: string
+          group_name?: string
+          id?: string
+          name?: string
+          percentage?: number
+          photo_url?: string | null
+          rank?: number
+          roll_number?: string
+          year?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
