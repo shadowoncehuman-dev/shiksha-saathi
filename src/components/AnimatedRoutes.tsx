@@ -11,6 +11,7 @@ import Team from "@/pages/Team";
 import Gallery from "@/pages/Gallery";
 import ExamDetails from "@/pages/ExamDetails";
 import Downloads from "@/pages/Downloads";
+import Winners from "@/pages/Winners";
 import NotFound from "@/pages/NotFound";
 import Forbidden from "@/pages/Forbidden";
 import ServerError from "@/pages/ServerError";
