@@ -25,34 +25,35 @@ serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Find the smallest available roll number for this class
-    const { data: existingRolls, error: rollError } = await supabase
-      .from("registrations")
-      .select("roll_number")
-      .ilike("roll_number", `${student_class}%`)
-      .order("roll_number");
+    // Atomically increment the counter
+    const { data, error } = await supabase
+      .from("roll_counters")
+      .select("last_number")
+      .eq("class", student_class)
+      .single();
 
-    if (rollError) {
-      return new Response(JSON.stringify({ error: "Failed to check existing roll numbers" }), {
+    if (error || !data) {
+      return new Response(JSON.stringify({ error: "Counter not found" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Extract numbers from existing roll numbers
-    const usedNumbers = new Set<number>();
-    existingRolls?.forEach((row: any) => {
-      const num = parseInt(row.roll_number.substring(1));
-      if (!isNaN(num)) usedNumbers.add(num);
-    });
+    const newNumber = data.last_number + 1;
+    const { error: updateError } = await supabase
+      .from("roll_counters")
+      .update({ last_number: newNumber })
+      .eq("class", student_class)
+      .eq("last_number", data.last_number); // Optimistic lock
 
-    // Find the smallest available number
-    let rollNumber = 1;
-    while (usedNumbers.has(rollNumber)) {
-      rollNumber++;
+    if (updateError) {
+      return new Response(JSON.stringify({ error: "Failed to update counter" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    const roll_number = `${student_class}${String(rollNumber).padStart(3, "0")}`;
+    const roll_number = `${student_class}${String(newNumber).padStart(3, "0")}`;
 
     return new Response(JSON.stringify({ roll_number }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

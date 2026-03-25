@@ -51,10 +51,6 @@ const t = {
       readyToRegister: "Ready to Register?",
       readyDesc: "Join thousands of students in the Dr. B.R. Ambedkar examination. Registration is quick and easy.",
       meetTeam: "Meet Our Team",
-      achievers: "Achievers",
-      previousWinners: "Previous Year Winners",
-      winnersDesc: "Celebrating the outstanding achievers who topped our examinations year after year.",
-      viewAllWinners: "View All Winners",
     },
     // Countdown
     countdown: {
@@ -299,10 +295,6 @@ const t = {
       readyToRegister: "पंजीकरण के लिए तैयार हैं?",
       readyDesc: "डॉ. बी.आर. अम्बेडकर परीक्षा में हजारों छात्रों के साथ जुड़ें। पंजीकरण त्वरित और आसान है।",
       meetTeam: "हमारी टीम से मिलें",
-      achievers: "उपलब्धकर्ता",
-      previousWinners: "पिछले वर्ष के विजेता",
-      winnersDesc: "हमारी परीक्षाओं में वर्ष दर वर्ष शीर्ष स्थान प्राप्त करने वाले उत्कृष्ट उपलब्धकर्ताओं का जश्न मनाना।",
-      viewAllWinners: "सभी विजेताओं को देखें",
     },
     // Countdown
     countdown: {
