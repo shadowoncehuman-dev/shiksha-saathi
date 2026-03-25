@@ -15,6 +15,19 @@ import CountdownTimer from "@/components/CountdownTimer";
 import FAQSection from "@/components/FAQSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 
+type Winner = {
+  id: string;
+  year: number;
+  rank: number;
+  name: string;
+  father_name: string;
+  class: number;
+  group_name: string;
+  roll_number: string;
+  percentage: number;
+  photo_url: string | null;
+};
+
 const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: string }) => {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
@@ -47,6 +60,7 @@ const fadeUp = {
 const Index = () => {
   const { tr } = useLang();
   const [galleryImages, setGalleryImages] = useState<{ img: string; title: string }[]>([]);
+  const [winners, setWinners] = useState<Winner[]>([]);
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -65,6 +79,19 @@ const Index = () => {
       }
     };
     fetchGallery();
+  }, []);
+
+  useEffect(() => {
+    const fetchWinners = async () => {
+      const { data } = await supabase
+        .from("winners")
+        .select("*")
+        .order("year", { ascending: false })
+        .order("rank", { ascending: true })
+        .limit(3);
+      if (data) setWinners(data);
+    };
+    fetchWinners();
   }, []);
 
   return (
@@ -240,6 +267,43 @@ const Index = () => {
 
       {/* Testimonials */}
       <TestimonialsSection />
+
+      {/* Winners Showcase */}
+      <section className="py-20 md:py-32 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">{tr.index.achievers}</span>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">{tr.index.previousWinners}</h2>
+            <div className="section-divider mb-5" />
+            <p className="text-muted-foreground max-w-md mx-auto text-sm">{tr.index.winnersDesc}</p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
+            {winners.slice(0, 3).map((winner, i) => (
+              <motion.div key={winner.id} className="bg-card rounded-2xl p-6 text-center premium-shadow border border-border card-hover group" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.6 }}
+                whileHover={{ y: -6, transition: { duration: 0.3 } }}>
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-secondary/10 to-accent/10 flex items-center justify-center mx-auto mb-4 group-hover:from-secondary/20 group-hover:to-accent/20 transition-all duration-500 relative border border-secondary/10">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-secondary/5 to-accent/5 blur-xl group-hover:blur-2xl transition-all" />
+                  <Award className="text-secondary relative z-10" size={28} />
+                </div>
+                <h3 className="font-playfair text-lg font-bold text-foreground mb-2">{winner.name}</h3>
+                <p className="text-sm text-muted-foreground mb-1">Class {winner.class} • {winner.year}</p>
+                <p className="text-2xl font-bold text-secondary mb-2">{winner.percentage}%</p>
+                <p className="text-xs text-muted-foreground">Rank #{winner.rank}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Button asChild variant="outline" size="lg" className="group rounded-xl h-12 hover:border-secondary/30">
+              <Link to="/winners">
+                {tr.index.viewAllWinners}
+                <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
 
       {/* Gallery Preview */}
       <section className="py-20 md:py-32 bg-muted/30">

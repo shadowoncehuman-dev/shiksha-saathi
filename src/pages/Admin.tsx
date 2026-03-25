@@ -34,6 +34,19 @@ type GalleryImageDB = {
   sort_order: number;
 };
 
+type WinnerDB = {
+  id: string;
+  year: number;
+  rank: number;
+  name: string;
+  father_name: string;
+  class: number;
+  group_name: string;
+  roll_number: string;
+  percentage: number;
+  photo_url: string | null;
+};
+
 type MarksConfig = {
   class: number;
   total_out_of: number;
@@ -86,6 +99,14 @@ const Admin = () => {
   const [savingGallery, setSavingGallery] = useState(false);
   const galleryPhotoRef = useRef<HTMLInputElement>(null);
 
+  // Winners
+  const [winners, setWinners] = useState<WinnerDB[]>([]);
+  const [winnerForm, setWinnerForm] = useState({ year: new Date().getFullYear(), rank: 1, name: "", father_name: "", class: 6, group_name: "", roll_number: "", percentage: 0 });
+  const [editingWinnerId, setEditingWinnerId] = useState<string | null>(null);
+  const [winnerPhotoFile, setWinnerPhotoFile] = useState<File | null>(null);
+  const [savingWinner, setSavingWinner] = useState(false);
+  const winnerPhotoRef = useRef<HTMLInputElement>(null);
+
   // PDFs
   type PdfDB = { id: string; title: string; description: string; file_url: string; file_name: string; category: string; sort_order: number };
   const [pdfFiles, setPdfFiles] = useState<PdfDB[]>([]);
@@ -105,7 +126,7 @@ const Admin = () => {
   };
 
   const fetchAll = useCallback(() => {
-    fetchSettings(); fetchStudents(); fetchResultStats(); fetchMarksConfig(); fetchTeam(); fetchGallery(); fetchPdfs();
+    fetchSettings(); fetchStudents(); fetchResultStats(); fetchMarksConfig(); fetchTeam(); fetchGallery(); fetchWinners(); fetchPdfs();
   }, []);
 
   const fetchSettings = async () => {
@@ -217,6 +238,11 @@ const Admin = () => {
     if (data) setGalleryImages(data as GalleryImageDB[]);
   };
 
+  const fetchWinners = async () => {
+    const { data } = await supabase.from("winners").select("*").order("year", { ascending: false }).order("rank", { ascending: true });
+    if (data) setWinners(data as WinnerDB[]);
+  };
+
   const saveGalleryImage = async () => {
     if (!galleryPhotoFile) {
       toast({ title: "Please select a photo", variant: "destructive" });
@@ -245,6 +271,54 @@ const Admin = () => {
     await supabase.from("gallery_images").delete().eq("id", id);
     setGalleryImages(prev => prev.filter(g => g.id !== id));
     toast({ title: "Gallery image deleted" });
+  };
+
+  // Winners CRUD
+  const saveWinner = async () => {
+    setSavingWinner(true);
+    try {
+      let photo_url: string | null = null;
+      if (winnerPhotoFile) {
+        photo_url = await uploadPhoto(winnerPhotoFile, "winner-photos");
+      }
+
+      if (editingWinnerId) {
+        const updates: any = { ...winnerForm };
+        if (photo_url) updates.photo_url = photo_url;
+        await supabase.from("winners").update(updates).eq("id", editingWinnerId);
+        toast({ title: "Winner updated" });
+      } else {
+        await supabase.from("winners").insert({
+          ...winnerForm,
+          photo_url,
+        });
+        toast({ title: "Winner added" });
+      }
+      resetWinnerForm();
+      fetchWinners();
+    } catch {
+      toast({ title: "Error saving winner", variant: "destructive" });
+    }
+    setSavingWinner(false);
+  };
+
+  const editWinner = (w: WinnerDB) => {
+    setEditingWinnerId(w.id);
+    setWinnerForm({ year: w.year, rank: w.rank, name: w.name, father_name: w.father_name, class: w.class, group_name: w.group_name, roll_number: w.roll_number, percentage: w.percentage });
+    setWinnerPhotoFile(null);
+  };
+
+  const deleteWinner = async (id: string) => {
+    await supabase.from("winners").delete().eq("id", id);
+    setWinners(prev => prev.filter(w => w.id !== id));
+    toast({ title: "Winner deleted" });
+  };
+
+  const resetWinnerForm = () => {
+    setEditingWinnerId(null);
+    setWinnerForm({ year: new Date().getFullYear(), rank: 1, name: "", father_name: "", class: 6, group_name: "", roll_number: "", percentage: 0 });
+    setWinnerPhotoFile(null);
+    if (winnerPhotoRef.current) winnerPhotoRef.current.value = "";
   };
 
   // PDF functions
@@ -420,12 +494,11 @@ const Admin = () => {
               <TabsTrigger value="settings" className="rounded-lg text-sm"><Settings size={14} className="mr-1.5" /> Settings</TabsTrigger>
               <TabsTrigger value="marks" className="rounded-lg text-sm"><BookOpen size={14} className="mr-1.5" /> Marks</TabsTrigger>
               <TabsTrigger value="students" className="rounded-lg text-sm"><Users size={14} className="mr-1.5" /> Students</TabsTrigger>
+                <TabsTrigger value="winners" className="rounded-lg text-sm"><Trophy size={14} className="mr-1.5" /> Winners</TabsTrigger>
               <TabsTrigger value="team" className="rounded-lg text-sm"><UsersRound size={14} className="mr-1.5" /> Team</TabsTrigger>
               <TabsTrigger value="gallery" className="rounded-lg text-sm"><Image size={14} className="mr-1.5" /> Gallery</TabsTrigger>
               <TabsTrigger value="pdfs" className="rounded-lg text-sm"><FileText size={14} className="mr-1.5" /> PDFs</TabsTrigger>
             </TabsList>
-
-            {/* SETTINGS TAB */}
             <TabsContent value="settings">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
@@ -573,6 +646,98 @@ const Admin = () => {
                     {!filteredStudents.length && <p className="text-center py-8 text-muted-foreground text-sm">{searchQuery ? "No matching students found." : "No registrations yet."}</p>}
                   </div>
                 )}
+              </div>
+            </TabsContent>
+
+            {/* WINNERS TAB */}
+            <TabsContent value="winners">
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Add/Edit Form */}
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">{editingWinnerId ? "Edit" : "Add"} Winner</h3>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-sm text-muted-foreground block mb-1.5">Year</label>
+                        <Input type="number" className="h-10 rounded-xl" value={winnerForm.year} onChange={e => setWinnerForm(f => ({ ...f, year: parseInt(e.target.value) || new Date().getFullYear() }))} />
+                      </div>
+                      <div>
+                        <label className="text-sm text-muted-foreground block mb-1.5">Rank</label>
+                        <Select value={winnerForm.rank.toString()} onValueChange={v => setWinnerForm(f => ({ ...f, rank: parseInt(v) }))}>
+                          <SelectTrigger className="h-10 rounded-xl"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">1st</SelectItem>
+                            <SelectItem value="2">2nd</SelectItem>
+                            <SelectItem value="3">3rd</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <Input placeholder="Student Name" className="h-10 rounded-xl" value={winnerForm.name} onChange={e => setWinnerForm(f => ({ ...f, name: e.target.value }))} />
+                    <Input placeholder="Father's Name" className="h-10 rounded-xl" value={winnerForm.father_name} onChange={e => setWinnerForm(f => ({ ...f, father_name: e.target.value }))} />
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-sm text-muted-foreground block mb-1.5">Class</label>
+                        <Select value={winnerForm.class.toString()} onValueChange={v => setWinnerForm(f => ({ ...f, class: parseInt(v) }))}>
+                          <SelectTrigger className="h-10 rounded-xl"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {[6, 7, 8, 9, 10, 11, 12].map(c => <SelectItem key={c} value={c.toString()}>Class {c}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <label className="text-sm text-muted-foreground block mb-1.5">Percentage</label>
+                        <Input type="number" step="0.01" min="0" max="100" className="h-10 rounded-xl" value={winnerForm.percentage} onChange={e => setWinnerForm(f => ({ ...f, percentage: parseFloat(e.target.value) || 0 }))} />
+                      </div>
+                    </div>
+                    <Input placeholder="Group Name (e.g., Group A)" className="h-10 rounded-xl" value={winnerForm.group_name} onChange={e => setWinnerForm(f => ({ ...f, group_name: e.target.value }))} />
+                    <Input placeholder="Roll Number" className="h-10 rounded-xl" value={winnerForm.roll_number} onChange={e => setWinnerForm(f => ({ ...f, roll_number: e.target.value }))} />
+                    <div>
+                      <label className="text-sm text-muted-foreground block mb-1.5">Photo (optional)</label>
+                      <input type="file" accept="image/*" ref={winnerPhotoRef} onChange={e => setWinnerPhotoFile(e.target.files?.[0] || null)} className="text-sm" />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={saveWinner} className="flex-1 bg-primary h-10 rounded-xl" disabled={savingWinner || !winnerForm.name}>
+                        {savingWinner ? <Loader2 className="animate-spin mr-2" size={14} /> : <Save size={14} className="mr-2" />}
+                        {editingWinnerId ? "Update" : "Add Winner"}
+                      </Button>
+                      {editingWinnerId && (
+                        <Button variant="outline" onClick={resetWinnerForm} className="rounded-xl h-10">Cancel</Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Winners List */}
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">Winners ({winners.length})</h3>
+                  <div className="space-y-3 max-h-[500px] overflow-y-auto">
+                    {winners.map(w => (
+                      <div key={w.id} className="flex items-center gap-3 bg-muted/50 rounded-xl p-3">
+                        {w.photo_url ? (
+                          <img src={w.photo_url} alt={w.name} className="w-10 h-10 rounded-full object-cover border border-border shrink-0" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                            <Trophy size={16} className="text-primary" />
+                          </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-foreground truncate">{w.name}</p>
+                          <p className="text-xs text-muted-foreground">{w.year} • Rank #{w.rank} • Class {w.class} • {w.percentage}%</p>
+                        </div>
+                        <div className="flex gap-1 shrink-0">
+                          <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg" onClick={() => editWinner(w)}>
+                            <Edit size={12} />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive rounded-lg" onClick={() => deleteWinner(w.id)}>
+                            <Trash2 size={12} />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    {!winners.length && <p className="text-center py-4 text-muted-foreground text-sm">No winners yet.</p>}
+                  </div>
+                </div>
               </div>
             </TabsContent>
 
