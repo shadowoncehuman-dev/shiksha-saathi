@@ -432,7 +432,7 @@ const Admin = () => {
   const saveMarks = async () => {
     if (!markStudent) return;
     const total = parseInt(totalMarks) || 0;
-    const outOf = marksConfigMap[markStudent.class] || 400;
+    const outOf = marksConfigMap[markStudent.class] || 100;
     const percentage = Math.round((total / outOf) * 100);
     const grade = getGrade(percentage);
     const status = percentage >= 33 ? "PASS" : "FAIL";

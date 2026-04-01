@@ -76,7 +76,7 @@ export const parseExcelFile = (file: File, marksConfigMap: Record<number, number
 
 export const buildResultsFromParsed = (rows: ParsedExcelRow[], marksConfigMap: Record<number, number> = {}) => {
   return rows.map((r) => {
-    const outOf = marksConfigMap[r.studentClass || 0] || 400;
+    const outOf = marksConfigMap[r.studentClass || 0] || 100;
     const percentage = Math.round((r.total / outOf) * 100);
     const grade = getGrade(percentage);
     const status = percentage >= 33 ? "PASS" : "FAIL";
