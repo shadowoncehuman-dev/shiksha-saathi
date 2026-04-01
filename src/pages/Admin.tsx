@@ -770,6 +770,78 @@ const Admin = () => {
               </div>
             </TabsContent>
 
+            {/* WINNERS TAB */}
+            <TabsContent value="winners">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">{editingWinnerId ? "Edit" : "Add"} Winner</h3>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input placeholder="Year" type="number" className="h-10 rounded-xl" value={winnerForm.year} onChange={e => setWinnerForm(f => ({ ...f, year: e.target.value }))} />
+                      <Select value={winnerForm.rank} onValueChange={v => setWinnerForm(f => ({ ...f, rank: v }))}>
+                        <SelectTrigger className="h-10 rounded-xl"><SelectValue placeholder="Rank" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1st</SelectItem>
+                          <SelectItem value="2">2nd</SelectItem>
+                          <SelectItem value="3">3rd</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Input placeholder="Student Name" className="h-10 rounded-xl" value={winnerForm.name} onChange={e => setWinnerForm(f => ({ ...f, name: e.target.value }))} />
+                    <Input placeholder="Father's Name" className="h-10 rounded-xl" value={winnerForm.father_name} onChange={e => setWinnerForm(f => ({ ...f, father_name: e.target.value }))} />
+                    <div className="grid grid-cols-2 gap-3">
+                      <Select value={winnerForm.class} onValueChange={v => setWinnerForm(f => ({ ...f, class: v }))}>
+                        <SelectTrigger className="h-10 rounded-xl"><SelectValue placeholder="Class" /></SelectTrigger>
+                        <SelectContent>
+                          {[6,7,8,9,10,11,12].map(c => <SelectItem key={c} value={c.toString()}>Class {c}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <Input placeholder="Percentage" type="number" className="h-10 rounded-xl" value={winnerForm.percentage} onChange={e => setWinnerForm(f => ({ ...f, percentage: e.target.value }))} />
+                    </div>
+                    <Input placeholder="Group Name" className="h-10 rounded-xl" value={winnerForm.group_name} onChange={e => setWinnerForm(f => ({ ...f, group_name: e.target.value }))} />
+                    <Input placeholder="Roll Number" className="h-10 rounded-xl" value={winnerForm.roll_number} onChange={e => setWinnerForm(f => ({ ...f, roll_number: e.target.value }))} />
+                    <div>
+                      <label className="text-sm text-muted-foreground block mb-1.5">Photo</label>
+                      <input type="file" accept="image/*" ref={winnerPhotoRef} onChange={e => setWinnerPhotoFile(e.target.files?.[0] || null)} className="text-sm" />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={saveWinner} className="flex-1 bg-primary h-10 rounded-xl" disabled={savingWinner || !winnerForm.name}>
+                        {savingWinner ? <Loader2 className="animate-spin mr-2" size={14} /> : <Save size={14} className="mr-2" />}
+                        {editingWinnerId ? "Update" : "Add Winner"}
+                      </Button>
+                      {editingWinnerId && <Button variant="outline" onClick={resetWinnerForm} className="rounded-xl h-10">Cancel</Button>}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">Winners ({winners.length})</h3>
+                  <div className="space-y-3 max-h-[500px] overflow-y-auto">
+                    {winners.map(w => (
+                      <div key={w.id} className="flex items-center gap-3 bg-muted/50 rounded-xl p-3">
+                        {w.photo_url ? (
+                          <img src={w.photo_url} alt={w.name} className="w-10 h-10 rounded-full object-cover border border-border shrink-0" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center shrink-0">
+                            <Trophy size={16} className="text-secondary" />
+                          </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-foreground truncate">{w.name}</p>
+                          <p className="text-xs text-muted-foreground">#{w.rank} • {w.year} • Class {w.class} • {w.percentage}%</p>
+                        </div>
+                        <div className="flex gap-1 shrink-0">
+                          <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg" onClick={() => editWinner(w)}><Edit size={12} /></Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive rounded-lg" onClick={() => deleteWinner(w.id)}><Trash2 size={12} /></Button>
+                        </div>
+                      </div>
+                    ))}
+                    {!winners.length && <p className="text-center py-4 text-muted-foreground text-sm">No winners yet.</p>}
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
             {/* PDFs TAB */}
             <TabsContent value="pdfs">
               <div className="grid md:grid-cols-2 gap-6">
