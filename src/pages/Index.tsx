@@ -1,6 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
-import { BookOpen, Clock, Calendar, Award, Users, Shield, ArrowRight, ChevronDown, GraduationCap, Sparkles } from "lucide-react";
+import { BookOpen, Clock, Calendar, Award, Users, Shield, ArrowRight, ChevronDown, GraduationCap, Sparkles, Trophy, Crown, Medal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/SEOHead";
@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import CountdownTimer from "@/components/CountdownTimer";
 import FAQSection from "@/components/FAQSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: string }) => {
   const [count, setCount] = useState(0);
@@ -44,9 +45,15 @@ const fadeUp = {
   }),
 };
 
+type Winner = {
+  id: string; rank: number; name: string; father_name: string;
+  class: number; percentage: number; photo_url: string | null; year: number;
+};
+
 const Index = () => {
   const { tr } = useLang();
   const [galleryImages, setGalleryImages] = useState<{ img: string; title: string }[]>([]);
+  const [topWinners, setTopWinners] = useState<Winner[]>([]);
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -64,7 +71,17 @@ const Index = () => {
         ]);
       }
     };
+    const fetchWinners = async () => {
+      const { data } = await supabase
+        .from("winners")
+        .select("*")
+        .order("year", { ascending: false })
+        .order("rank", { ascending: true })
+        .limit(3);
+      if (data) setTopWinners(data as Winner[]);
+    };
     fetchGallery();
+    fetchWinners();
   }, []);
 
   return (
@@ -240,6 +257,60 @@ const Index = () => {
 
       {/* Testimonials */}
       <TestimonialsSection />
+
+      {/* Winners Showcase */}
+      {topWinners.length > 0 && (
+        <section className="py-20 md:py-32">
+          <div className="container mx-auto px-4">
+            <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">Hall of Fame</span>
+              <h2 className="font-playfair text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">Our Top Achievers</h2>
+              <div className="section-divider" />
+            </motion.div>
+
+            <div className="flex items-end justify-center gap-4 md:gap-8 max-w-3xl mx-auto mb-12">
+              {[
+                { rank: 2, icon: Medal, color: "from-zinc-300 to-zinc-400", border: "border-zinc-300", size: "w-24 h-24 md:w-28 md:h-28", mt: "mt-6" },
+                { rank: 1, icon: Crown, color: "from-yellow-400 to-amber-500", border: "border-yellow-400", size: "w-32 h-32 md:w-36 md:h-36", mt: "mt-0" },
+                { rank: 3, icon: Award, color: "from-amber-600 to-amber-700", border: "border-amber-600", size: "w-24 h-24 md:w-28 md:h-28", mt: "mt-6" },
+              ].map((config, ci) => {
+                const winner = topWinners.find(w => w.rank === config.rank);
+                if (!winner) return <div key={ci} className="flex-1" />;
+                const Icon = config.icon;
+                return (
+                  <motion.div key={winner.id} className={`flex-1 flex flex-col items-center ${config.mt}`}
+                    initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 + ci * 0.15 }}>
+                    <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${config.color} flex items-center justify-center mb-2 shadow-lg`}>
+                      <Icon size={16} className="text-white" />
+                    </div>
+                    <div className={`relative ${config.size} rounded-full border-4 ${config.border} overflow-hidden shadow-xl mb-3`}>
+                      <Avatar className="w-full h-full">
+                        <AvatarImage src={winner.photo_url || ""} alt={winner.name} className="object-cover" />
+                        <AvatarFallback className="text-xl font-bold bg-muted">
+                          {winner.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                    <h3 className="font-semibold text-foreground text-sm text-center truncate max-w-full">{winner.name}</h3>
+                    <p className="text-xs text-muted-foreground">Class {winner.class}</p>
+                    <p className="text-xl font-bold text-secondary mt-1">{winner.percentage}%</p>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            <div className="text-center">
+              <Button asChild variant="outline" size="lg" className="group rounded-xl h-12 hover:border-secondary/30">
+                <Link to="/winners">
+                  View All Winners
+                  <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Gallery Preview */}
       <section className="py-20 md:py-32 bg-muted/30">

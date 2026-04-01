@@ -60,7 +60,7 @@ const ResultDetail = () => {
 
   const handleWhatsAppShare = () => {
     const emoji = isPass ? "🎉" : "📋";
-    const text = `${emoji} *EXAMINATION RESULT*\n\n🏫 ${ORG_NAME}\n\n👤 Name: ${data.name || "N/A"}\n📝 Roll No: ${data.roll_number}\n📊 Total: ${data.total}/400\n📈 Percentage: ${data.percentage}%\n🏅 Grade: ${data.grade}\n${isPass ? "✅ PASS" : "❌ FAIL"}`;
+    const text = `${emoji} *EXAMINATION RESULT*\n\n🏫 ${ORG_NAME}\n\n👤 Name: ${data.name || "N/A"}\n📝 Roll No: ${data.roll_number}\n📊 Total: ${data.total}/100\n📈 Percentage: ${data.percentage}%\n🏅 Grade: ${data.grade}\n${isPass ? "✅ PASS" : "❌ FAIL"}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -106,7 +106,7 @@ const ResultDetail = () => {
 
               <div className="grid grid-cols-3 gap-3 mb-6 relative z-10">
                 {[
-                  { label: tr.resultDetail.total, value: `${data.total}/400` },
+                  { label: tr.resultDetail.total, value: `${data.total}/100` },
                   { label: tr.resultDetail.percentage, value: `${data.percentage}%` },
                   { label: tr.resultDetail.grade, value: data.grade },
                 ].map(item => (

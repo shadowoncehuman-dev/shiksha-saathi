@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload, Image, UsersRound, Plus, Edit, Phone, Briefcase, FileText } from "lucide-react";
+import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload, Image, UsersRound, Plus, Edit, Phone, Briefcase, FileText, Trophy } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,19 @@ type GalleryImageDB = {
 type MarksConfig = {
   class: number;
   total_out_of: number;
+};
+
+type WinnerDB = {
+  id: string;
+  year: number;
+  rank: number;
+  name: string;
+  father_name: string;
+  class: number;
+  group_name: string;
+  roll_number: string;
+  percentage: number;
+  photo_url: string | null;
 };
 
 const Admin = () => {
@@ -94,6 +107,14 @@ const Admin = () => {
   const [savingPdf, setSavingPdf] = useState(false);
   const pdfFileRef = useRef<HTMLInputElement>(null);
 
+  // Winners
+  const [winners, setWinners] = useState<WinnerDB[]>([]);
+  const [winnerForm, setWinnerForm] = useState({ year: new Date().getFullYear().toString(), rank: "1", name: "", father_name: "", class: "6", group_name: "", roll_number: "", percentage: "" });
+  const [editingWinnerId, setEditingWinnerId] = useState<string | null>(null);
+  const [winnerPhotoFile, setWinnerPhotoFile] = useState<File | null>(null);
+  const [savingWinner, setSavingWinner] = useState(false);
+  const winnerPhotoRef = useRef<HTMLInputElement>(null);
+
   const handleLogin = async () => {
     setVerifying(true);
     try {
@@ -105,7 +126,7 @@ const Admin = () => {
   };
 
   const fetchAll = useCallback(() => {
-    fetchSettings(); fetchStudents(); fetchResultStats(); fetchMarksConfig(); fetchTeam(); fetchGallery(); fetchPdfs();
+    fetchSettings(); fetchStudents(); fetchResultStats(); fetchMarksConfig(); fetchTeam(); fetchGallery(); fetchPdfs(); fetchWinners();
   }, []);
 
   const fetchSettings = async () => {
@@ -293,6 +314,69 @@ const Admin = () => {
     toast({ title: "Student Deleted" });
   };
 
+  // Winners CRUD
+  const fetchWinners = async () => {
+    const { data } = await supabase.from("winners").select("*").order("year", { ascending: false }).order("rank");
+    if (data) setWinners(data as WinnerDB[]);
+  };
+
+  const saveWinner = async () => {
+    setSavingWinner(true);
+    try {
+      let photo_url: string | null = null;
+      if (winnerPhotoFile) photo_url = await uploadPhoto(winnerPhotoFile, "team-photos");
+
+      const payload = {
+        year: parseInt(winnerForm.year),
+        rank: parseInt(winnerForm.rank),
+        name: winnerForm.name,
+        father_name: winnerForm.father_name,
+        class: parseInt(winnerForm.class),
+        group_name: winnerForm.group_name,
+        roll_number: winnerForm.roll_number,
+        percentage: parseFloat(winnerForm.percentage) || 0,
+      };
+
+      if (editingWinnerId) {
+        const updates: any = { ...payload };
+        if (photo_url) updates.photo_url = photo_url;
+        await supabase.from("winners").update(updates).eq("id", editingWinnerId);
+        toast({ title: "Winner updated" });
+      } else {
+        await supabase.from("winners").insert({ ...payload, photo_url });
+        toast({ title: "Winner added" });
+      }
+      resetWinnerForm();
+      fetchWinners();
+    } catch {
+      toast({ title: "Error saving winner", variant: "destructive" });
+    }
+    setSavingWinner(false);
+  };
+
+  const editWinner = (w: WinnerDB) => {
+    setEditingWinnerId(w.id);
+    setWinnerForm({
+      year: w.year.toString(), rank: w.rank.toString(), name: w.name,
+      father_name: w.father_name, class: w.class.toString(), group_name: w.group_name,
+      roll_number: w.roll_number, percentage: w.percentage.toString(),
+    });
+    setWinnerPhotoFile(null);
+  };
+
+  const deleteWinner = async (id: string) => {
+    await supabase.from("winners").delete().eq("id", id);
+    setWinners(prev => prev.filter(w => w.id !== id));
+    toast({ title: "Winner deleted" });
+  };
+
+  const resetWinnerForm = () => {
+    setEditingWinnerId(null);
+    setWinnerForm({ year: new Date().getFullYear().toString(), rank: "1", name: "", father_name: "", class: "6", group_name: "", roll_number: "", percentage: "" });
+    setWinnerPhotoFile(null);
+    if (winnerPhotoRef.current) winnerPhotoRef.current.value = "";
+  };
+
   const exportExcel = () => exportStudentsToExcel(students, marksConfigMap);
 
   const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -348,7 +432,7 @@ const Admin = () => {
   const saveMarks = async () => {
     if (!markStudent) return;
     const total = parseInt(totalMarks) || 0;
-    const outOf = marksConfigMap[markStudent.class] || 400;
+    const outOf = marksConfigMap[markStudent.class] || 100;
     const percentage = Math.round((total / outOf) * 100);
     const grade = getGrade(percentage);
     const status = percentage >= 33 ? "PASS" : "FAIL";
@@ -386,7 +470,7 @@ const Admin = () => {
     );
   }
 
-  const currentOutOf = markStudent ? (marksConfigMap[markStudent.class] || 400) : 400;
+  const currentOutOf = markStudent ? (marksConfigMap[markStudent.class] || 100) : 100;
 
   return (
     <Layout>
@@ -422,6 +506,7 @@ const Admin = () => {
               <TabsTrigger value="students" className="rounded-lg text-sm"><Users size={14} className="mr-1.5" /> Students</TabsTrigger>
               <TabsTrigger value="team" className="rounded-lg text-sm"><UsersRound size={14} className="mr-1.5" /> Team</TabsTrigger>
               <TabsTrigger value="gallery" className="rounded-lg text-sm"><Image size={14} className="mr-1.5" /> Gallery</TabsTrigger>
+              <TabsTrigger value="winners" className="rounded-lg text-sm"><Trophy size={14} className="mr-1.5" /> Winners</TabsTrigger>
               <TabsTrigger value="pdfs" className="rounded-lg text-sm"><FileText size={14} className="mr-1.5" /> PDFs</TabsTrigger>
             </TabsList>
 
@@ -680,6 +765,78 @@ const Admin = () => {
                       </div>
                     ))}
                     {!galleryImages.length && <p className="col-span-2 text-center py-4 text-muted-foreground text-sm">No gallery images yet.</p>}
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* WINNERS TAB */}
+            <TabsContent value="winners">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">{editingWinnerId ? "Edit" : "Add"} Winner</h3>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input placeholder="Year" type="number" className="h-10 rounded-xl" value={winnerForm.year} onChange={e => setWinnerForm(f => ({ ...f, year: e.target.value }))} />
+                      <Select value={winnerForm.rank} onValueChange={v => setWinnerForm(f => ({ ...f, rank: v }))}>
+                        <SelectTrigger className="h-10 rounded-xl"><SelectValue placeholder="Rank" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1st</SelectItem>
+                          <SelectItem value="2">2nd</SelectItem>
+                          <SelectItem value="3">3rd</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Input placeholder="Student Name" className="h-10 rounded-xl" value={winnerForm.name} onChange={e => setWinnerForm(f => ({ ...f, name: e.target.value }))} />
+                    <Input placeholder="Father's Name" className="h-10 rounded-xl" value={winnerForm.father_name} onChange={e => setWinnerForm(f => ({ ...f, father_name: e.target.value }))} />
+                    <div className="grid grid-cols-2 gap-3">
+                      <Select value={winnerForm.class} onValueChange={v => setWinnerForm(f => ({ ...f, class: v }))}>
+                        <SelectTrigger className="h-10 rounded-xl"><SelectValue placeholder="Class" /></SelectTrigger>
+                        <SelectContent>
+                          {[6,7,8,9,10,11,12].map(c => <SelectItem key={c} value={c.toString()}>Class {c}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <Input placeholder="Percentage" type="number" className="h-10 rounded-xl" value={winnerForm.percentage} onChange={e => setWinnerForm(f => ({ ...f, percentage: e.target.value }))} />
+                    </div>
+                    <Input placeholder="Group Name" className="h-10 rounded-xl" value={winnerForm.group_name} onChange={e => setWinnerForm(f => ({ ...f, group_name: e.target.value }))} />
+                    <Input placeholder="Roll Number" className="h-10 rounded-xl" value={winnerForm.roll_number} onChange={e => setWinnerForm(f => ({ ...f, roll_number: e.target.value }))} />
+                    <div>
+                      <label className="text-sm text-muted-foreground block mb-1.5">Photo</label>
+                      <input type="file" accept="image/*" ref={winnerPhotoRef} onChange={e => setWinnerPhotoFile(e.target.files?.[0] || null)} className="text-sm" />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={saveWinner} className="flex-1 bg-primary h-10 rounded-xl" disabled={savingWinner || !winnerForm.name}>
+                        {savingWinner ? <Loader2 className="animate-spin mr-2" size={14} /> : <Save size={14} className="mr-2" />}
+                        {editingWinnerId ? "Update" : "Add Winner"}
+                      </Button>
+                      {editingWinnerId && <Button variant="outline" onClick={resetWinnerForm} className="rounded-xl h-10">Cancel</Button>}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">Winners ({winners.length})</h3>
+                  <div className="space-y-3 max-h-[500px] overflow-y-auto">
+                    {winners.map(w => (
+                      <div key={w.id} className="flex items-center gap-3 bg-muted/50 rounded-xl p-3">
+                        {w.photo_url ? (
+                          <img src={w.photo_url} alt={w.name} className="w-10 h-10 rounded-full object-cover border border-border shrink-0" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center shrink-0">
+                            <Trophy size={16} className="text-secondary" />
+                          </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-foreground truncate">{w.name}</p>
+                          <p className="text-xs text-muted-foreground">#{w.rank} • {w.year} • Class {w.class} • {w.percentage}%</p>
+                        </div>
+                        <div className="flex gap-1 shrink-0">
+                          <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg" onClick={() => editWinner(w)}><Edit size={12} /></Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive rounded-lg" onClick={() => deleteWinner(w.id)}><Trash2 size={12} /></Button>
+                        </div>
+                      </div>
+                    ))}
+                    {!winners.length && <p className="text-center py-4 text-muted-foreground text-sm">No winners yet.</p>}
                   </div>
                 </div>
               </div>

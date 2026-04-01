@@ -6,7 +6,7 @@ export const exportStudentsToExcel = (students: Registration[], marksConfigMap: 
   if (!students.length) return;
 
   const data = students.map((s) => {
-    const outOf = marksConfigMap[s.class] || 400;
+    const outOf = marksConfigMap[s.class] || 100;
     return {
       "Roll Number": s.roll_number,
       "Name": s.name,
@@ -52,7 +52,7 @@ export const parseExcelFile = (file: File, marksConfigMap: Record<number, number
         for (const row of rows) {
           const rollNumber = String(row["Roll Number"] || "").trim();
           const studentClass = parseInt(String(row["Class"] || "0"));
-          const outOf = marksConfigMap[studentClass] || 400;
+          const outOf = marksConfigMap[studentClass] || 100;
 
           // Find the marks column dynamically
           const marksKey = Object.keys(row).find(k => k.startsWith("Total Marks"));
@@ -76,7 +76,7 @@ export const parseExcelFile = (file: File, marksConfigMap: Record<number, number
 
 export const buildResultsFromParsed = (rows: ParsedExcelRow[], marksConfigMap: Record<number, number> = {}) => {
   return rows.map((r) => {
-    const outOf = marksConfigMap[r.studentClass || 0] || 400;
+    const outOf = marksConfigMap[r.studentClass || 0] || 100;
     const percentage = Math.round((r.total / outOf) * 100);
     const grade = getGrade(percentage);
     const status = percentage >= 33 ? "PASS" : "FAIL";
