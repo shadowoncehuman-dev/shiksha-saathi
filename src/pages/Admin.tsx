@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload, Image, UsersRound, Plus, Edit, Phone, Briefcase, FileText } from "lucide-react";
+import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload, Image, UsersRound, Plus, Edit, Phone, Briefcase, FileText, Trophy } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
