@@ -106,7 +106,7 @@ const ResultDetail = () => {
 
               <div className="grid grid-cols-3 gap-3 mb-6 relative z-10">
                 {[
-                  { label: tr.resultDetail.total, value: `${data.total}/400` },
+                  { label: tr.resultDetail.total, value: `${data.total}/100` },
                   { label: tr.resultDetail.percentage, value: `${data.percentage}%` },
                   { label: tr.resultDetail.grade, value: data.grade },
                 ].map(item => (
