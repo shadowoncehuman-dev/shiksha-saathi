@@ -6,7 +6,7 @@ export const exportStudentsToExcel = (students: Registration[], marksConfigMap: 
   if (!students.length) return;
 
   const data = students.map((s) => {
-    const outOf = marksConfigMap[s.class] || 400;
+    const outOf = marksConfigMap[s.class] || 100;
     return {
       "Roll Number": s.roll_number,
       "Name": s.name,
