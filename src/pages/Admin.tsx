@@ -470,7 +470,7 @@ const Admin = () => {
     );
   }
 
-  const currentOutOf = markStudent ? (marksConfigMap[markStudent.class] || 400) : 400;
+  const currentOutOf = markStudent ? (marksConfigMap[markStudent.class] || 100) : 100;
 
   return (
     <Layout>
