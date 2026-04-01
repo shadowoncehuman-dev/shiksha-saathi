@@ -314,6 +314,69 @@ const Admin = () => {
     toast({ title: "Student Deleted" });
   };
 
+  // Winners CRUD
+  const fetchWinners = async () => {
+    const { data } = await supabase.from("winners").select("*").order("year", { ascending: false }).order("rank");
+    if (data) setWinners(data as WinnerDB[]);
+  };
+
+  const saveWinner = async () => {
+    setSavingWinner(true);
+    try {
+      let photo_url: string | null = null;
+      if (winnerPhotoFile) photo_url = await uploadPhoto(winnerPhotoFile, "team-photos");
+
+      const payload = {
+        year: parseInt(winnerForm.year),
+        rank: parseInt(winnerForm.rank),
+        name: winnerForm.name,
+        father_name: winnerForm.father_name,
+        class: parseInt(winnerForm.class),
+        group_name: winnerForm.group_name,
+        roll_number: winnerForm.roll_number,
+        percentage: parseFloat(winnerForm.percentage) || 0,
+      };
+
+      if (editingWinnerId) {
+        const updates: any = { ...payload };
+        if (photo_url) updates.photo_url = photo_url;
+        await supabase.from("winners").update(updates).eq("id", editingWinnerId);
+        toast({ title: "Winner updated" });
+      } else {
+        await supabase.from("winners").insert({ ...payload, photo_url });
+        toast({ title: "Winner added" });
+      }
+      resetWinnerForm();
+      fetchWinners();
+    } catch {
+      toast({ title: "Error saving winner", variant: "destructive" });
+    }
+    setSavingWinner(false);
+  };
+
+  const editWinner = (w: WinnerDB) => {
+    setEditingWinnerId(w.id);
+    setWinnerForm({
+      year: w.year.toString(), rank: w.rank.toString(), name: w.name,
+      father_name: w.father_name, class: w.class.toString(), group_name: w.group_name,
+      roll_number: w.roll_number, percentage: w.percentage.toString(),
+    });
+    setWinnerPhotoFile(null);
+  };
+
+  const deleteWinner = async (id: string) => {
+    await supabase.from("winners").delete().eq("id", id);
+    setWinners(prev => prev.filter(w => w.id !== id));
+    toast({ title: "Winner deleted" });
+  };
+
+  const resetWinnerForm = () => {
+    setEditingWinnerId(null);
+    setWinnerForm({ year: new Date().getFullYear().toString(), rank: "1", name: "", father_name: "", class: "6", group_name: "", roll_number: "", percentage: "" });
+    setWinnerPhotoFile(null);
+    if (winnerPhotoRef.current) winnerPhotoRef.current.value = "";
+  };
+
   const exportExcel = () => exportStudentsToExcel(students, marksConfigMap);
 
   const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
