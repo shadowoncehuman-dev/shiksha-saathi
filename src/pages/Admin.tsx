@@ -107,6 +107,14 @@ const Admin = () => {
   const [savingPdf, setSavingPdf] = useState(false);
   const pdfFileRef = useRef<HTMLInputElement>(null);
 
+  // Winners
+  const [winners, setWinners] = useState<WinnerDB[]>([]);
+  const [winnerForm, setWinnerForm] = useState({ year: new Date().getFullYear().toString(), rank: "1", name: "", father_name: "", class: "6", group_name: "", roll_number: "", percentage: "" });
+  const [editingWinnerId, setEditingWinnerId] = useState<string | null>(null);
+  const [winnerPhotoFile, setWinnerPhotoFile] = useState<File | null>(null);
+  const [savingWinner, setSavingWinner] = useState(false);
+  const winnerPhotoRef = useRef<HTMLInputElement>(null);
+
   const handleLogin = async () => {
     setVerifying(true);
     try {
