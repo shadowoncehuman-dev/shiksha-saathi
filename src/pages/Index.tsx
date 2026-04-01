@@ -45,9 +45,15 @@ const fadeUp = {
   }),
 };
 
+type Winner = {
+  id: string; rank: number; name: string; father_name: string;
+  class: number; percentage: number; photo_url: string | null; year: number;
+};
+
 const Index = () => {
   const { tr } = useLang();
   const [galleryImages, setGalleryImages] = useState<{ img: string; title: string }[]>([]);
+  const [topWinners, setTopWinners] = useState<Winner[]>([]);
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -65,7 +71,17 @@ const Index = () => {
         ]);
       }
     };
+    const fetchWinners = async () => {
+      const { data } = await supabase
+        .from("winners")
+        .select("*")
+        .order("year", { ascending: false })
+        .order("rank", { ascending: true })
+        .limit(3);
+      if (data) setTopWinners(data as Winner[]);
+    };
     fetchGallery();
+    fetchWinners();
   }, []);
 
   return (
