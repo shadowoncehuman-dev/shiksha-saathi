@@ -25,33 +25,33 @@ serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Atomically increment the counter
-    const { data, error } = await supabase
-      .from("roll_counters")
-      .select("last_number")
-      .eq("class", student_class)
-      .single();
+    // Get all existing roll numbers for this class to find gaps
+    const prefix = student_class.toString();
+    const { data: existingRegs } = await supabase
+      .from("registrations")
+      .select("roll_number")
+      .like("roll_number", `${prefix}%`);
 
-    if (error || !data) {
-      return new Response(JSON.stringify({ error: "Counter not found" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const usedNumbers = new Set<number>();
+    if (existingRegs) {
+      for (const reg of existingRegs) {
+        const num = parseInt(reg.roll_number.slice(prefix.length));
+        if (!isNaN(num)) usedNumbers.add(num);
+      }
     }
 
-    const newNumber = data.last_number + 1;
-    const { error: updateError } = await supabase
-      .from("roll_counters")
-      .update({ last_number: newNumber })
-      .eq("class", student_class)
-      .eq("last_number", data.last_number); // Optimistic lock
-
-    if (updateError) {
-      return new Response(JSON.stringify({ error: "Failed to update counter" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    // Find the first available number (fill gaps)
+    let newNumber = 1;
+    while (usedNumbers.has(newNumber)) {
+      newNumber++;
     }
+
+    // Update the counter to track the highest used number
+    const maxUsed = Math.max(newNumber, ...Array.from(usedNumbers));
+    await supabase
+      .from("roll_counters")
+      .update({ last_number: maxUsed })
+      .eq("class", student_class);
 
     const roll_number = `${student_class}${String(newNumber).padStart(3, "0")}`;
 
