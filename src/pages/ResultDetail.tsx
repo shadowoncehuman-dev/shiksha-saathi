@@ -60,7 +60,7 @@ const ResultDetail = () => {
 
   const handleWhatsAppShare = () => {
     const emoji = isPass ? "🎉" : "📋";
-    const text = `${emoji} *EXAMINATION RESULT*\n\n🏫 ${ORG_NAME}\n\n👤 Name: ${data.name || "N/A"}\n📝 Roll No: ${data.roll_number}\n📊 Total: ${data.total}/400\n📈 Percentage: ${data.percentage}%\n🏅 Grade: ${data.grade}\n${isPass ? "✅ PASS" : "❌ FAIL"}`;
+    const text = `${emoji} *EXAMINATION RESULT*\n\n🏫 ${ORG_NAME}\n\n👤 Name: ${data.name || "N/A"}\n📝 Roll No: ${data.roll_number}\n📊 Total: ${data.total}/100\n📈 Percentage: ${data.percentage}%\n🏅 Grade: ${data.grade}\n${isPass ? "✅ PASS" : "❌ FAIL"}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
