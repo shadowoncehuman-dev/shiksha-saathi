@@ -39,6 +39,19 @@ type MarksConfig = {
   total_out_of: number;
 };
 
+type WinnerDB = {
+  id: string;
+  year: number;
+  rank: number;
+  name: string;
+  father_name: string;
+  class: number;
+  group_name: string;
+  roll_number: string;
+  percentage: number;
+  photo_url: string | null;
+};
+
 const Admin = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
