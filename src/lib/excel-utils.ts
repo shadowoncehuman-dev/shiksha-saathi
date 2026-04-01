@@ -52,7 +52,7 @@ export const parseExcelFile = (file: File, marksConfigMap: Record<number, number
         for (const row of rows) {
           const rollNumber = String(row["Roll Number"] || "").trim();
           const studentClass = parseInt(String(row["Class"] || "0"));
-          const outOf = marksConfigMap[studentClass] || 400;
+          const outOf = marksConfigMap[studentClass] || 100;
 
           // Find the marks column dynamically
           const marksKey = Object.keys(row).find(k => k.startsWith("Total Marks"));
