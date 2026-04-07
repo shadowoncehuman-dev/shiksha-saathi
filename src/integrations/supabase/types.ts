@@ -181,6 +181,8 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          exam_notice: string | null
+          exam_notice_type: string | null
           id: number
           registration_status: string
           result_expiry_date: string | null
@@ -188,6 +190,8 @@ export type Database = {
           result_status: string
         }
         Insert: {
+          exam_notice?: string | null
+          exam_notice_type?: string | null
           id?: number
           registration_status?: string
           result_expiry_date?: string | null
@@ -195,6 +199,8 @@ export type Database = {
           result_status?: string
         }
         Update: {
+          exam_notice?: string | null
+          exam_notice_type?: string | null
           id?: number
           registration_status?: string
           result_expiry_date?: string | null
