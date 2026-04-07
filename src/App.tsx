@@ -9,6 +9,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { ScrollToTop } from "./components/ScrollToTop";
 import WhatsAppButton from "./components/WhatsAppButton";
 import AnimatedRoutes from "./components/AnimatedRoutes";
+import OfflineDetector from "./components/OfflineDetector";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
               <ScrollToTop />
               <AnimatedRoutes />
               <WhatsAppButton />
+              <OfflineDetector />
             </BrowserRouter>
           </TooltipProvider>
         </LangProvider>

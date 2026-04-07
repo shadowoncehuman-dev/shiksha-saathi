@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, UserPlus, AlertTriangle } from "lucide-react";
+import { Loader2, UserPlus, AlertTriangle, Calendar } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { VILLAGES, getGroup, ORG_NAME } from "@/lib/constants";
 import { useLang } from "@/lib/i18n";
 import { useToast } from "@/hooks/use-toast";
+import ExamNoticeBanner from "@/components/ExamNoticeBanner";
+import RegistrationSuccess from "@/components/RegistrationSuccess";
+import RegistrationFailed from "@/components/RegistrationFailed";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
@@ -31,6 +34,10 @@ const Register = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [duplicateWarning, setDuplicateWarning] = useState(false);
+  const [examNoticeType, setExamNoticeType] = useState<string>("info");
+  const [examNotice, setExamNotice] = useState<string | null>(null);
+  const [successData, setSuccessData] = useState<{ rollNumber: string; name: string; studentClass: number; group: string } | null>(null);
+  const [failedError, setFailedError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { tr } = useLang();
@@ -43,8 +50,10 @@ const Register = () => {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const { data } = await supabase.from("site_settings").select("registration_status").single();
+        const { data } = await supabase.from("site_settings").select("registration_status, exam_notice, exam_notice_type").single();
         setStatus(data?.registration_status || "Not Started");
+        setExamNotice((data as any)?.exam_notice || null);
+        setExamNoticeType((data as any)?.exam_notice_type || "info");
       } catch { setStatus("Not Started"); }
       setLoading(false);
     };
@@ -63,7 +72,6 @@ const Register = () => {
     setDuplicateWarning(!!(data && data.length > 0));
   };
 
-  // Watch fields for duplicate check
   const watchName = form.watch("name");
   const watchFather = form.watch("father_name");
   const watchClass = form.watch("student_class");
@@ -81,6 +89,7 @@ const Register = () => {
 
   const onSubmit = async (values: FormData) => {
     setSubmitting(true);
+    setFailedError(null);
     try {
       const studentClass = parseInt(values.student_class);
       const group = getGroup(studentClass);
@@ -97,10 +106,15 @@ const Register = () => {
         roll_number: rollData.roll_number, name: values.name.trim(), father_name: values.father_name.trim(),
         class: studentClass, group: group.name, phone: values.phone, village: values.village, duration: group.duration,
       }));
-      toast({ title: "Registration Successful!", description: `Roll Number: ${rollData.roll_number}` });
-      navigate("/admit-card");
+
+      setSuccessData({
+        rollNumber: rollData.roll_number,
+        name: values.name.trim(),
+        studentClass,
+        group: group.name,
+      });
     } catch (error: any) {
-      toast({ title: "Registration Failed", description: error.message || "Please try again.", variant: "destructive" });
+      setFailedError(error.message || "Please try again.");
     }
     setSubmitting(false);
   };
@@ -110,6 +124,52 @@ const Register = () => {
       <Layout>
         <div className="flex items-center justify-center min-h-[60vh]">
           <Loader2 className="animate-spin text-primary" size={36} />
+        </div>
+      </Layout>
+    );
+  }
+
+  // Show success screen
+  if (successData) {
+    return (
+      <Layout>
+        <RegistrationSuccess {...successData} />
+      </Layout>
+    );
+  }
+
+  // Show failed screen
+  if (failedError) {
+    return (
+      <Layout>
+        <RegistrationFailed error={failedError} onRetry={() => setFailedError(null)} />
+      </Layout>
+    );
+  }
+
+  // Exam cancelled or rescheduled - block registration
+  const isBlocked = examNotice && (examNoticeType === "cancelled" || examNoticeType === "rescheduled");
+
+  if (isBlocked) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[70vh] px-4 pt-20">
+          <motion.div className="bg-card rounded-2xl p-10 text-center max-w-md premium-shadow border border-border" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+            <div className="w-14 h-14 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto mb-5">
+              {examNoticeType === "cancelled" ? (
+                <AlertTriangle className="text-destructive" size={24} />
+              ) : (
+                <Calendar className="text-[hsl(30,80%,45%)]" size={24} />
+              )}
+            </div>
+            <h2 className="font-playfair text-2xl font-bold text-foreground mb-3">
+              {tr.examNotice?.[examNoticeType as "cancelled" | "rescheduled"] || (examNoticeType === "cancelled" ? "Exam Cancelled" : "Exam Rescheduled")}
+            </h2>
+            <p className="text-muted-foreground text-sm leading-relaxed mb-6">{examNotice}</p>
+            <Button variant="outline" onClick={() => navigate("/")} className="rounded-xl h-11">
+              {tr.errors.goHome}
+            </Button>
+          </motion.div>
         </div>
       </Layout>
     );
@@ -146,6 +206,13 @@ const Register = () => {
             <div className="section-divider mb-4" />
             <p className="text-muted-foreground text-sm">{ORG_NAME}</p>
           </motion.div>
+
+          {/* Exam notice banner (info/warning only - not blocking) */}
+          {examNotice && (examNoticeType === "info" || examNoticeType === "warning") && (
+            <div className="mb-6">
+              <ExamNoticeBanner />
+            </div>
+          )}
 
           <motion.div
             className="bg-card rounded-2xl p-8 premium-shadow border border-border"

@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ORG_NAME } from "@/lib/constants";
 import { useLang } from "@/lib/i18n";
 import { useToast } from "@/hooks/use-toast";
+import ExamNoticeBanner from "@/components/ExamNoticeBanner";
 
 const ResultPage = () => {
   const [resultStatus, setResultStatus] = useState<string | null>(null);
@@ -105,6 +106,11 @@ const ResultPage = () => {
             <div className="section-divider mb-4" />
             <p className="text-muted-foreground text-sm">{ORG_NAME}</p>
           </motion.div>
+
+          {/* Exam Notice Banner */}
+          <div className="mb-6">
+            <ExamNoticeBanner />
+          </div>
 
           <motion.div className="bg-card rounded-2xl p-6 md:p-8 premium-shadow border border-border" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <Tabs defaultValue="roll">
