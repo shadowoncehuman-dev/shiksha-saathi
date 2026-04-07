@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import CountdownTimer from "@/components/CountdownTimer";
 import FAQSection from "@/components/FAQSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import ExamNoticeBanner from "@/components/ExamNoticeBanner";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: string }) => {
@@ -170,6 +171,11 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Exam Notice Banner */}
+      <div className="container mx-auto px-4 -mt-1 mb-4">
+        <ExamNoticeBanner />
+      </div>
 
       {/* Countdown Timer */}
       <CountdownTimer />

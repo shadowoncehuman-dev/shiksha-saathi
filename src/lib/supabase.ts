@@ -35,4 +35,6 @@ export type SiteSettings = {
   result_status: "Not Declared" | "Available" | "Viewing Period Ended";
   result_publish_date: string | null;
   result_expiry_date: string | null;
+  exam_notice: string | null;
+  exam_notice_type: "info" | "warning" | "cancelled" | "rescheduled";
 };

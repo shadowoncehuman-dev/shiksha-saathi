@@ -245,6 +245,34 @@ const t = {
       failCount: "Failed",
       searchPlaceholder: "Search by name, roll no, or village...",
     },
+    // Offline
+    offline: {
+      title: "No Internet Connection",
+      subtitle: "Please check your connection and try again. The page will reload automatically when you're back online.",
+      waiting: "Waiting for connection...",
+    },
+    // Registration Success/Failed
+    regSuccess: {
+      badge: "Registration Successful",
+      title: "You're Registered!",
+      rollLabel: "Your Roll Number",
+      downloadAdmitCard: "Download Admit Card",
+      goHome: "Go Home",
+    },
+    regFailed: {
+      title: "Registration Failed",
+      tryAgain: "Try Again",
+      goHome: "Go Home",
+    },
+    // Exam Notice
+    examNotice: {
+      cancelled: "Exam Cancelled",
+      rescheduled: "Exam Rescheduled",
+      warning: "Important Notice",
+      info: "Information",
+      examCancelledTitle: "Exam Cancelled",
+      examRescheduledTitle: "Exam Rescheduled",
+    },
   },
 
   hi: {
@@ -488,6 +516,34 @@ const t = {
       passCount: "उत्तीर्ण",
       failCount: "अनुत्तीर्ण",
       searchPlaceholder: "नाम, रोल नंबर या गाँव से खोजें...",
+    },
+    // Offline
+    offline: {
+      title: "इंटरनेट कनेक्शन नहीं है",
+      subtitle: "कृपया अपना कनेक्शन जांचें और पुनः प्रयास करें। ऑनलाइन होने पर पेज अपने आप रीलोड हो जाएगा।",
+      waiting: "कनेक्शन की प्रतीक्षा...",
+    },
+    // Registration Success/Failed
+    regSuccess: {
+      badge: "पंजीकरण सफल",
+      title: "आपका पंजीकरण हो गया!",
+      rollLabel: "आपका रोल नंबर",
+      downloadAdmitCard: "प्रवेश पत्र डाउनलोड करें",
+      goHome: "होम पर जाएं",
+    },
+    regFailed: {
+      title: "पंजीकरण विफल",
+      tryAgain: "फिर से कोशिश करें",
+      goHome: "होम पर जाएं",
+    },
+    // Exam Notice
+    examNotice: {
+      cancelled: "परीक्षा रद्द",
+      rescheduled: "परीक्षा पुनर्निर्धारित",
+      warning: "महत्वपूर्ण सूचना",
+      info: "जानकारी",
+      examCancelledTitle: "परीक्षा रद्द",
+      examRescheduledTitle: "परीक्षा पुनर्निर्धारित",
     },
   },
 };

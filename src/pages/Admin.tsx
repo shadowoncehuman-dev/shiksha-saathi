@@ -62,6 +62,7 @@ const Admin = () => {
   const [settings, setSettings] = useState<SiteSettings>({
     registration_status: "Not Started", result_status: "Not Declared",
     result_publish_date: null, result_expiry_date: null,
+    exam_notice: null, exam_notice_type: "info",
   });
 
   const [students, setStudents] = useState<Registration[]>([]);
@@ -542,6 +543,58 @@ const Admin = () => {
                     <label className="text-sm text-muted-foreground block mb-1.5">Expiry Date</label>
                     <Input type="datetime-local" className="h-11 rounded-xl" value={settings.result_expiry_date || ""} onChange={(e) => updateSetting("result_expiry_date", e.target.value || null)} />
                   </div>
+                </div>
+
+                {/* Exam Notice */}
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border md:col-span-2 space-y-4">
+                  <h3 className="font-playfair text-lg font-semibold">Exam Notice / Cancellation</h3>
+                  <p className="text-xs text-muted-foreground">Set a notice to show on Home, Register, and Result pages. "Cancelled" or "Rescheduled" will block registration.</p>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm text-muted-foreground block mb-1.5">Notice Type</label>
+                      <Select value={settings.exam_notice_type || "info"} onValueChange={(v) => updateSetting("exam_notice_type", v)}>
+                        <SelectTrigger className="h-11 rounded-xl"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="info">Info</SelectItem>
+                          <SelectItem value="warning">Warning</SelectItem>
+                          <SelectItem value="cancelled">Cancelled</SelectItem>
+                          <SelectItem value="rescheduled">Rescheduled</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-sm text-muted-foreground block mb-1.5">Notice Message</label>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="e.g. Exam cancelled due to weather conditions"
+                          className="h-11 rounded-xl"
+                          value={settings.exam_notice || ""}
+                          onChange={(e) => setSettings(s => ({ ...s, exam_notice: e.target.value || null }))}
+                        />
+                        <Button
+                          onClick={() => {
+                            updateSetting("exam_notice", settings.exam_notice);
+                          }}
+                          className="shrink-0 h-11 rounded-xl"
+                        >
+                          <Save size={14} className="mr-1.5" /> Save
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  {settings.exam_notice && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-lg text-destructive hover:text-destructive"
+                      onClick={() => {
+                        updateSetting("exam_notice", null);
+                        setSettings(s => ({ ...s, exam_notice: null }));
+                      }}
+                    >
+                      <Trash2 size={13} className="mr-1.5" /> Clear Notice
+                    </Button>
+                  )}
                 </div>
 
                 {/* Marks Config */}
