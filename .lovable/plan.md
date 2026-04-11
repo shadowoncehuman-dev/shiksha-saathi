@@ -1,76 +1,76 @@
 
 
-# Exam Notice System + Enhanced Registration Feedback + Offline Page + Hindi Translations
+# Invigilator Dashboard + Duplicate Prevention + Student Data Insert
 
 ## Overview
-Add an admin-manageable exam notice system (cancelled/rescheduled), a no-internet offline page, visually rich registration success/failed screens, and Hindi translations for all new text. When exam is cancelled/rescheduled, the Register page hides the form entirely and shows only the notice.
+Create the Invigilator page (3 tabs: Search, All Students, QR Scanner — no Attendance tab), strengthen duplicate prevention, insert ~40 class 6 and ~72 class 9 students, and update passwords.
 
-## 1. Database Migration
-Add two columns to `site_settings`:
+## 1. Database Changes
+
+### Unique index on registrations
 ```sql
-ALTER TABLE site_settings ADD COLUMN exam_notice TEXT DEFAULT NULL;
-ALTER TABLE site_settings ADD COLUMN exam_notice_type TEXT DEFAULT 'info';
+CREATE UNIQUE INDEX idx_unique_registration 
+ON registrations (LOWER(TRIM(name)), LOWER(TRIM(father_name)), class);
 ```
-`exam_notice_type` values: `info`, `warning`, `cancelled`, `rescheduled`. When null, no notice shown.
 
-## 2. Exam Notice Banner (`src/components/ExamNoticeBanner.tsx`)
-- Fetches `exam_notice` + `exam_notice_type` from `site_settings`
-- Color-coded: red for cancelled, orange for rescheduled, yellow for warning, blue for info
-- Animated icon (AlertTriangle/Calendar/Info) + message text
-- Dismissible via sessionStorage (except on Register page when cancelled/rescheduled)
-- Used on: **Index.tsx** (below hero), **Result.tsx** (above search), **Register.tsx** (above form)
+### Insert student data
+- **Class 6, Village "Ahmadpur Nayagaon", Group "Group 1"**: ~40 students (Vinam s/o Chunni Lal through Vishakha d/o Raju). Roll numbers start from 6037 onward (current last_number is 36).
+- **Class 9, Village "Ahmadpur Nayagaon", Group "Group 2"**: ~72 students (Payal d/o Nanhe Singh through Khushi d/o Sansarpal). Roll numbers start from 9005 onward (current last_number is 4).
+- Parse "s/o" / "d/o" to split student name and father name.
+- Students without marks in the results table will be treated as absent (no action needed now — the result system already handles missing entries).
 
-## 3. Register Page Logic Change (`src/pages/Register.tsx`)
-- Fetch `exam_notice` and `exam_notice_type` alongside `registration_status`
-- **If `exam_notice_type` is `cancelled` or `rescheduled`**: hide the registration form entirely, show a full themed notice page (similar to the "Not Started"/"Closed" block but with the exam notice message, a prominent icon, and no form)
-- If notice is `info` or `warning`: show banner above form but allow registration
+## 2. Secrets
+- Add `INVIGILATOR_PASSWORD` secret with value `exam2026`
+- Update `ADMIN_PASSWORD` secret to `april14`
 
-## 4. Registration Success Screen (`src/components/RegistrationSuccess.tsx`)
-- Full-screen green/emerald themed page (replaces toast + navigate)
-- Animated checkmark SVG (circle draws in, checkmark appears)
-- Confetti-like CSS particle animation
-- Displays roll number prominently, student name, class, group
-- Buttons: "Download Admit Card" + "Go Home"
+## 3. Edge Function: `validate-invigilator`
+- File: `supabase/functions/validate-invigilator/index.ts`
+- Same pattern as `validate-admin`, checks against `INVIGILATOR_PASSWORD`
 
-## 5. Registration Failed Screen (`src/components/RegistrationFailed.tsx`)
-- Red themed overlay with animated X-mark SVG + shake effect
-- Error message display
-- "Try Again" + "Go Home" buttons
+## 4. Invigilator Page (`src/pages/Invigilator.tsx`)
 
-## 6. Offline Detector (`src/components/OfflineDetector.tsx`)
-- Listens to `online`/`offline` window events + `navigator.onLine`
-- Full-screen overlay when offline: dark gradient, animated WiFi-off SVG with fading signal waves
-- Auto-dismisses when connection restores
-- Added to `App.tsx` wrapping everything
+### Password Gate
+- Password input, validates via `validate-invigilator` edge function
 
-## 7. Admin Panel — Exam Notice Management
-Add to Settings tab in `Admin.tsx`:
-- Text input for exam notice message
-- Dropdown for notice type (Info/Warning/Cancelled/Rescheduled)
-- Save + Clear buttons
-- Update `SiteSettings` type in `src/lib/supabase.ts`
+### Tab 1: Student Search
+- Search by roll number or name (partial match via ilike)
+- Results as cards showing all student details
+- Click to edit name, father_name, class, village, phone (roll_number read-only)
 
-## 8. Hindi Translations (`src/lib/i18n.tsx`)
-Add keys for:
-- Offline page: title, subtitle
-- Registration success: title, rollLabel, downloadAdmitCard
-- Registration failed: title, tryAgain
-- Exam notice types: cancelled, rescheduled, warning, info
-- Admin notice labels
+### Tab 2: All Students
+- Paginated table of all registrations
+- Filter by class, group, village
+- Inline edit with save to DB
+
+### Tab 3: QR Scanner
+- Install `html5-qrcode` package
+- Scan QR → parse JSON → cross-verify against `registrations` table
+- Green/red result indicator with student details
+
+## 5. Enhanced Duplicate Prevention (`src/pages/Register.tsx`)
+- **Server-side block**: In `onSubmit`, before inserting, query for exact match (case-insensitive name + father_name + class). If found, show error and block submission.
+- **Phone spam check**: Warn if same phone has 3+ registrations.
+- DB unique index as final safety net.
+
+## 6. Route & Dependencies
+- Add `/invigilator` to `AnimatedRoutes.tsx` (lazy loaded)
+- Install `html5-qrcode`
+
+## 7. i18n Translations
+Add Hindi/English keys for invigilator UI (login, search, tabs, edit, QR status).
 
 ## Files to Create
-- `src/components/ExamNoticeBanner.tsx`
-- `src/components/RegistrationSuccess.tsx`
-- `src/components/RegistrationFailed.tsx`
-- `src/components/OfflineDetector.tsx`
+- `src/pages/Invigilator.tsx`
+- `supabase/functions/validate-invigilator/index.ts`
+- Migration: unique index on registrations
 
 ## Files to Modify
-- `src/pages/Register.tsx` — fetch exam notice, conditionally hide form, use success/failed components
-- `src/pages/Index.tsx` — add ExamNoticeBanner
-- `src/pages/Result.tsx` — add ExamNoticeBanner
-- `src/pages/Admin.tsx` — add exam notice management in Settings tab
-- `src/App.tsx` — add OfflineDetector
-- `src/lib/i18n.tsx` — add all new translation keys (en + hi)
-- `src/lib/supabase.ts` — update SiteSettings type
-- Migration: add `exam_notice` + `exam_notice_type` columns to `site_settings`
+- `src/components/AnimatedRoutes.tsx` — add route
+- `src/pages/Register.tsx` — server-side duplicate block in onSubmit
+- `src/lib/i18n.tsx` — invigilator translations
+
+## Data Operations (via insert tool)
+- Insert ~40 class 6 students with generated roll numbers (6037–6076)
+- Insert ~72 class 9 students with generated roll numbers (9005–9076)
+- Update roll_counters for class 6 and class 9
 
