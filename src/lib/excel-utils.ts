@@ -5,7 +5,9 @@ import { formatIndianDateTime, getGrade } from "@/lib/constants";
 export const exportStudentsToExcel = (students: Registration[], marksConfigMap: Record<number, number> = {}) => {
   if (!students.length) return;
 
-  const data = students.map((s) => {
+  const sorted = [...students].sort((a, b) => a.class - b.class || a.roll_number.localeCompare(b.roll_number, undefined, { numeric: true }));
+
+  const data = sorted.map((s) => {
     const outOf = marksConfigMap[s.class] || 100;
     return {
       "Roll Number": s.roll_number,
