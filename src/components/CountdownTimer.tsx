@@ -3,11 +3,12 @@ import { motion } from "framer-motion";
 import { Timer } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 
-const TARGET_DATE = new Date("2026-04-12T11:00:00+05:30").getTime();
+const EXAM_DATE = new Date("2026-04-12T11:00:00+05:30").getTime();
+const RESULT_DATE = new Date("2026-05-02T10:00:00+05:30").getTime();
 
-const CountdownTimer = () => {
+const CountdownTimer = ({ mode = "exam" }: { mode?: "exam" | "result" }) => {
   const { tr } = useLang();
-  const [timeLeft, setTimeLeft] = useState(getTimeLeft());
+  const TARGET_DATE = mode === "result" ? RESULT_DATE : EXAM_DATE;
 
   function getTimeLeft() {
     const diff = Math.max(TARGET_DATE - Date.now(), 0);
@@ -18,6 +19,8 @@ const CountdownTimer = () => {
       seconds: Math.floor((diff / 1000) % 60),
     };
   }
+
+  const [timeLeft, setTimeLeft] = useState(getTimeLeft());
 
   useEffect(() => {
     const interval = setInterval(() => setTimeLeft(getTimeLeft()), 1000);
@@ -31,6 +34,9 @@ const CountdownTimer = () => {
     { label: tr.countdown.seconds, value: timeLeft.seconds },
   ];
 
+  const title = mode === "result" ? "Result Countdown" : tr.countdown.title;
+  const heading = mode === "result" ? "Result Available on 2 May 2026" : tr.countdown.heading;
+
   return (
     <section className="py-16 md:py-20 bg-muted/30">
       <div className="container mx-auto px-4 text-center">
@@ -41,10 +47,10 @@ const CountdownTimer = () => {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 text-secondary text-xs font-semibold mb-6">
             <Timer size={14} />
-            <span>{mode === "result" ? (tr.countdown.resultTitle || "Result Countdown") : tr.countdown.title}</span>
+            <span>{title}</span>
           </div>
           <h2 className="font-playfair text-2xl md:text-3xl font-bold text-foreground mb-8">
-            {mode === "result" ? (tr.countdown.resultHeading || "Result Available on 2 May 2026") : tr.countdown.heading}
+            {heading}
           </h2>
           <div className="flex justify-center items-center gap-2 md:gap-4">
             {units.map((unit, i) => (
