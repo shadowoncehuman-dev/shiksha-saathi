@@ -41,10 +41,10 @@ const CountdownTimer = () => {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 text-secondary text-xs font-semibold mb-6">
             <Timer size={14} />
-            <span>{tr.countdown.title}</span>
+            <span>{mode === "result" ? (tr.countdown.resultTitle || "Result Countdown") : tr.countdown.title}</span>
           </div>
           <h2 className="font-playfair text-2xl md:text-3xl font-bold text-foreground mb-8">
-            {tr.countdown.heading}
+            {mode === "result" ? (tr.countdown.resultHeading || "Result Available on 2 May 2026") : tr.countdown.heading}
           </h2>
           <div className="flex justify-center items-center gap-2 md:gap-4">
             {units.map((unit, i) => (
