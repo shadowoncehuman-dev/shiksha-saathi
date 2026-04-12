@@ -123,11 +123,11 @@ const SearchTab = () => {
     if (!query.trim()) return;
     setSearching(true);
     const q = query.trim();
-    // Try roll number first, then name
+    // Try roll number, name, father_name, or phone
     let { data } = await supabase
       .from("registrations")
       .select("*")
-      .or(`roll_number.eq.${q},name.ilike.%${q}%,father_name.ilike.%${q}%`)
+      .or(`roll_number.eq.${q},name.ilike.%${q}%,father_name.ilike.%${q}%,phone.ilike.%${q}%`)
       .order("class")
       .limit(50);
     setResults(data || []);
@@ -154,7 +154,7 @@ const SearchTab = () => {
     <div className="bg-card rounded-2xl p-6 border border-border premium-shadow">
       <div className="flex gap-3 mb-6">
         <Input
-          placeholder={tr.invigilator?.searchPlaceholder || "Search by roll number or name..."}
+          placeholder={tr.invigilator?.searchPlaceholder || "Search by roll number, name, or phone..."}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && doSearch()}

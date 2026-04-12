@@ -12,6 +12,7 @@ import { ORG_NAME } from "@/lib/constants";
 import { useLang } from "@/lib/i18n";
 import { useToast } from "@/hooks/use-toast";
 import ExamNoticeBanner from "@/components/ExamNoticeBanner";
+import CountdownTimer from "@/components/CountdownTimer";
 
 const ResultPage = () => {
   const [resultStatus, setResultStatus] = useState<string | null>(null);
@@ -90,6 +91,7 @@ const ResultPage = () => {
               {resultStatus === "Not Declared" ? tr.result.notDeclaredMsg : tr.result.viewingEndedMsg}
             </p>
           </motion.div>
+          {resultStatus === "Not Declared" && <CountdownTimer mode="result" />}
         </div>
       </Layout>
     );
