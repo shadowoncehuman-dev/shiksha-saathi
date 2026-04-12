@@ -19,6 +19,7 @@ const ExamDetails = lazy(() => import("@/pages/ExamDetails"));
 const Downloads = lazy(() => import("@/pages/Downloads"));
 const Winners = lazy(() => import("@/pages/Winners"));
 const Invigilator = lazy(() => import("@/pages/Invigilator"));
+const Admin2 = lazy(() => import("@/pages/Admin2"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const Forbidden = lazy(() => import("@/pages/Forbidden"));
 const ServerError = lazy(() => import("@/pages/ServerError"));
