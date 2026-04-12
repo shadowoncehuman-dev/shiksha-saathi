@@ -18,6 +18,7 @@ const Gallery = lazy(() => import("@/pages/Gallery"));
 const ExamDetails = lazy(() => import("@/pages/ExamDetails"));
 const Downloads = lazy(() => import("@/pages/Downloads"));
 const Winners = lazy(() => import("@/pages/Winners"));
+const Invigilator = lazy(() => import("@/pages/Invigilator"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const Forbidden = lazy(() => import("@/pages/Forbidden"));
 const ServerError = lazy(() => import("@/pages/ServerError"));
@@ -47,6 +48,7 @@ const AnimatedRoutes = () => {
           <Route path="/exam-details" element={<PageTransition><ExamDetails /></PageTransition>} />
           <Route path="/downloads" element={<PageTransition><Downloads /></PageTransition>} />
           <Route path="/winners" element={<PageTransition><Winners /></PageTransition>} />
+          <Route path="/invigilator" element={<PageTransition><Invigilator /></PageTransition>} />
           <Route path="/forbidden" element={<PageTransition><Forbidden /></PageTransition>} />
           <Route path="/server-error" element={<PageTransition><ServerError /></PageTransition>} />
           <Route path="/service-unavailable" element={<PageTransition><ServiceUnavailable /></PageTransition>} />

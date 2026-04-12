@@ -93,6 +93,29 @@ const Register = () => {
     try {
       const studentClass = parseInt(values.student_class);
       const group = getGroup(studentClass);
+
+      // Server-side duplicate check - block submission
+      const { data: dupCheck } = await supabase
+        .from("registrations")
+        .select("id")
+        .ilike("name", values.name.trim())
+        .ilike("father_name", values.father_name.trim())
+        .eq("class", studentClass)
+        .limit(1);
+      if (dupCheck && dupCheck.length > 0) {
+        throw new Error(tr.invigilator?.duplicateBlocked || "This student is already registered. Duplicate registration is not allowed.");
+      }
+
+      // Phone spam check
+      const { data: phoneCheck } = await supabase
+        .from("registrations")
+        .select("id")
+        .eq("phone", values.phone)
+        .limit(3);
+      if (phoneCheck && phoneCheck.length >= 3) {
+        throw new Error(tr.invigilator?.phoneSpamWarning || "This phone number has been used for too many registrations.");
+      }
+
       const { data: rollData, error: rollError } = await supabase.functions.invoke("generate-roll-number", { body: { student_class: studentClass } });
       if (rollError || !rollData?.roll_number) throw new Error("Failed to generate roll number");
 
