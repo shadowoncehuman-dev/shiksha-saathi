@@ -13,6 +13,7 @@ import { useLang } from "@/lib/i18n";
 import { useToast } from "@/hooks/use-toast";
 import ExamNoticeBanner from "@/components/ExamNoticeBanner";
 import CountdownTimer from "@/components/CountdownTimer";
+import QuestionPaperBanner from "@/components/QuestionPaperBanner";
 
 const ResultPage = () => {
   const [resultStatus, setResultStatus] = useState<string | null>(null);
@@ -79,19 +80,24 @@ const ResultPage = () => {
   if (resultStatus !== "Available") {
     return (
       <Layout>
-        <div className="flex items-center justify-center min-h-[70vh] px-4 pt-20">
-          <motion.div className="bg-card rounded-2xl p-10 text-center max-w-md premium-shadow border border-border" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
-            <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-5">
-              <Award className="text-secondary" size={24} />
-            </div>
-            <h2 className="font-playfair text-2xl font-bold text-foreground mb-3">
-              {resultStatus === "Not Declared" ? tr.result.notDeclared : tr.result.viewingEnded}
-            </h2>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              {resultStatus === "Not Declared" ? tr.result.notDeclaredMsg : tr.result.viewingEndedMsg}
-            </p>
-          </motion.div>
+        <div className="pt-20">
+          <div className="flex items-center justify-center min-h-[50vh] px-4">
+            <motion.div className="bg-card rounded-2xl p-10 text-center max-w-md premium-shadow border border-border" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+              <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-5">
+                <Award className="text-secondary" size={24} />
+              </div>
+              <h2 className="font-playfair text-2xl font-bold text-foreground mb-3">
+                {resultStatus === "Not Declared" ? tr.result.notDeclared : tr.result.viewingEnded}
+              </h2>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                {resultStatus === "Not Declared" ? tr.result.notDeclaredMsg : tr.result.viewingEndedMsg}
+              </p>
+            </motion.div>
+          </div>
           {resultStatus === "Not Declared" && <CountdownTimer mode="result" />}
+          <div className="my-4">
+            <QuestionPaperBanner />
+          </div>
         </div>
       </Layout>
     );
