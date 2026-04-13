@@ -147,7 +147,8 @@ const Downloads = () => {
                     ))}
                   </div>
                 </motion.div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
