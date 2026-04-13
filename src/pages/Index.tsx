@@ -178,6 +178,21 @@ const Index = () => {
         <ExamNoticeBanner />
       </div>
 
+      {/* Result Date Announcement */}
+      <div className="container mx-auto px-4 mb-2">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="flex items-center justify-center gap-3 px-4 sm:px-6 py-3 sm:py-4 rounded-xl bg-gradient-to-r from-secondary/10 via-accent/5 to-secondary/10 border border-secondary/15 text-center"
+        >
+          <Award size={18} className="text-secondary shrink-0" />
+          <p className="text-sm sm:text-base font-semibold text-foreground">
+            📢 Result will be available on <span className="text-secondary">2 May 2026</span>
+          </p>
+        </motion.div>
+      </div>
+
       {/* Countdown Timer */}
       <CountdownTimer />
 
