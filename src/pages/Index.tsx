@@ -15,6 +15,7 @@ import CountdownTimer from "@/components/CountdownTimer";
 import FAQSection from "@/components/FAQSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import ExamNoticeBanner from "@/components/ExamNoticeBanner";
+import QuestionPaperBanner from "@/components/QuestionPaperBanner";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: string }) => {
@@ -179,6 +180,14 @@ const Index = () => {
 
       {/* Countdown Timer */}
       <CountdownTimer />
+
+      {/* Result Countdown */}
+      <CountdownTimer mode="result" />
+
+      {/* Question Paper Banner */}
+      <div className="my-4">
+        <QuestionPaperBanner />
+      </div>
 
       {/* Exam Groups */}
       <section className="py-20 md:py-32">
