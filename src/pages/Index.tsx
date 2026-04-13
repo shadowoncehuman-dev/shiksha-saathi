@@ -188,13 +188,12 @@ const Index = () => {
         >
           <Award size={18} className="text-secondary shrink-0" />
           <p className="text-sm sm:text-base font-semibold text-foreground">
-            📢 Result will be available on <span className="text-secondary">2 May 2026</span>
+            📢 Result will be available on <span className="text-secondary">1 May 2026</span>
           </p>
         </motion.div>
       </div>
 
-      {/* Countdown Timer */}
-      <CountdownTimer />
+      {/* Exam Countdown - hidden since exam date passed */}
 
       {/* Result Countdown */}
       <CountdownTimer mode="result" />

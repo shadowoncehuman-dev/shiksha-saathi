@@ -4,7 +4,7 @@ import { Timer } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 
 const EXAM_DATE = new Date("2026-04-12T11:00:00+05:30").getTime();
-const RESULT_DATE = new Date("2026-05-02T10:00:00+05:30").getTime();
+const RESULT_DATE = new Date("2026-05-01T10:00:00+05:30").getTime();
 
 const CountdownTimer = ({ mode = "exam" }: { mode?: "exam" | "result" }) => {
   const { tr } = useLang();
@@ -35,7 +35,7 @@ const CountdownTimer = ({ mode = "exam" }: { mode?: "exam" | "result" }) => {
   ];
 
   const title = mode === "result" ? "Result Countdown" : tr.countdown.title;
-  const heading = mode === "result" ? "Result Available on 2 May 2026" : tr.countdown.heading;
+  const heading = mode === "result" ? "Result Available on 1 May 2026" : tr.countdown.heading;
 
   return (
     <section className="py-10 sm:py-16 md:py-20 bg-muted/30">
