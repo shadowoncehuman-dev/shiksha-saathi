@@ -42,6 +42,13 @@ const Downloads = () => {
     return acc;
   }, {});
 
+  // Sort categories: "Question Paper" first, rest alphabetical
+  const sortedCategories = Object.keys(grouped).sort((a, b) => {
+    if (a.toLowerCase().includes("question paper")) return -1;
+    if (b.toLowerCase().includes("question paper")) return 1;
+    return a.localeCompare(b);
+  });
+
   return (
     <Layout>
       <SEOHead title="Documents — BBDBASS" description="Download syllabi, templates, and important documents for the BBDBASS examination." path="/downloads" />
@@ -81,7 +88,9 @@ const Downloads = () => {
             </div>
           ) : (
             <div className="space-y-10">
-              {Object.entries(grouped).map(([category, files], ci) => (
+              {sortedCategories.map((category, ci) => {
+                const files = grouped[category];
+                return (
                 <motion.div
                   key={category}
                   initial={{ opacity: 0, y: 20 }}
