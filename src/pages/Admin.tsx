@@ -513,13 +513,20 @@ const Admin = () => {
 
       // Insert winners
       const { error } = await supabase.from("winners").insert(winnersToAdd);
-      if (error) throw error;
+      if (error) {
+        // Check if it's a constraint violation error due to tied ranks
+        if (error.message.includes('duplicate key value') || error.message.includes('violates unique constraint')) {
+          throw new Error("Database constraint prevents tied ranks. Please update the database schema to allow multiple winners with the same rank.");
+        }
+        throw error;
+      }
 
       toast({ title: "Success", description: "Top students added to winners for 2026" });
       fetchWinners();
     } catch (error) {
       console.error("Error adding winners:", error);
-      toast({ title: "Error", description: "Failed to add winners", variant: "destructive" });
+      const errorMessage = error instanceof Error ? error.message : "Failed to add winners";
+      toast({ title: "Error", description: errorMessage, variant: "destructive" });
     }
     setAddingWinners(false);
   };
