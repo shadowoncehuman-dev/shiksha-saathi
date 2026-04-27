@@ -423,14 +423,50 @@ const Admin = () => {
         return reg ? { ...result, registrations: reg } : null;
       }).filter(Boolean);
 
-      // Separate by group and take top 3
-      const group1Students = combinedResults
-        .filter(r => r.registrations.group === "Group 1")
-        .slice(0, 3);
+      // Separate by group and assign ranks considering ties
+      const assignRanksWithTies = (students) => {
+        if (!students.length) return [];
+        
+        // Sort by percentage descending
+        const sorted = [...students].sort((a, b) => b.percentage - a.percentage);
+        
+        // Assign ranks with ties
+        const ranked = [];
+        let currentRank = 1;
+        let previousPercentage = null;
+        
+        for (let i = 0; i < sorted.length; i++) {
+          const student = sorted[i];
+          
+          // If this student has the same percentage as the previous one, give same rank
+          if (previousPercentage !== null && student.percentage === previousPercentage) {
+            ranked.push({ ...student, rank: currentRank });
+          } else {
+            // New rank for different percentage
+            ranked.push({ ...student, rank: currentRank });
+            previousPercentage = student.percentage;
+          }
+          
+          // Only increment rank if next student has different percentage
+          if (i < sorted.length - 1 && sorted[i + 1].percentage !== student.percentage) {
+            currentRank++;
+          }
+        }
+        
+        return ranked;
+      };
 
-      const group2Students = combinedResults
-        .filter(r => r.registrations.group === "Group 2")
-        .slice(0, 3);
+      const group1Ranked = assignRanksWithTies(
+        combinedResults.filter(r => r.registrations.group === "Group 1")
+      );
+
+      const group2Ranked = assignRanksWithTies(
+        combinedResults.filter(r => r.registrations.group === "Group 2")
+      );
+
+      // Take students with ranks 1, 2, or 3 (may include more than 3 students due to ties)
+      const group1Students = group1Ranked.filter(s => s.rank <= 3);
+      const group2Students = group2Ranked.filter(s => s.rank <= 3);
 
       setTopStudents({
         group1: group1Students,
@@ -448,10 +484,10 @@ const Admin = () => {
       const winnersToAdd = [];
 
       // Add Group 1 winners
-      topStudents.group1.forEach((student, index) => {
+      topStudents.group1.forEach((student) => {
         winnersToAdd.push({
           year: 2026,
-          rank: index + 1, // 1, 2, 3
+          rank: student.rank, // Use the actual rank considering ties
           name: student.registrations.name,
           father_name: student.registrations.father_name,
           class: student.registrations.class,
@@ -462,10 +498,10 @@ const Admin = () => {
       });
 
       // Add Group 2 winners
-      topStudents.group2.forEach((student, index) => {
+      topStudents.group2.forEach((student) => {
         winnersToAdd.push({
           year: 2026,
-          rank: index + 4, // 4, 5, 6
+          rank: student.rank, // Use the actual rank considering ties
           name: student.registrations.name,
           father_name: student.registrations.father_name,
           class: student.registrations.class,
@@ -950,9 +986,6 @@ const Admin = () => {
                           <SelectItem value="1">1st</SelectItem>
                           <SelectItem value="2">2nd</SelectItem>
                           <SelectItem value="3">3rd</SelectItem>
-                          <SelectItem value="4">4th</SelectItem>
-                          <SelectItem value="5">5th</SelectItem>
-                          <SelectItem value="6">6th</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1033,7 +1066,7 @@ const Admin = () => {
                         {topStudents.group1.map((student, index) => (
                           <div key={student.roll_number} className="flex items-center gap-3 bg-background rounded-lg p-3">
                             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
-                              {index + 1}
+                              {student.rank}
                             </div>
                             <div className="min-w-0 flex-1">
                               <p className="text-sm font-semibold text-foreground truncate">{student.registrations.name}</p>
@@ -1057,7 +1090,7 @@ const Admin = () => {
                         {topStudents.group2.map((student, index) => (
                           <div key={student.roll_number} className="flex items-center gap-3 bg-background rounded-lg p-3">
                             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
-                              {index + 1}
+                              {student.rank}
                             </div>
                             <div className="min-w-0 flex-1">
                               <p className="text-sm font-semibold text-foreground truncate">{student.registrations.name}</p>

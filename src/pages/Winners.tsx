@@ -53,39 +53,6 @@ const rankConfig = [
     size: "w-28 h-28 md:w-32 md:h-32",
     mt: "mt-8",
   },
-  {
-    rank: 5,
-    icon: Star,
-    color: "from-blue-400 to-blue-500",
-    border: "border-blue-400",
-    bg: "bg-blue-50 dark:bg-blue-900/20",
-    badge: "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-200",
-    label: "5th",
-    size: "w-24 h-24 md:w-28 md:h-28",
-    mt: "mt-12",
-  },
-  {
-    rank: 4,
-    icon: Trophy,
-    color: "from-green-400 to-green-500",
-    border: "border-green-400",
-    bg: "bg-green-50 dark:bg-green-900/20",
-    badge: "bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200",
-    label: "4th",
-    size: "w-28 h-28 md:w-32 md:h-32",
-    mt: "mt-4",
-  },
-  {
-    rank: 6,
-    icon: Award,
-    color: "from-purple-400 to-purple-500",
-    border: "border-purple-400",
-    bg: "bg-purple-50 dark:bg-purple-900/20",
-    badge: "bg-purple-100 text-purple-700 dark:bg-purple-800 dark:text-purple-200",
-    label: "6th",
-    size: "w-24 h-24 md:w-28 md:h-28",
-    mt: "mt-12",
-  },
 ];
 
 const Winners = () => {
@@ -198,93 +165,145 @@ const Winners = () => {
                     </span>
                   </div>
 
-                  {/* Podium - order: 2nd, 1st, 3rd */}
-                  <div className="flex items-end justify-center gap-4 md:gap-8 max-w-4xl mx-auto">
-                    {rankConfig.map((config, ci) => {
-                      const winner = winnersByYear[year]?.find(
-                        (w) => w.rank === config.rank
-                      );
-                      if (!winner) return <div key={ci} className="flex-1" />;
+                  {/* Winners Grid - showing all top ranked students */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                    {/* Group 1 Winners */}
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold text-center text-primary">Group 1 Winners</h3>
+                      <div className="space-y-3">
+                        {winnersByYear[year]?.filter(w => w.group_name === "Group 1" && w.rank <= 3)
+                          .sort((a, b) => a.rank - b.rank)
+                          .map((winner, index) => {
+                            const config = rankConfig.find(c => c.rank === winner.rank) || rankConfig[0];
+                            const Icon = config.icon;
 
-                      const Icon = config.icon;
+                            return (
+                              <motion.div
+                                key={winner.id}
+                                className="flex items-center gap-4 bg-card rounded-xl p-4 border border-border premium-shadow"
+                                initial={{ opacity: 0, x: -20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                              >
+                                {/* Rank & Medal */}
+                                <div className="flex flex-col items-center">
+                                  <div
+                                    className={`w-10 h-10 rounded-full bg-gradient-to-br ${config.color} flex items-center justify-center shadow-lg`}
+                                  >
+                                    <Icon size={18} className="text-white" />
+                                  </div>
+                                  <span className="text-xs font-bold mt-1">
+                                    {winner.rank}${winner.rank === 1 ? 'st' : winner.rank === 2 ? 'nd' : 'rd'}
+                                  </span>
+                                </div>
 
-                      return (
-                        <motion.div
-                          key={winner.id}
-                          className={`flex-1 flex flex-col items-center ${config.mt}`}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.5, delay: 0.2 + ci * 0.15 }}
-                        >
-                          {/* Medal icon */}
-                          <div
-                            className={`w-10 h-10 rounded-full bg-gradient-to-br ${config.color} flex items-center justify-center mb-3 shadow-lg`}
-                          >
-                            <Icon size={20} className="text-white" />
-                          </div>
+                                {/* Photo */}
+                                <div className="relative w-16 h-16 rounded-full border-2 border-primary/20 overflow-hidden flex-shrink-0">
+                                  <Avatar className="w-full h-full">
+                                    <AvatarImage
+                                      src={winner.photo_url || ""}
+                                      alt={winner.name}
+                                      className="object-cover"
+                                    />
+                                    <AvatarFallback className="text-sm font-bold bg-muted">
+                                      {winner.name
+                                        .split(" ")
+                                        .map((n) => n[0])
+                                        .join("")
+                                        .slice(0, 2)
+                                        .toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                </div>
 
-                          {/* Photo */}
-                          <div
-                            className={`relative ${config.size} rounded-full border-4 ${config.border} overflow-hidden shadow-xl mb-4`}
-                          >
-                            <Avatar className="w-full h-full">
-                              <AvatarImage
-                                src={winner.photo_url || ""}
-                                alt={winner.name}
-                                className="object-cover"
-                              />
-                              <AvatarFallback className="text-2xl font-bold bg-muted">
-                                {winner.name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")
-                                  .slice(0, 2)
-                                  .toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                            {/* Rank badge */}
-                            <div
-                              className={`absolute -bottom-1 left-1/2 -translate-x-1/2 ${config.badge} text-xs font-bold px-3 py-0.5 rounded-full shadow`}
-                            >
-                              {config.label}
-                            </div>
-                          </div>
+                                {/* Info */}
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="font-semibold text-foreground truncate">{winner.name}</h4>
+                                  {winner.father_name && (
+                                    <p className="text-xs text-muted-foreground truncate">S/o {winner.father_name}</p>
+                                  )}
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                                      Class {winner.class}
+                                    </span>
+                                    <span className="text-sm font-bold text-secondary">{winner.percentage}%</span>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            );
+                          })}
+                      </div>
+                    </div>
 
-                          {/* Info card */}
-                          <div
-                            className={`${config.bg} rounded-xl p-4 text-center w-full border border-border premium-shadow`}
-                          >
-                            <h3 className="font-semibold text-foreground text-sm md:text-base truncate">
-                              {winner.name}
-                            </h3>
-                            {winner.father_name && (
-                              <p className="text-xs text-muted-foreground mt-0.5">
-                                S/o {winner.father_name}
-                              </p>
-                            )}
-                            <div className="flex items-center justify-center gap-2 mt-2">
-                              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                                Class {winner.class}
-                              </span>
-                              {winner.group_name && (
-                                <span className="text-xs bg-secondary/10 text-secondary px-2 py-0.5 rounded-full">
-                                  {winner.group_name}
-                                </span>
-                              )}
-                            </div>
-                            <div className="mt-3 text-2xl md:text-3xl font-bold text-secondary">
-                              {winner.percentage}%
-                            </div>
-                            {winner.roll_number && (
-                              <p className="text-[10px] text-muted-foreground mt-1">
-                                Roll: {winner.roll_number}
-                              </p>
-                            )}
-                          </div>
-                        </motion.div>
-                      );
-                    })}
+                    {/* Group 2 Winners */}
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold text-center text-primary">Group 2 Winners</h3>
+                      <div className="space-y-3">
+                        {winnersByYear[year]?.filter(w => w.group_name === "Group 2" && w.rank <= 3)
+                          .sort((a, b) => a.rank - b.rank)
+                          .map((winner, index) => {
+                            const config = rankConfig.find(c => c.rank === winner.rank) || rankConfig[0];
+                            const Icon = config.icon;
+
+                            return (
+                              <motion.div
+                                key={winner.id}
+                                className="flex items-center gap-4 bg-card rounded-xl p-4 border border-border premium-shadow"
+                                initial={{ opacity: 0, x: 20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                              >
+                                {/* Rank & Medal */}
+                                <div className="flex flex-col items-center">
+                                  <div
+                                    className={`w-10 h-10 rounded-full bg-gradient-to-br ${config.color} flex items-center justify-center shadow-lg`}
+                                  >
+                                    <Icon size={18} className="text-white" />
+                                  </div>
+                                  <span className="text-xs font-bold mt-1">
+                                    {winner.rank}${winner.rank === 1 ? 'st' : winner.rank === 2 ? 'nd' : 'rd'}
+                                  </span>
+                                </div>
+
+                                {/* Photo */}
+                                <div className="relative w-16 h-16 rounded-full border-2 border-primary/20 overflow-hidden flex-shrink-0">
+                                  <Avatar className="w-full h-full">
+                                    <AvatarImage
+                                      src={winner.photo_url || ""}
+                                      alt={winner.name}
+                                      className="object-cover"
+                                    />
+                                    <AvatarFallback className="text-sm font-bold bg-muted">
+                                      {winner.name
+                                        .split(" ")
+                                        .map((n) => n[0])
+                                        .join("")
+                                        .slice(0, 2)
+                                        .toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                </div>
+
+                                {/* Info */}
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="font-semibold text-foreground truncate">{winner.name}</h4>
+                                  {winner.father_name && (
+                                    <p className="text-xs text-muted-foreground truncate">S/o {winner.father_name}</p>
+                                  )}
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                                      Class {winner.class}
+                                    </span>
+                                    <span className="text-sm font-bold text-secondary">{winner.percentage}%</span>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            );
+                          })}
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               ))}
