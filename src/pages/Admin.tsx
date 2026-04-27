@@ -378,7 +378,9 @@ const Admin = () => {
     if (winnerPhotoRef.current) winnerPhotoRef.current.value = "";
   };
 
-  const exportExcel = () => exportStudentsToExcel(students, marksConfigMap);
+  const exportExcel = async () => {
+    await exportStudentsToExcel(students, marksConfigMap, supabase);
+  };
 
   const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

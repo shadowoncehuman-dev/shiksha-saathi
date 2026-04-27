@@ -2,13 +2,47 @@ import * as XLSX from "xlsx";
 import { type Registration } from "@/lib/supabase";
 import { formatIndianDateTime, getGrade } from "@/lib/constants";
 
-export const exportStudentsToExcel = (students: Registration[], marksConfigMap: Record<number, number> = {}) => {
+type StudentMarks = {
+  roll_number: string;
+  subject1: number;
+  subject2: number;
+  subject3: number;
+  subject4: number;
+  total: number;
+  percentage: number;
+  grade: string;
+  status: string;
+};
+
+export const exportStudentsToExcel = async (
+  students: Registration[],
+  marksConfigMap: Record<number, number> = {},
+  supabase?: any
+) => {
   if (!students.length) return;
+
+  // Fetch marks data from database if supabase is provided
+  let marksMap: Record<string, StudentMarks> = {};
+  if (supabase) {
+    try {
+      const { data: marksData } = await supabase.from("results").select("*");
+      if (marksData) {
+        marksMap = marksData.reduce((acc: Record<string, StudentMarks>, mark: StudentMarks) => {
+          acc[mark.roll_number] = mark;
+          return acc;
+        }, {});
+      }
+    } catch (error) {
+      console.error("Error fetching marks:", error);
+    }
+  }
 
   const sorted = [...students].sort((a, b) => a.class - b.class || a.roll_number.localeCompare(b.roll_number, undefined, { numeric: true }));
 
   const data = sorted.map((s) => {
     const outOf = marksConfigMap[s.class] || 100;
+    const marks = marksMap[s.roll_number];
+    
     return {
       "Roll Number": s.roll_number,
       "Name": s.name,
@@ -18,7 +52,14 @@ export const exportStudentsToExcel = (students: Registration[], marksConfigMap: 
       "Phone": s.phone,
       "Village": s.village,
       "Registered At": s.created_at ? formatIndianDateTime(s.created_at) : "",
-      [`Total Marks (out of ${outOf})`]: "",
+      "Subject 1": marks?.subject1 || "",
+      "Subject 2": marks?.subject2 || "",
+      "Subject 3": marks?.subject3 || "",
+      "Subject 4": marks?.subject4 || "",
+      [`Total Marks (out of ${outOf})`]: marks?.total || "",
+      "Percentage": marks?.percentage || "",
+      "Grade": marks?.grade || "",
+      "Status": marks?.status || "",
     };
   });
 
