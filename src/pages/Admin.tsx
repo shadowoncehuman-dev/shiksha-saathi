@@ -386,35 +386,55 @@ const Admin = () => {
   // Top Students Functions
   const fetchTopStudents = async () => {
     try {
-      // Fetch top 3 from Group 1
-      const { data: group1Results } = await supabase
+      // First, get all results ordered by percentage
+      const { data: allResults } = await supabase
         .from("results")
-        .select(`
-          roll_number,
-          percentage,
-          total,
-          registrations!roll_number(name, father_name, class, group)
-        `)
-        .eq("registrations.group", "Group 1")
-        .order("percentage", { ascending: false })
-        .limit(3);
+        .select("roll_number, percentage, total")
+        .order("percentage", { ascending: false });
 
-      // Fetch top 3 from Group 2
-      const { data: group2Results } = await supabase
-        .from("results")
-        .select(`
-          roll_number,
-          percentage,
-          total,
-          registrations!roll_number(name, father_name, class, group)
-        `)
-        .eq("registrations.group", "Group 2")
-        .order("percentage", { ascending: false })
-        .limit(3);
+      if (!allResults || allResults.length === 0) {
+        setTopStudents({ group1: [], group2: [] });
+        return;
+      }
+
+      // Get all roll numbers
+      const rollNumbers = allResults.map(r => r.roll_number);
+
+      // Fetch registrations for these roll numbers
+      const { data: registrations } = await supabase
+        .from("registrations")
+        .select("roll_number, name, father_name, class, group")
+        .in("roll_number", rollNumbers);
+
+      if (!registrations) {
+        setTopStudents({ group1: [], group2: [] });
+        return;
+      }
+
+      // Create a map for quick lookup
+      const regMap = new Map();
+      registrations.forEach(reg => {
+        regMap.set(reg.roll_number, reg);
+      });
+
+      // Combine results with registrations and filter by group
+      const combinedResults = allResults.map(result => {
+        const reg = regMap.get(result.roll_number);
+        return reg ? { ...result, registrations: reg } : null;
+      }).filter(Boolean);
+
+      // Separate by group and take top 3
+      const group1Students = combinedResults
+        .filter(r => r.registrations.group === "Group 1")
+        .slice(0, 3);
+
+      const group2Students = combinedResults
+        .filter(r => r.registrations.group === "Group 2")
+        .slice(0, 3);
 
       setTopStudents({
-        group1: group1Results || [],
-        group2: group2Results || [],
+        group1: group1Students,
+        group2: group2Students,
       });
     } catch (error) {
       console.error("Error fetching top students:", error);
