@@ -55,8 +55,8 @@ const ResultPage = () => {
       const { data: regData } = await supabase.from("registrations").select("name, father_name, class").eq("roll_number", rollNumber.trim()).single();
       const { data: resData } = await supabase.from("results").select("*").eq("roll_number", rollNumber.trim()).single();
       if (resData) navigateToResult(resData, regData);
-      else toast({ title: "No result found", description: "Please check the roll number.", variant: "destructive" });
-    } catch { toast({ title: "Error", description: "Failed to fetch result.", variant: "destructive" }); }
+      else toast({ title: "Roll Number or Name not found", description: "Please search using your name and father's name or contact the admins.", variant: "destructive" });
+    } catch { toast({ title: "Roll Number or Name not found", description: "Please search using your name and father's name or contact the admins.", variant: "destructive" }); }
     setSearching(false);
   };
 
@@ -65,11 +65,11 @@ const ResultPage = () => {
     setSearching(true);
     try {
       const { data: regData } = await supabase.from("registrations").select("roll_number, name, father_name, class").ilike("name", searchName.trim()).ilike("father_name", searchFatherName.trim()).single();
-      if (!regData) { toast({ title: "Student not found", variant: "destructive" }); setSearching(false); return; }
+      if (!regData) { toast({ title: "Student not found", description: "Please check your name and father's name or contact the admins.", variant: "destructive" }); setSearching(false); return; }
       const { data: resData } = await supabase.from("results").select("*").eq("roll_number", regData.roll_number).single();
       if (resData) navigateToResult(resData, { name: regData.name, father_name: regData.father_name, class: regData.class });
-      else toast({ title: "No result found", variant: "destructive" });
-    } catch { toast({ title: "Error", description: "Failed to fetch result.", variant: "destructive" }); }
+      else toast({ title: "Result not available", description: "Please use the roll number search or contact the admins.", variant: "destructive" });
+    } catch { toast({ title: "Student not found", description: "Please check your name and father's name or contact the admins.", variant: "destructive" }); }
     setSearching(false);
   };
 

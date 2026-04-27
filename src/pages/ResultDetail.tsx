@@ -18,8 +18,8 @@ type ResultData = {
   class?: number;
   total: number;
   percentage: number;
-  grade: string;
-  status: string;
+  grade?: string;
+  status?: string;
 };
 
 const ResultDetail = () => {
@@ -36,7 +36,7 @@ const ResultDetail = () => {
 
   if (!data) return null;
 
-  const isPass = data.status === "PASS";
+  const isAbsent = data.total === 0 || data.total === undefined || data.total === null;
 
   const handleDownloadPDF = async () => {
     if (!cardRef.current) return;
@@ -59,8 +59,9 @@ const ResultDetail = () => {
   };
 
   const handleWhatsAppShare = () => {
-    const emoji = isPass ? "🎉" : "📋";
-    const text = `${emoji} *EXAMINATION RESULT*\n\n🏫 ${ORG_NAME}\n\n👤 Name: ${data.name || "N/A"}\n📝 Roll No: ${data.roll_number}\n📊 Total: ${data.total}/100\n📈 Percentage: ${data.percentage}%\n🏅 Grade: ${data.grade}\n${isPass ? "✅ PASS" : "❌ FAIL"}`;
+    const emoji = isAbsent ? "📋" : "🎉";
+    const statusText = isAbsent ? "ABSENT" : `📊 Total: ${data.total}/100\n📈 Percentage: ${data.percentage}%`;
+    const text = `${emoji} *EXAMINATION RESULT*\n\n🏫 ${ORG_NAME}\n\n👤 Name: ${data.name || "N/A"}\n📝 Roll No: ${data.roll_number}\n${statusText}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -104,25 +105,26 @@ const ResultDetail = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 mb-6 relative z-10">
-                {[
-                  { label: tr.resultDetail.total, value: `${data.total}/100` },
-                  { label: tr.resultDetail.percentage, value: `${data.percentage}%` },
-                  { label: tr.resultDetail.grade, value: data.grade },
-                ].map(item => (
-                  <div key={item.label} className="text-center p-4 rounded-xl" style={{ background: "hsl(222 67% 16% / 0.03)" }}>
-                    <p className="text-xs text-gray-400 mb-1">{item.label}</p>
-                    <p className="font-bold text-xl" style={{ color: "hsl(222 67% 16%)" }}>{item.value}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="text-center mb-6 relative z-10">
-                <Badge className={`text-sm px-6 py-2 ${isPass ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "bg-red-600 hover:bg-red-700 text-white"}`}>
-                  <Award size={16} className="mr-2" />
-                  {isPass ? tr.resultDetail.pass : tr.resultDetail.fail}
-                </Badge>
-              </div>
+              {isAbsent ? (
+                <div className="text-center mb-6 relative z-10">
+                  <Badge className="text-sm px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white">
+                    <Award size={16} className="mr-2" />
+                    ABSENT
+                  </Badge>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3 mb-6 relative z-10">
+                  {[
+                    { label: tr.resultDetail.total, value: `${data.total}/100` },
+                    { label: tr.resultDetail.percentage, value: `${data.percentage}%` },
+                  ].map(item => (
+                    <div key={item.label} className="text-center p-4 rounded-xl" style={{ background: "hsl(222 67% 16% / 0.03)" }}>
+                      <p className="text-xs text-gray-400 mb-1">{item.label}</p>
+                      <p className="font-bold text-xl" style={{ color: "hsl(222 67% 16%)" }}>{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <div className="mt-8 pt-4 border-t border-gray-100 text-xs text-gray-400 relative z-10 flex justify-between">
                 <div>
@@ -130,8 +132,8 @@ const ResultDetail = () => {
                   <p><strong className="text-gray-500">Contact:</strong> {CONTACT.phone}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-gray-600">Authorized Signatory</p>
-                  <p>{ORG_NAME.split(" ").slice(0, 3).join(" ")}</p>
+                  <p className="font-medium text-gray-600">President</p>
+                  <p>Bijander Kumar</p>
                 </div>
               </div>
             </div>
