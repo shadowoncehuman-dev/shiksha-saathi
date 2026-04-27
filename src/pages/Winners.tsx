@@ -53,6 +53,39 @@ const rankConfig = [
     size: "w-28 h-28 md:w-32 md:h-32",
     mt: "mt-8",
   },
+  {
+    rank: 5,
+    icon: Star,
+    color: "from-blue-400 to-blue-500",
+    border: "border-blue-400",
+    bg: "bg-blue-50 dark:bg-blue-900/20",
+    badge: "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-200",
+    label: "5th",
+    size: "w-24 h-24 md:w-28 md:h-28",
+    mt: "mt-12",
+  },
+  {
+    rank: 4,
+    icon: Trophy,
+    color: "from-green-400 to-green-500",
+    border: "border-green-400",
+    bg: "bg-green-50 dark:bg-green-900/20",
+    badge: "bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200",
+    label: "4th",
+    size: "w-28 h-28 md:w-32 md:h-32",
+    mt: "mt-4",
+  },
+  {
+    rank: 6,
+    icon: Award,
+    color: "from-purple-400 to-purple-500",
+    border: "border-purple-400",
+    bg: "bg-purple-50 dark:bg-purple-900/20",
+    badge: "bg-purple-100 text-purple-700 dark:bg-purple-800 dark:text-purple-200",
+    label: "6th",
+    size: "w-24 h-24 md:w-28 md:h-28",
+    mt: "mt-12",
+  },
 ];
 
 const Winners = () => {
@@ -88,7 +121,7 @@ const Winners = () => {
     <Layout>
       <SEOHead
         title="Previous Year Winners — BBDBASS"
-        description="View the top 3 winners from previous year examinations conducted by BBDBASS."
+        description="View the top 6 winners from previous year examinations conducted by BBDBASS."
         path="/winners"
       />
 

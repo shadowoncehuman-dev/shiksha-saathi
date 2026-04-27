@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload, Image, UsersRound, Plus, Edit, Phone, Briefcase, FileText, Trophy } from "lucide-react";
+import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload, Image, UsersRound, Plus, Edit, Phone, Briefcase, FileText, Trophy, Award } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -116,6 +116,11 @@ const Admin = () => {
   const [savingWinner, setSavingWinner] = useState(false);
   const winnerPhotoRef = useRef<HTMLInputElement>(null);
 
+  // Top Students
+  const [topStudents, setTopStudents] = useState<{ group1: any[], group2: any[] }>({ group1: [], group2: [] });
+  const [addToWinnersEnabled, setAddToWinnersEnabled] = useState(false);
+  const [addingWinners, setAddingWinners] = useState(false);
+
   const handleLogin = async () => {
     setVerifying(true);
     try {
@@ -127,7 +132,7 @@ const Admin = () => {
   };
 
   const fetchAll = useCallback(() => {
-    fetchSettings(); fetchStudents(); fetchResultStats(); fetchMarksConfig(); fetchTeam(); fetchGallery(); fetchPdfs(); fetchWinners();
+    fetchSettings(); fetchStudents(); fetchResultStats(); fetchMarksConfig(); fetchTeam(); fetchGallery(); fetchPdfs(); fetchWinners(); fetchTopStudents();
   }, []);
 
   const fetchSettings = async () => {
@@ -378,6 +383,91 @@ const Admin = () => {
     if (winnerPhotoRef.current) winnerPhotoRef.current.value = "";
   };
 
+  // Top Students Functions
+  const fetchTopStudents = async () => {
+    try {
+      // Fetch top 3 from Group 1
+      const { data: group1Results } = await supabase
+        .from("results")
+        .select(`
+          roll_number,
+          percentage,
+          total,
+          registrations!roll_number(name, father_name, class, group)
+        `)
+        .eq("registrations.group", "Group 1")
+        .order("percentage", { ascending: false })
+        .limit(3);
+
+      // Fetch top 3 from Group 2
+      const { data: group2Results } = await supabase
+        .from("results")
+        .select(`
+          roll_number,
+          percentage,
+          total,
+          registrations!roll_number(name, father_name, class, group)
+        `)
+        .eq("registrations.group", "Group 2")
+        .order("percentage", { ascending: false })
+        .limit(3);
+
+      setTopStudents({
+        group1: group1Results || [],
+        group2: group2Results || [],
+      });
+    } catch (error) {
+      console.error("Error fetching top students:", error);
+      toast({ title: "Error", description: "Failed to fetch top students", variant: "destructive" });
+    }
+  };
+
+  const addTopStudentsToWinners = async () => {
+    setAddingWinners(true);
+    try {
+      const winnersToAdd = [];
+
+      // Add Group 1 winners
+      topStudents.group1.forEach((student, index) => {
+        winnersToAdd.push({
+          year: 2026,
+          rank: index + 1, // 1, 2, 3
+          name: student.registrations.name,
+          father_name: student.registrations.father_name,
+          class: student.registrations.class,
+          group_name: student.registrations.group,
+          roll_number: student.roll_number,
+          percentage: student.percentage,
+        });
+      });
+
+      // Add Group 2 winners
+      topStudents.group2.forEach((student, index) => {
+        winnersToAdd.push({
+          year: 2026,
+          rank: index + 4, // 4, 5, 6
+          name: student.registrations.name,
+          father_name: student.registrations.father_name,
+          class: student.registrations.class,
+          group_name: student.registrations.group,
+          roll_number: student.roll_number,
+          percentage: student.percentage,
+        });
+      });
+
+      // Insert winners
+      const { error } = await supabase.from("winners").insert(winnersToAdd);
+      if (error) throw error;
+
+      toast({ title: "Success", description: "Top students added to winners for 2026" });
+      fetchWinners();
+    } catch (error) {
+      console.error("Error adding winners:", error);
+      toast({ title: "Error", description: "Failed to add winners", variant: "destructive" });
+    }
+    setAddingWinners(false);
+  };
+
   const exportExcel = async () => {
     await exportStudentsToExcel(students, marksConfigMap, supabase);
   };
@@ -510,6 +600,7 @@ const Admin = () => {
               <TabsTrigger value="team" className="rounded-lg text-sm"><UsersRound size={14} className="mr-1.5" /> Team</TabsTrigger>
               <TabsTrigger value="gallery" className="rounded-lg text-sm"><Image size={14} className="mr-1.5" /> Gallery</TabsTrigger>
               <TabsTrigger value="winners" className="rounded-lg text-sm"><Trophy size={14} className="mr-1.5" /> Winners</TabsTrigger>
+              <TabsTrigger value="top-students" className="rounded-lg text-sm"><Award size={14} className="mr-1.5" /> Top Students</TabsTrigger>
               <TabsTrigger value="pdfs" className="rounded-lg text-sm"><FileText size={14} className="mr-1.5" /> PDFs</TabsTrigger>
             </TabsList>
 
@@ -839,6 +930,9 @@ const Admin = () => {
                           <SelectItem value="1">1st</SelectItem>
                           <SelectItem value="2">2nd</SelectItem>
                           <SelectItem value="3">3rd</SelectItem>
+                          <SelectItem value="4">4th</SelectItem>
+                          <SelectItem value="5">5th</SelectItem>
+                          <SelectItem value="6">6th</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -893,6 +987,96 @@ const Admin = () => {
                     ))}
                     {!winners.length && <p className="text-center py-4 text-muted-foreground text-sm">No winners yet.</p>}
                   </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* TOP STUDENTS TAB */}
+            <TabsContent value="top-students">
+              <div className="space-y-6">
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-playfair text-lg font-semibold">Top Students by Group</h3>
+                    <Button onClick={fetchTopStudents} variant="outline" className="rounded-xl">
+                      <Search size={14} className="mr-2" />
+                      Refresh
+                    </Button>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Group 1 */}
+                    <div className="bg-muted/30 rounded-xl p-4">
+                      <h4 className="font-semibold text-foreground mb-3 flex items-center">
+                        <Award size={16} className="mr-2 text-primary" />
+                        Group 1 Top 3
+                      </h4>
+                      <div className="space-y-2">
+                        {topStudents.group1.map((student, index) => (
+                          <div key={student.roll_number} className="flex items-center gap-3 bg-background rounded-lg p-3">
+                            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
+                              {index + 1}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-semibold text-foreground truncate">{student.registrations.name}</p>
+                              <p className="text-xs text-muted-foreground">
+                                Roll: {student.roll_number} • Class {student.registrations.class} • {student.percentage}%
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                        {!topStudents.group1.length && <p className="text-center py-4 text-muted-foreground text-sm">No results found</p>}
+                      </div>
+                    </div>
+
+                    {/* Group 2 */}
+                    <div className="bg-muted/30 rounded-xl p-4">
+                      <h4 className="font-semibold text-foreground mb-3 flex items-center">
+                        <Award size={16} className="mr-2 text-primary" />
+                        Group 2 Top 3
+                      </h4>
+                      <div className="space-y-2">
+                        {topStudents.group2.map((student, index) => (
+                          <div key={student.roll_number} className="flex items-center gap-3 bg-background rounded-lg p-3">
+                            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
+                              {index + 1}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-semibold text-foreground truncate">{student.registrations.name}</p>
+                              <p className="text-xs text-muted-foreground">
+                                Roll: {student.roll_number} • Class {student.registrations.class} • {student.percentage}%
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                        {!topStudents.group2.length && <p className="text-center py-4 text-muted-foreground text-sm">No results found</p>}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
+                  <h3 className="font-playfair text-lg font-semibold mb-4">Add to Winners</h3>
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={addToWinnersEnabled}
+                        onChange={(e) => setAddToWinnersEnabled(e.target.checked)}
+                        className="rounded"
+                      />
+                      <span className="text-sm">Enable adding top students to winners for 2026</span>
+                    </label>
+                    <Button
+                      onClick={addTopStudentsToWinners}
+                      disabled={!addToWinnersEnabled || addingWinners || (!topStudents.group1.length && !topStudents.group2.length)}
+                      className="bg-primary rounded-xl"
+                    >
+                      {addingWinners ? <Loader2 className="animate-spin mr-2" size={14} /> : <Trophy size={14} className="mr-2" />}
+                      Add to Winners 2026
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    This will add the top 3 students from each group as winners for the year 2026.
+                  </p>
                 </div>
               </div>
             </TabsContent>
