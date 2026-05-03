@@ -6,7 +6,7 @@ export const SUBHEADING = "Organizing and facilitating student examinations with
 export const CONTACT = {
   phone: "9917917438",
   email: "bijanderk3@gmail.com",
-  office: "Pradhan Office, Nayagaon",
+  office: "Gram panchayat karyalay ,Nayagaon, Hapur, Uttar Pradesh",
 };
 
 export const EXAM_DATE = "12 April 2026";

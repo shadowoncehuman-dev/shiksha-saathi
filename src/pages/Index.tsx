@@ -142,7 +142,7 @@ const Index = () => {
               </Link>
             </Button>
             <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold text-sm px-8 h-12 rounded-xl shadow-lg shadow-accent/20 hover:shadow-accent/30 hover:shadow-xl transition-all">
-              <Link to="/register">{tr.hero.registerNow}</Link>
+              <Link to="/result">{tr.hero.checkResultNow}</Link>
             </Button>
           </motion.div>
         </div>
@@ -391,11 +391,11 @@ const Index = () => {
             <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-8 luxury-border">
               <GraduationCap size={32} className="text-secondary" />
             </div>
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-4 text-shadow">{tr.index.readyToRegister}</h2>
-            <p className="text-white/40 max-w-lg mx-auto mb-10 text-sm leading-relaxed">{tr.index.readyDesc}</p>
+            <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-4 text-shadow">{tr.index.readyToCheckResult}</h2>
+            <p className="text-white/40 max-w-lg mx-auto mb-10 text-sm leading-relaxed">{tr.index.readyCheckDesc}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-10 h-12 shadow-lg shadow-accent/20 rounded-xl hover:shadow-accent/30 hover:shadow-xl transition-all">
-                <Link to="/register">{tr.hero.registerNow}</Link>
+                <Link to="/result">{tr.hero.checkResultNow}</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-accent/40 text-accent hover:bg-accent/10 backdrop-blur-sm h-12 rounded-xl font-semibold">
                 <Link to="/team">{tr.index.meetTeam}</Link>

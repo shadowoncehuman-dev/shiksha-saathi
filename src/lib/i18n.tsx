@@ -21,6 +21,7 @@ const t = {
       subheading: "Organizing and facilitating student examinations with integrity and innovation",
       viewExam: "View Exam Details",
       registerNow: "Register Now",
+      checkResultNow: "Check Result Now",
     },
     // Stats
     stats: {
@@ -51,6 +52,8 @@ const t = {
       readyToRegister: "Ready to Register?",
       readyDesc: "Join thousands of students in the Dr. B.R. Ambedkar examination. Registration is quick and easy.",
       meetTeam: "Meet Our Team",
+      readyToCheckResult: "Check Your Result Now",
+      readyCheckDesc: "Enter your roll number or search by name to view this year's results and top rankers.",
     },
     // Countdown
     countdown: {
@@ -159,6 +162,7 @@ const t = {
       fatherName: "Father's Name",
       search: "Search",
       searching: "Searching...",
+      topRankers: "See this year's top rankers",
       notDeclared: "Result Not Declared",
       notDeclaredMsg: "Results will be declared soon. Please check back later.",
       viewingEnded: "Viewing Period Ended",
@@ -312,6 +316,7 @@ const t = {
       subheading: "ईमानदारी और नवाचार के साथ छात्र परीक्षाओं का आयोजन एवं संचालन",
       viewExam: "परीक्षा विवरण देखें",
       registerNow: "अभी पंजीकरण करें",
+      checkResultNow: "अब परिणाम देखें",
     },
     // Stats
     stats: {
@@ -342,6 +347,8 @@ const t = {
       readyToRegister: "पंजीकरण के लिए तैयार हैं?",
       readyDesc: "डॉ. बी.आर. अम्बेडकर परीक्षा में हजारों छात्रों के साथ जुड़ें। पंजीकरण त्वरित और आसान है।",
       meetTeam: "हमारी टीम से मिलें",
+      readyToCheckResult: "अब अपना परिणाम देखें",
+      readyCheckDesc: "इस वर्ष के परिणाम और शीर्ष स्थान प्राप्तकर्ताओं को देखने के लिए अपना रोल नंबर दर्ज करें या नाम से खोजें।",
     },
     // Countdown
     countdown: {
@@ -450,6 +457,7 @@ const t = {
       fatherName: "पिता का नाम",
       search: "खोजें",
       searching: "खोज रहे हैं...",
+      topRankers: "इस वर्ष के शीर्ष स्थान प्राप्तकर्ताओं को देखें",
       notDeclared: "परिणाम घोषित नहीं हुआ",
       notDeclaredMsg: "परिणाम जल्द ही घोषित किए जाएंगे। कृपया बाद में जाँचें।",
       viewingEnded: "देखने की अवधि समाप्त",

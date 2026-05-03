@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, Loader2, Award } from "lucide-react";
 import Layout from "@/components/layout/Layout";
@@ -93,6 +93,11 @@ const ResultPage = () => {
               <p className="text-muted-foreground text-sm leading-relaxed">
                 {resultStatus === "Not Declared" ? tr.result.notDeclaredMsg : tr.result.viewingEndedMsg}
               </p>
+              <div className="mt-6">
+                <Button asChild variant="outline" className="w-full md:w-auto mx-auto h-11 rounded-xl">
+                  <Link to="/winners">{tr.result.topRankers}</Link>
+                </Button>
+              </div>
             </motion.div>
           </div>
           {resultStatus === "Not Declared" && <CountdownTimer mode="result" />}
@@ -144,6 +149,11 @@ const ResultPage = () => {
               </TabsContent>
             </Tabs>
           </motion.div>
+          <div className="mt-8 flex justify-center">
+            <Button asChild variant="outline" className="w-full max-w-sm h-11 rounded-xl">
+              <Link to="/winners">{tr.result.topRankers}</Link>
+            </Button>
+          </div>
         </div>
       </section>
     </Layout>
