@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ZoomIn, Loader2 } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/SEOHead";
+import MasonryGallery from "@/components/premium/MasonryGallery";
 import { supabase } from "@/integrations/supabase/client";
 import { useLang } from "@/lib/i18n";
 
@@ -94,18 +95,10 @@ const Gallery = () => {
               <div className="section-divider" />
             </motion.div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              {gallery.images.map((img, i) => (
-                <motion.div key={i} className="relative group rounded-2xl overflow-hidden premium-shadow cursor-pointer card-hover aspect-[4/3]" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }} onClick={() => setLightbox(img)}>
-                  <img src={img} alt={`${gallery.title} ${i + 1}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
-                  <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/40 transition-colors duration-500 flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100">
-                      <ZoomIn className="text-white drop-shadow-lg" size={22} />
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+            <MasonryGallery
+              images={gallery.images.map((src, i) => ({ src, alt: `${gallery.title} ${i + 1}` }))}
+              onSelect={setLightbox}
+            />
           </div>
         </section>
       ))}
