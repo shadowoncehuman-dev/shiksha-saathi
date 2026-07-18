@@ -188,7 +188,7 @@ const Index = () => {
         >
           <Award size={18} className="text-secondary shrink-0" />
           <p className="text-sm sm:text-base font-semibold text-foreground">
-            📢 Result will be available on <span className="text-secondary">1 May 2026</span>
+            📢 Result will be available on <span className="text-secondary">1 May 2027</span>
           </p>
         </motion.div>
       </div>

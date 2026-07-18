@@ -9,7 +9,7 @@ export const CONTACT = {
   office: "Gram panchayat karyalay ,Nayagaon, Hapur, Uttar Pradesh",
 };
 
-export const EXAM_DATE = "12 April 2026";
+export const EXAM_DATE = "11 April 2027";
 export const EXAM_CENTER = "Govt. School, Nayagaon";
 
 // times have changed: both groups take the exam on the same day with distinct slots

@@ -81,7 +81,7 @@ const Footer = () => {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-3">
-          <p className="text-xs text-white/40">© 2026 {ORG_NAME}. {tr.footer.allRights}</p>
+          <p className="text-xs text-white/40">© 2027 {ORG_NAME}. {tr.footer.allRights}</p>
           <p className="text-xs text-white/40">{tr.footer.builtWith}</p>
         </div>
       </div>
