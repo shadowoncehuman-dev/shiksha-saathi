@@ -17,6 +17,8 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import ExamNoticeBanner from "@/components/ExamNoticeBanner";
 import QuestionPaperBanner from "@/components/QuestionPaperBanner";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import FlowingMenu from "@/components/premium/FlowingMenu";
+import { useNavigate } from "react-router-dom";
 
 const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: string }) => {
   const [count, setCount] = useState(0);
@@ -374,8 +376,19 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Explore — FlowingMenu */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4 mb-8 text-center">
+          <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">Explore</span>
+          <h2 className="font-playfair text-3xl md:text-4xl font-bold mt-3">Discover BBDBASS</h2>
+          <div className="section-divider mt-4" />
+        </div>
+        <FlowingMenuSection />
+      </section>
+
       {/* FAQ */}
       <FAQSection />
+
 
       {/* CTA */}
       <section className="py-20 md:py-32 hero-gradient text-white relative overflow-hidden">
@@ -406,6 +419,18 @@ const Index = () => {
       </section>
     </Layout>
   );
+};
+
+const FlowingMenuSection = () => {
+  const navigate = useNavigate();
+  const items = [
+    { link: "/exam-details", text: "Exam Details", image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=600&auto=format&fit=crop" },
+    { link: "/register", text: "Register", image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600&auto=format&fit=crop" },
+    { link: "/winners", text: "Winners", image: "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?q=80&w=600&auto=format&fit=crop" },
+    { link: "/gallery", text: "Gallery", image: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=600&auto=format&fit=crop" },
+    { link: "/downloads", text: "Documents", image: "https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=600&auto=format&fit=crop" },
+  ];
+  return <FlowingMenu items={items} onItemClick={(link) => navigate(link)} />;
 };
 
 export default Index;
