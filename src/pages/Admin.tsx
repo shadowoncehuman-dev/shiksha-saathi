@@ -486,7 +486,7 @@ const Admin = () => {
       // Add Group 1 winners
       topStudents.group1.forEach((student) => {
         winnersToAdd.push({
-          year: 2026,
+          year: 2027,
           rank: student.rank, // Use the actual rank considering ties
           name: student.registrations.name,
           father_name: student.registrations.father_name,
@@ -500,7 +500,7 @@ const Admin = () => {
       // Add Group 2 winners
       topStudents.group2.forEach((student) => {
         winnersToAdd.push({
-          year: 2026,
+          year: 2027,
           rank: student.rank, // Use the actual rank considering ties
           name: student.registrations.name,
           father_name: student.registrations.father_name,
@@ -521,7 +521,7 @@ const Admin = () => {
         throw error;
       }
 
-      toast({ title: "Success", description: "Top students added to winners for 2026" });
+      toast({ title: "Success", description: "Top students added to winners for 2027" });
       fetchWinners();
     } catch (error) {
       console.error("Error adding winners:", error);
@@ -1123,7 +1123,7 @@ const Admin = () => {
                         onChange={(e) => setAddToWinnersEnabled(e.target.checked)}
                         className="rounded"
                       />
-                      <span className="text-sm">Enable adding top students to winners for 2026</span>
+                      <span className="text-sm">Enable adding top students to winners for 2027</span>
                     </label>
                     <Button
                       onClick={addTopStudentsToWinners}
@@ -1131,11 +1131,11 @@ const Admin = () => {
                       className="bg-primary rounded-xl"
                     >
                       {addingWinners ? <Loader2 className="animate-spin mr-2" size={14} /> : <Trophy size={14} className="mr-2" />}
-                      Add to Winners 2026
+                      Add to Winners 2027
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
-                    This will add the top 3 students from each group as winners for the year 2026.
+                    This will add the top 3 students from each group as winners for the year 2027.
                   </p>
                 </div>
               </div>
