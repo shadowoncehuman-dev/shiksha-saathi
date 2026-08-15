@@ -121,6 +121,15 @@ const t = {
         title: "Service Unavailable",
         subtitle: "Our servers are temporarily down for maintenance. Please try again in a few minutes.",
       },
+      dock: {
+        home: "Home",
+        exam: "Exam",
+        register: "Register",
+        result: "Result",
+        team: "Team",
+        gallery: "Gallery",
+        docs: "Docs"
+      }
     },
     // Exam Details
     examDetails: {
@@ -416,6 +425,15 @@ const t = {
         title: "सेवा अनुपलब्ध",
         subtitle: "हमारे सर्वर अस्थायी रूप से रखरखाव के लिए बंद हैं। कृपया कुछ मिनट बाद पुनः प्रयास करें।",
       },
+      dock: {
+        home: "होम",
+        exam: "परीक्षा",
+        register: "पंजीकरण",
+        result: "परिणाम",
+        team: "टीम",
+        gallery: "गैलरी",
+        docs: "दस्तावेज़"
+      }
     },
     // Exam Details
     examDetails: {

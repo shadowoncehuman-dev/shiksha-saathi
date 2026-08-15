@@ -112,6 +112,7 @@ export default {
         "glow-pulse": "glow-pulse 2s ease-in-out infinite",
         "float": "float 4s ease-in-out infinite",
         "scale-in": "scale-in 0.3s ease-out",
+        "spin-slow": "spin 8s linear infinite",
       },
     },
   },
