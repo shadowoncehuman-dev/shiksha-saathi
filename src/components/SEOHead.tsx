@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { ORG_NAME } from "@/lib/constants";
 
 const SITE_URL = "https://shiksha-suvidha-portal.lovable.app";
 const OG_IMAGE = "https://shiksha-suvidha-portal.lovable.app/og-image.png";
