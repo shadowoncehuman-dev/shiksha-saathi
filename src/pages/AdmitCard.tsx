@@ -41,37 +41,56 @@ const AdmitCard = () => {
   const handleDownloadPDF = async () => {
     if (!cardRef.current) return;
     
-    // Temporarily apply print styles for PDF generation
     const element = cardRef.current;
     const originalStyle = element.getAttribute("style");
-    element.style.width = "210mm";
-    element.style.minHeight = "297mm";
-    element.style.padding = "10mm";
-    element.style.margin = "0";
+    
+    // Official Print Dimensions & Contrast Fixes
+    element.style.width = "190mm"; // A4 width minus margins
+    element.style.backgroundColor = "#ffffff";
+    element.style.color = "#000000";
     element.style.boxShadow = "none";
     element.style.borderRadius = "0";
     
     try {
       const canvas = await html2canvas(element, { 
-        scale: 3, 
+        scale: 4, // Higher scale for text clarity
         backgroundColor: "#ffffff",
         useCORS: true,
-        logging: false
+        logging: false,
+        onclone: (clonedDoc) => {
+          const clonedElement = clonedDoc.querySelector('[ref="cardRef"]') as HTMLElement;
+          if (clonedElement) {
+            // Ensure contrast for printing
+            const header = clonedElement.querySelector('div[style*="linear-gradient"]');
+            if (header) {
+              (header as HTMLElement).style.background = "#001a33"; // Deep solid blue for printers
+            }
+          }
+        }
       });
+      
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
+      
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      
-      // Calculate dimensions to fit A4 with margins
       const margin = 10;
-      const contentWidth = pageWidth - (2 * margin);
+      
+      const contentWidth = pageWidth - (margin * 2);
       const contentHeight = (canvas.height * contentWidth) / canvas.width;
       
+      // Page 1 Content
       pdf.addImage(imgData, "PNG", margin, margin, contentWidth, contentHeight);
+      
+      // Official Footer & Page Numbering
+      pdf.setFontSize(8);
+      pdf.setTextColor(100);
+      pdf.text(`Official Admit Card - ${ORG_NAME} 2027`, margin, pageHeight - 10);
+      pdf.text(`Generated on: ${new Date().toLocaleString('en-IN')}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+      pdf.text(`Page 1 of 1`, pageWidth - margin, pageHeight - 10, { align: 'right' });
+      
       pdf.save(`AdmitCard_${data.roll_number}.pdf`);
     } finally {
-      // Restore original style
       if (originalStyle) element.setAttribute("style", originalStyle);
       else element.removeAttribute("style");
     }
