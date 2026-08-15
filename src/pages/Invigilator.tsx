@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Loader2, Search, Users, QrCode, Edit2, Save, X, CheckCircle2, XCircle, Shield } from "lucide-react";
 import Layout from "@/components/layout/Layout";
@@ -99,7 +100,7 @@ const Invigilator = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="search"><SearchTab /></TabsContent>
+            <TabsContent value="search"><SearchTab initialQuery={verifyRoll || ""} /></TabsContent>
             <TabsContent value="all"><AllStudentsTab /></TabsContent>
             <TabsContent value="qr"><QRScannerTab /></TabsContent>
           </Tabs>

@@ -36,7 +36,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://shiksha-suvidha-portal.lovable.app/downloads</loc>
+    <loc>https://shiksha-suvidha-portal.lovable.app/documents</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -44,5 +44,15 @@
     <loc>https://shiksha-suvidha-portal.lovable.app/winners</loc>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://shiksha-suvidha-portal.lovable.app/invigilator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://shiksha-suvidha-portal.lovable.app/result-detail</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>

@@ -36,20 +36,45 @@ const AdmitCard = () => {
 
   if (!data) return null;
 
-  const qrData = JSON.stringify({
-    name: data.name, father_name: data.father_name, roll_number: data.roll_number,
-    class: data.class, group: data.group, exam_date: EXAM_DATE,
-  });
+  const qrData = `${window.location.origin}/invigilator?verify=${data.roll_number}`;
 
   const handleDownloadPDF = async () => {
     if (!cardRef.current) return;
-    const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: "#ffffff" });
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
-    const w = pdf.internal.pageSize.getWidth() - 20;
-    const h = (canvas.height * w) / canvas.width;
-    pdf.addImage(imgData, "PNG", 10, 10, w, h);
-    pdf.save(`AdmitCard_${data.roll_number}.pdf`);
+    
+    // Temporarily apply print styles for PDF generation
+    const element = cardRef.current;
+    const originalStyle = element.getAttribute("style");
+    element.style.width = "210mm";
+    element.style.minHeight = "297mm";
+    element.style.padding = "10mm";
+    element.style.margin = "0";
+    element.style.boxShadow = "none";
+    element.style.borderRadius = "0";
+    
+    try {
+      const canvas = await html2canvas(element, { 
+        scale: 3, 
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        logging: false
+      });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      
+      // Calculate dimensions to fit A4 with margins
+      const margin = 10;
+      const contentWidth = pageWidth - (2 * margin);
+      const contentHeight = (canvas.height * contentWidth) / canvas.width;
+      
+      pdf.addImage(imgData, "PNG", margin, margin, contentWidth, contentHeight);
+      pdf.save(`AdmitCard_${data.roll_number}.pdf`);
+    } finally {
+      // Restore original style
+      if (originalStyle) element.setAttribute("style", originalStyle);
+      else element.removeAttribute("style");
+    }
   };
 
   const handleDownloadImage = async () => {
