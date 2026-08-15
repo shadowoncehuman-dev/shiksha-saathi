@@ -70,21 +70,27 @@ const AdmitCard = () => {
     <Layout>
       <section className="pt-28 pb-16 md:pt-36 md:pb-24">
         <div className="container mx-auto px-4 max-w-2xl">
-          <motion.div ref={cardRef} className="bg-white rounded-2xl overflow-hidden shadow-2xl" style={{ border: "3px solid hsl(43, 96%, 56%)" }} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
+          <motion.div ref={cardRef} className="bg-white rounded-2xl overflow-hidden shadow-2xl relative" style={{ border: "4px solid hsl(43, 96%, 56%)" }} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
+            {/* Guilloche/Security Texture Overlay */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0" style={{ backgroundImage: `radial-gradient(circle at 2px 2px, black 1px, transparent 0)`, backgroundSize: '12px 12px' }} />
+            
             {/* Header */}
-            <div style={{ background: "linear-gradient(165deg, hsl(222 67% 10%), hsl(222 67% 16%), hsl(222 50% 22%))" }} className="text-white p-6 text-center relative">
-              <img src={logo} alt="" className="absolute inset-0 m-auto w-32 h-32 opacity-5 select-none pointer-events-none" />
-              <img src={logo} alt="Logo" className="w-14 h-14 mx-auto mb-2 rounded-full bg-white p-1 relative z-10" />
-              <h2 className="font-playfair text-lg md:text-xl font-bold relative z-10 mb-1">{ORG_NAME}</h2>
-              <p className="text-amber-400 font-semibold relative z-10 text-sm tracking-wider">{tr.admitCard.title}</p>
+            <div style={{ background: "linear-gradient(165deg, hsl(222 67% 10%), hsl(222 67% 16%), hsl(222 50% 22%))" }} className="text-white p-8 text-center relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-accent opacity-10 rounded-full -mr-16 -mt-16 blur-3xl" />
+              <img src={logo} alt="" className="absolute inset-0 m-auto w-32 h-32 opacity-10 select-none pointer-events-none" />
+              <img src={logo} alt="Logo" className="w-16 h-16 mx-auto mb-3 rounded-full bg-white p-1.5 relative z-10 shadow-lg" />
+              <h2 className="font-playfair text-xl md:text-2xl font-bold relative z-10 mb-2 leading-tight px-4">{ORG_NAME}</h2>
+              <div className="inline-block px-4 py-1 rounded-full bg-accent/20 border border-accent/30 relative z-10">
+                <p className="text-accent font-bold text-sm tracking-[0.2em] uppercase">{tr.admitCard.title}</p>
+              </div>
             </div>
 
             {/* Body */}
-            <div className="p-6 md:p-8 relative">
-              <img src={logo} alt="" className="absolute inset-0 m-auto w-48 h-48 opacity-[0.04] select-none pointer-events-none" />
+            <div className="p-8 md:p-10 relative bg-[#fafafa]">
+              <img src={logo} alt="" className="absolute inset-0 m-auto w-64 h-64 opacity-[0.03] select-none pointer-events-none" />
 
-              <div className="flex flex-col md:flex-row gap-6 relative z-10">
-                <div className="flex-1 space-y-3.5">
+              <div className="flex flex-col md:flex-row gap-8 relative z-10">
+                <div className="flex-1 grid grid-cols-1 gap-y-4">
                   {[
                     { label: tr.admitCard.group, value: data.group },
                     { label: tr.admitCard.studentName, value: data.name },
@@ -94,30 +100,52 @@ const AdmitCard = () => {
                     { label: tr.admitCard.duration, value: data.duration },
                     { label: tr.admitCard.examCenter, value: EXAM_CENTER },
                   ].map((item) => (
-                    <div key={item.label} className="flex gap-2">
-                      <span className="text-gray-400 text-sm min-w-[120px]">{item.label}:</span>
-                      <span className="font-medium text-gray-900 text-sm">{item.value}</span>
+                    <div key={item.label} className="border-b border-gray-100 pb-2 last:border-0">
+                      <span className="text-gray-400 text-[10px] uppercase tracking-wider font-bold block mb-0.5">{item.label}</span>
+                      <span className="font-semibold text-gray-900 text-base">{item.value}</span>
                     </div>
                   ))}
-                  <div className="pt-3">
-                    <p className="text-xs text-gray-400 mb-1">{tr.admitCard.rollNumber}</p>
-                    <p className="font-playfair text-4xl font-bold" style={{ color: "hsl(222 67% 16%)" }}>{data.roll_number}</p>
+                  <div className="mt-4 p-4 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] text-primary/60 font-bold uppercase tracking-widest mb-1">{tr.admitCard.rollNumber}</p>
+                      <p className="font-playfair text-4xl font-black text-primary leading-none">{data.roll_number}</p>
+                    </div>
+                    <div className="text-right opacity-20 hidden sm:block">
+                      <ImageIcon size={40} className="text-primary" />
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center gap-2">
-                  <div className="p-2.5 bg-white rounded-xl border border-gray-100 shadow-sm">
-                    <QRCodeSVG value={qrData} size={110} />
+                <div className="flex flex-col items-center justify-start gap-4">
+                  <div className="p-4 bg-white rounded-2xl border-2 border-gray-100 shadow-xl relative group">
+                    <QRCodeSVG value={qrData} size={140} />
+                    <div className="absolute inset-0 border-2 border-accent opacity-0 group-hover:opacity-20 transition-opacity rounded-2xl pointer-events-none" />
                   </div>
-                  <p className="text-xs text-gray-300">{tr.admitCard.scanDetails}</p>
+                  <div className="text-center">
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{tr.admitCard.scanDetails}</p>
+                    <div className="flex gap-1 justify-center mt-1">
+                      <div className="w-1 h-1 rounded-full bg-accent animate-pulse" />
+                      <div className="w-1 h-1 rounded-full bg-accent animate-pulse delay-75" />
+                      <div className="w-1 h-1 rounded-full bg-accent animate-pulse delay-150" />
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-100 text-xs text-gray-400 relative z-10">
-                <p><strong className="text-gray-500">{tr.admitCard.office}:</strong> {CONTACT.office}</p>
-                <p><strong className="text-gray-500">{tr.admitCard.contact}:</strong> {CONTACT.phone} | {CONTACT.email}</p>
+              <div className="mt-8 pt-6 border-t-2 border-dashed border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-4 text-[11px] text-gray-500 relative z-10">
+                <div>
+                  <strong className="text-gray-700 uppercase tracking-tighter block mb-1">{tr.admitCard.office}</strong>
+                  <p className="leading-tight">{CONTACT.office}</p>
+                </div>
+                <div className="sm:text-right">
+                  <strong className="text-gray-700 uppercase tracking-tighter block mb-1">{tr.admitCard.contact}</strong>
+                  <p className="leading-tight">{CONTACT.phone} | {CONTACT.email}</p>
+                </div>
               </div>
             </div>
+            
+            {/* Footer Stripe */}
+            <div className="h-2 bg-gradient-to-r from-primary via-accent to-primary opacity-80" />
           </motion.div>
 
           {/* Warning */}

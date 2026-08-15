@@ -81,22 +81,42 @@ const ErrorBase = ({ code, title, subtitle, icon, themeColor, accentColor, showR
           {subtitle}
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
+        <div className="flex flex-wrap items-center justify-center gap-4 relative z-10">
           <Button 
             onClick={() => navigate("/")}
             size="lg"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-8 h-14 font-semibold shadow-xl transition-all hover:scale-105 active:scale-95"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-6 h-14 font-semibold shadow-xl transition-all hover:scale-105 active:scale-95 w-full sm:w-auto"
           >
             <Home className="mr-2 h-5 w-5" />
             {tr.errors?.goHome || "Go Back Home"}
           </Button>
 
+          <Button 
+            onClick={() => navigate("/exam-details")}
+            variant="outline"
+            size="lg"
+            className="rounded-xl px-6 h-14 font-semibold border-2 transition-all hover:bg-muted w-full sm:w-auto"
+          >
+            <Calendar className="mr-2 h-5 w-5" />
+            {tr.errors?.dock?.exam || "Exam Details"}
+          </Button>
+
+          <Button 
+            onClick={() => navigate("/register")}
+            variant="outline"
+            size="lg"
+            className="rounded-xl px-6 h-14 font-semibold border-2 transition-all hover:bg-muted w-full sm:w-auto"
+          >
+            <UserPlus className="mr-2 h-5 w-5" />
+            {tr.errors?.dock?.register || "Register Now"}
+          </Button>
+
           {showRetry && (
             <Button 
               onClick={() => window.location.reload()}
-              variant="outline"
+              variant="ghost"
               size="lg"
-              className="rounded-xl px-8 h-14 font-semibold border-2 transition-all hover:bg-muted"
+              className="rounded-xl px-6 h-14 font-semibold transition-all hover:bg-muted w-full sm:w-auto"
             >
               <ArrowLeft className="mr-2 h-5 w-5" />
               {tr.errors?.retry || "Try Again"}
