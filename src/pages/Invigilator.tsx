@@ -122,11 +122,11 @@ const SearchTab = ({ initialQuery = "" }: { initialQuery?: string }) => {
   const { toast } = useToast();
   const { tr } = useLang();
 
-  const doSearch = useCallback(async (qParam?: string) => {
-    const q = (qParam || query).trim();
+  const doSearch = useCallback(async (qParam?: string | React.MouseEvent) => {
+    const qValue = typeof qParam === 'string' ? qParam : query;
+    const q = qValue.trim();
     if (!q) return;
     setSearching(true);
-    const q = query.trim();
     // Try roll number, name, father_name, or phone
     let { data } = await supabase
       .from("registrations")
