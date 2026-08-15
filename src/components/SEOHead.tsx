@@ -11,8 +11,8 @@ interface SEOHeadProps {
 }
 
 const SEOHead = ({
-  title = "BBDBASS — Empowering Education Through Excellence",
-  description = "Official examination portal — Register for exams, download admit cards, and check results. Bharat Ratan Baba Sahib Dr. Bhimrao Ambedkar Ji Shiksha Sudhar Samiti.",
+  title = "BBDBASS 2027 — Empowering Education Through Excellence",
+  description = "Official 2027 examination portal of Bharat Ratan Baba Sahib Dr. Bhimrao Ambedkar Ji Shiksha Sudhar Samiti. Register for exams, download admit cards, and check results online.",
   path = "/",
   type = "website",
 }: SEOHeadProps) => {
