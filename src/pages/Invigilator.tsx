@@ -17,6 +17,8 @@ import type { Registration } from "@/lib/supabase";
 const ITEMS_PER_PAGE = 20;
 
 const Invigilator = () => {
+  const [searchParams] = useSearchParams();
+  const verifyRoll = searchParams.get("verify");
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
@@ -111,8 +113,8 @@ const Invigilator = () => {
 };
 
 // ==================== SEARCH TAB ====================
-const SearchTab = () => {
-  const [query, setQuery] = useState("");
+const SearchTab = ({ initialQuery = "" }: { initialQuery?: string }) => {
+  const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<Registration[]>([]);
   const [searching, setSearching] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -120,8 +122,9 @@ const SearchTab = () => {
   const { toast } = useToast();
   const { tr } = useLang();
 
-  const doSearch = async () => {
-    if (!query.trim()) return;
+  const doSearch = useCallback(async (qParam?: string) => {
+    const q = (qParam || query).trim();
+    if (!q) return;
     setSearching(true);
     const q = query.trim();
     // Try roll number, name, father_name, or phone
@@ -133,7 +136,13 @@ const SearchTab = () => {
       .limit(50);
     setResults(data || []);
     setSearching(false);
-  };
+  }, [query]);
+
+  useEffect(() => {
+    if (initialQuery) {
+      doSearch(initialQuery);
+    }
+  }, [initialQuery, doSearch]);
 
   const startEdit = (r: Registration) => {
     setEditingId(r.id!);
