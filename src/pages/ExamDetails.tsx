@@ -129,7 +129,7 @@ const ExamDetails = () => {
 
                   {/* CTA */}
                   <Button asChild className="w-full bg-accent text-accent-foreground hover:bg-accent/90 group rounded-xl h-11 mt-2 hover:shadow-lg hover:shadow-accent/20 transition-all">
-                    <Link to="/register">
+                    <Link to="/register" aria-label={`Register for ${group.name}`}>
                       <span className="font-semibold">{tr.examDetails.registerNow}</span>
                       <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
                     </Link>

@@ -24,14 +24,22 @@ type AdmitData = {
 
 const AdmitCard = () => {
   const [data, setData] = useState<AdmitData | null>(null);
+  const [docHash, setDocHash] = useState("");
   const cardRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { tr } = useLang();
 
   useEffect(() => {
     const stored = sessionStorage.getItem("admit_card_data");
-    if (stored) setData(JSON.parse(stored));
-    else navigate("/register");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setData(parsed);
+      // Generate a unique hash based on student data
+      const hashInput = `${parsed.roll_number}-${parsed.name}-${Date.now()}`;
+      setDocHash(btoa(hashInput).substring(0, 12).toUpperCase());
+    } else {
+      navigate("/register");
+    }
   }, [navigate]);
 
   if (!data) return null;
@@ -53,18 +61,32 @@ const AdmitCard = () => {
     
     try {
       const canvas = await html2canvas(element, { 
-        scale: 4, // Higher scale for text clarity
+        scale: 4,
         backgroundColor: "#ffffff",
         useCORS: true,
         logging: false,
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.querySelector('[ref="cardRef"]') as HTMLElement;
           if (clonedElement) {
-            // Ensure contrast for printing
             const header = clonedElement.querySelector('div[style*="linear-gradient"]');
             if (header) {
-              (header as HTMLElement).style.background = "#001a33"; // Deep solid blue for printers
+              (header as HTMLElement).style.background = "#001a33";
             }
+            
+            // Add Print-Only Watermark in Clone
+            const watermark = clonedDoc.createElement('div');
+            watermark.innerText = "OFFICIAL DOCUMENT";
+            watermark.style.position = 'absolute';
+            watermark.style.top = '50%';
+            watermark.style.left = '50%';
+            watermark.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+            watermark.style.fontSize = '80px';
+            watermark.style.color = 'rgba(0,0,0,0.05)';
+            watermark.style.fontWeight = 'bold';
+            watermark.style.zIndex = '0';
+            watermark.style.pointerEvents = 'none';
+            watermark.style.whiteSpace = 'nowrap';
+            clonedElement.appendChild(watermark);
           }
         }
       });
@@ -79,15 +101,13 @@ const AdmitCard = () => {
       const contentWidth = pageWidth - (margin * 2);
       const contentHeight = (canvas.height * contentWidth) / canvas.width;
       
-      // Page 1 Content
       pdf.addImage(imgData, "PNG", margin, margin, contentWidth, contentHeight);
       
-      // Official Footer & Page Numbering
       pdf.setFontSize(8);
       pdf.setTextColor(100);
       pdf.text(`Official Admit Card - ${ORG_NAME} 2027`, margin, pageHeight - 10);
-      pdf.text(`Generated on: ${new Date().toLocaleString('en-IN')}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-      pdf.text(`Page 1 of 1`, pageWidth - margin, pageHeight - 10, { align: 'right' });
+      pdf.text(`Verify at: ${window.location.origin}/invigilator`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+      pdf.text(`Hash: ${docHash} | Page 1 of 1`, pageWidth - margin, pageHeight - 10, { align: 'right' });
       
       pdf.save(`AdmitCard_${data.roll_number}.pdf`);
     } finally {
@@ -126,8 +146,11 @@ const AdmitCard = () => {
               <h2 className="font-playfair text-xl md:text-2xl font-bold relative z-10 mb-2 leading-tight px-4">{ORG_NAME}</h2>
               <div className="inline-block px-4 py-1 rounded-full bg-accent/20 border border-accent/30 relative z-10">
                 <p className="text-accent font-bold text-sm tracking-[0.2em] uppercase">{tr.admitCard.title}</p>
-              </div>
-            </div>
+                  </div>
+                  <div className="mt-4 text-[9px] font-mono text-muted-foreground opacity-50 uppercase tracking-tighter">
+                    Document Verification Hash: {docHash}
+                  </div>
+                </div>
 
             {/* Body */}
             <div className="p-8 md:p-10 relative bg-[#fafafa]">
