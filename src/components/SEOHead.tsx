@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { ORG_NAME } from "@/lib/constants";
 
 const SITE_URL = "https://shiksha-suvidha-portal.lovable.app";
 const OG_IMAGE = "https://shiksha-suvidha-portal.lovable.app/og-image.png";
@@ -32,9 +33,16 @@ const SEOHead = ({
       <meta property="og:url" content={url} />
       <meta property="og:type" content={type} />
       <meta property="og:image" content={OG_IMAGE} />
+      <meta property="og:locale" content="en_IN" />
+      <meta property="og:site_name" content={ORG_NAME} />
+      <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={OG_IMAGE} />
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      <meta name="googlebot" content="index, follow" />
+      <meta name="geo.region" content="IN-UP" />
+      <meta name="geo.placename" content="Nayagaon" />
 
       {faq && (
         <script type="application/ld+json">
