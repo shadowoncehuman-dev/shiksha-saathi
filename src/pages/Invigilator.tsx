@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Loader2, Search, Users, QrCode, Edit2, Save, X, CheckCircle2, XCircle, Shield } from "lucide-react";
 import Layout from "@/components/layout/Layout";
@@ -16,6 +17,8 @@ import type { Registration } from "@/lib/supabase";
 const ITEMS_PER_PAGE = 20;
 
 const Invigilator = () => {
+  const [searchParams] = useSearchParams();
+  const verifyRoll = searchParams.get("verify");
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
@@ -99,7 +102,7 @@ const Invigilator = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="search"><SearchTab /></TabsContent>
+            <TabsContent value="search"><SearchTab initialQuery={verifyRoll || ""} /></TabsContent>
             <TabsContent value="all"><AllStudentsTab /></TabsContent>
             <TabsContent value="qr"><QRScannerTab /></TabsContent>
           </Tabs>
@@ -110,8 +113,8 @@ const Invigilator = () => {
 };
 
 // ==================== SEARCH TAB ====================
-const SearchTab = () => {
-  const [query, setQuery] = useState("");
+const SearchTab = ({ initialQuery = "" }: { initialQuery?: string }) => {
+  const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<Registration[]>([]);
   const [searching, setSearching] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -119,10 +122,11 @@ const SearchTab = () => {
   const { toast } = useToast();
   const { tr } = useLang();
 
-  const doSearch = async () => {
-    if (!query.trim()) return;
+  const doSearch = useCallback(async (qParam?: string | React.MouseEvent) => {
+    const qValue = typeof qParam === 'string' ? qParam : query;
+    const q = qValue.trim();
+    if (!q) return;
     setSearching(true);
-    const q = query.trim();
     // Try roll number, name, father_name, or phone
     let { data } = await supabase
       .from("registrations")
@@ -132,7 +136,13 @@ const SearchTab = () => {
       .limit(50);
     setResults(data || []);
     setSearching(false);
-  };
+  }, [query]);
+
+  useEffect(() => {
+    if (initialQuery) {
+      doSearch(initialQuery);
+    }
+  }, [initialQuery, doSearch]);
 
   const startEdit = (r: Registration) => {
     setEditingId(r.id!);
