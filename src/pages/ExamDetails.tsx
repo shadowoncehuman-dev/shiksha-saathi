@@ -43,7 +43,17 @@ const ExamDetails = () => {
 
   return (
     <Layout>
-      <SEOHead title="Exam Details — BBDBASS" description="View examination groups, schedules, topics and timings for the Dr. B.R. Ambedkar annual examination." path="/exam-details" />
+      <SEOHead 
+        title="Exam Details — BBDBASS" 
+        description="View examination groups, schedules, topics and timings for the Dr. B.R. Ambedkar annual examination." 
+        path="/exam-details" 
+        howTo={[
+          { name: "Visit Portal", text: "Go to the Shiksha Suvidha Portal home page." },
+          { name: "Register Online", text: "Click 'Register Now' and fill out the student registration form." },
+          { name: "Get Admit Card", text: "Download your admit card immediately after registration." },
+          { name: "Check Exam Groups", text: "Verify your exam group (Group 1 or 2) and reporting time." }
+        ]}
+      />
       {/* Hero */}
       <section className="hero-gradient text-white pt-28 pb-16 md:pt-36 md:pb-24 relative overflow-hidden">
         <div className="absolute inset-0 grain-overlay" />
