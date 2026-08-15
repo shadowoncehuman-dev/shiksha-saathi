@@ -152,7 +152,7 @@ const AdmitCard = () => {
                   <div className="mt-4 p-4 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-between">
                     <div>
                       <p className="text-[10px] text-primary/60 font-bold uppercase tracking-widest mb-1">{tr.admitCard.rollNumber}</p>
-                      <p className="font-playfair text-4xl font-black text-primary leading-none">{data.roll_number}</p>
+                      <p className="font-playfair text-4xl font-black text-primary leading-none" style={{ color: '#000000' }}>{data.roll_number}</p>
                     </div>
                     <div className="text-right opacity-20 hidden sm:block">
                       <ImageIcon size={40} className="text-primary" />

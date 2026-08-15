@@ -8,6 +8,8 @@ interface SEOHeadProps {
   description?: string;
   path?: string;
   type?: string;
+  faq?: { q: string; a: string }[];
+  howTo?: { name: string; text: string; image?: string }[];
 }
 
 const SEOHead = ({
@@ -15,6 +17,8 @@ const SEOHead = ({
   description = "Official 2027 examination portal of Bharat Ratan Baba Sahib Dr. Bhimrao Ambedkar Ji Shiksha Sudhar Samiti. Register for exams, download admit cards, and check results online.",
   path = "/",
   type = "website",
+  faq,
+  howTo,
 }: SEOHeadProps) => {
   const url = `${SITE_URL}${path}`;
 
@@ -31,6 +35,42 @@ const SEOHead = ({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={OG_IMAGE} />
+
+      {faq && (
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faq.map(item => ({
+              "@type": "Question",
+              "name": item.q,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": item.a
+              }
+            }))
+          })}
+        </script>
+      )}
+
+      {howTo && (
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "HowTo",
+            "name": `How to Register for BBDBASS Exam`,
+            "step": howTo.map((step, index) => ({
+              "@type": "HowToStep",
+              "position": index + 1,
+              "name": step.name,
+              "itemListElement": [{
+                "@type": "HowToDirection",
+                "text": step.text
+              }]
+            }))
+          })}
+        </script>
+      )}
     </Helmet>
   );
 };

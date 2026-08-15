@@ -94,6 +94,11 @@ const Index = () => {
         title="BBDBASS — Empowering Education Through Excellence"
         description="Official examination portal of BBDBASS — Register for exams, download admit cards, check results. Bharat Ratan Baba Sahib Dr. Bhimrao Ambedkar Ji Shiksha Sudhar Samiti."
         path="/"
+        faq={[
+          { q: "What is BBDBASS?", a: "Bharat Ratan Baba Sahib Dr. Bhimrao Ambedkar Ji Shiksha Sudhar Samiti organises educational exams for students." },
+          { q: "How to register?", a: "Students can register online through the portal by providing their name, class and village." },
+          { q: "When is the result?", a: "The 2027 result will be announced on 1 May 2027." }
+        ]}
       />
       {/* Hero */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
