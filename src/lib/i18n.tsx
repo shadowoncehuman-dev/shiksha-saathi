@@ -121,6 +121,15 @@ const t = {
         title: "Service Unavailable",
         subtitle: "Our servers are temporarily down for maintenance. Please try again in a few minutes.",
       },
+      dock: {
+        home: "Home",
+        exam: "Exam",
+        register: "Register",
+        result: "Result",
+        team: "Team",
+        gallery: "Gallery",
+        docs: "Docs"
+      }
     },
     // Exam Details
     examDetails: {
