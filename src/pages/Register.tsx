@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, UserPlus, AlertTriangle, Calendar } from "lucide-react";
+import { Loader2, UserPlus, AlertTriangle, Calendar, Sparkles, ShieldCheck } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,6 @@ const Register = () => {
   const [successData, setSuccessData] = useState<{ rollNumber: string; name: string; studentClass: number; group: string } | null>(null);
   const [failedError, setFailedError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { toast } = useToast();
   const { tr } = useLang();
 
   const form = useForm<FormData>({
@@ -94,7 +93,6 @@ const Register = () => {
       const studentClass = parseInt(values.student_class);
       const group = getGroup(studentClass);
 
-      // Server-side duplicate check - block submission
       const { data: dupCheck } = await supabase
         .from("registrations")
         .select("id")
@@ -106,7 +104,6 @@ const Register = () => {
         throw new Error(tr.invigilator?.duplicateBlocked || "This student is already registered. Duplicate registration is not allowed.");
       }
 
-      // Phone spam check
       const { data: phoneCheck } = await supabase
         .from("registrations")
         .select("id")
@@ -146,72 +143,28 @@ const Register = () => {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="animate-spin text-primary" size={36} />
+          <Loader2 className="animate-spin text-[#6B4EFF]" size={36} />
         </div>
       </Layout>
     );
   }
 
-  // Show success screen
-  if (successData) {
-    return (
-      <Layout>
-        <RegistrationSuccess {...successData} />
-      </Layout>
-    );
-  }
+  if (successData) return <Layout><RegistrationSuccess {...successData} /></Layout>;
+  if (failedError) return <Layout><RegistrationFailed error={failedError} onRetry={() => setFailedError(null)} /></Layout>;
 
-  // Show failed screen
-  if (failedError) {
-    return (
-      <Layout>
-        <RegistrationFailed error={failedError} onRetry={() => setFailedError(null)} />
-      </Layout>
-    );
-  }
-
-  // Exam cancelled or rescheduled - block registration
   const isBlocked = examNotice && (examNoticeType === "cancelled" || examNoticeType === "rescheduled");
 
   if (isBlocked) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[70vh] px-4 pt-20">
-          <motion.div className="bg-card rounded-2xl p-10 text-center max-w-md premium-shadow border border-border" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
-            <div className="w-14 h-14 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto mb-5">
-              {examNoticeType === "cancelled" ? (
-                <AlertTriangle className="text-destructive" size={24} />
-              ) : (
-                <Calendar className="text-[hsl(30,80%,45%)]" size={24} />
-              )}
+          <motion.div className="glass-strong rounded-[2.5rem] p-10 text-center max-w-md relative overflow-hidden" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+            <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto mb-6">
+              <AlertTriangle className="text-destructive" size={32} />
             </div>
-            <h2 className="font-playfair text-2xl font-bold text-foreground mb-3">
-              {tr.examNotice?.[examNoticeType as "cancelled" | "rescheduled"] || (examNoticeType === "cancelled" ? "Exam Cancelled" : "Exam Rescheduled")}
-            </h2>
-            <p className="text-muted-foreground text-sm leading-relaxed mb-6">{examNotice}</p>
-            <Button variant="outline" onClick={() => navigate("/")} className="rounded-xl h-11">
-              {tr.errors.goHome}
-            </Button>
-          </motion.div>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (status !== "Open") {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-[70vh] px-4 pt-20">
-          <motion.div className="bg-card rounded-2xl p-10 text-center max-w-md premium-shadow border border-border" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
-            <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-5">
-              <UserPlus className="text-secondary" size={24} />
-            </div>
-            <h2 className="font-playfair text-2xl font-bold text-foreground mb-3">
-              {status === "Not Started" ? tr.register.notStarted : tr.register.closed}
-            </h2>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              {status === "Not Started" ? tr.register.notStartedMsg : tr.register.closedMsg}
-            </p>
+            <h2 className="font-serif text-3xl font-bold text-[#1A2E1F] dark:text-[#E8EDE3] mb-4">Portal Restricted</h2>
+            <p className="text-[#7A8C7C] font-sans leading-relaxed mb-8">{examNotice}</p>
+            <Button onClick={() => navigate("/")} className="btn-primary w-full">Return Home</Button>
           </motion.div>
         </div>
       </Layout>
@@ -220,93 +173,125 @@ const Register = () => {
 
   return (
     <Layout>
-      <SEOHead title="Register for Exam — BBDBASS" description="Register for the Dr. B.R. Ambedkar annual examination. Fill the form with student details to get your roll number." path="/register" />
-      <section className="pt-28 pb-16 md:pt-36 md:pb-24">
-        <div className="container mx-auto px-4 max-w-lg">
-          <motion.div className="text-center mb-10" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">{tr.register.joinUs}</span>
-            <h2 className="font-playfair text-3xl font-bold text-foreground mt-3 mb-3">{tr.register.title}</h2>
-            <div className="section-divider mb-4" />
-            <p className="text-muted-foreground text-sm">{ORG_NAME}</p>
-          </motion.div>
-
-          {/* Exam notice banner (info/warning only - not blocking) */}
-          {examNotice && (examNoticeType === "info" || examNoticeType === "warning") && (
-            <div className="mb-6">
-              <ExamNoticeBanner />
-            </div>
-          )}
-
-          <motion.div
-            className="bg-card rounded-2xl p-8 premium-shadow border border-border"
-            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          >
-            {duplicateWarning && (
-              <motion.div
-                className="flex items-start gap-3 p-4 mb-5 bg-destructive/5 rounded-xl border border-destructive/20"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
+      <SEOHead title="Enrollment — BBDBASS" description="Register for the Dr. B.R. Ambedkar annual examination." path="/register" />
+      
+      <section className="pt-32 pb-24">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto grid lg:grid-cols-12 gap-12 items-start">
+            
+            {/* Left: Info */}
+            <div className="lg:col-span-5 pt-8">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
               >
-                <AlertTriangle className="text-destructive shrink-0 mt-0.5" size={16} />
-                <p className="text-sm text-destructive">{tr.register.duplicateWarning}</p>
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-light border border-[#6B4EFF]/20 text-[#6B4EFF] text-xs font-bold mb-6 tracking-widest uppercase">
+                  <UserPlus size={14} /> 
+                  <span>Candidate Enrollment</span>
+                </div>
+                <h1 className="text-4xl md:text-5xl font-serif font-bold text-[#1A2E1F] dark:text-[#E8EDE3] mb-6">
+                  Join the <span className="premium-gradient-text italic font-normal">Academic Vanguard</span>
+                </h1>
+                <p className="text-[#7A8C7C] font-sans text-lg mb-8 leading-relaxed">
+                  Please provide accurate student information. Your admit card will be generated automatically upon successful enrollment.
+                </p>
+                
+                <div className="space-y-4">
+                  {[
+                    "Instant Admit Card Generation",
+                    "Official Roll Number Assignment",
+                    "Secured Data Privacy",
+                  ].map((item) => (
+                    <div key={item} className="flex items-center gap-3 text-[#1A2E1F] dark:text-[#E8EDE3] font-sans font-medium">
+                      <ShieldCheck className="text-[#6B4EFF]" size={20} />
+                      {item}
+                    </div>
+                  ))}
+                </div>
               </motion.div>
-            )}
+            </div>
 
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                <FormField control={form.control} name="name" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">{tr.register.studentName}</FormLabel>
-                    <FormControl><Input placeholder={tr.register.studentName} className="h-11 rounded-xl" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="father_name" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">{tr.register.fatherName}</FormLabel>
-                    <FormControl><Input placeholder={tr.register.fatherName} className="h-11 rounded-xl" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="student_class" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">{tr.register.class}</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl><SelectTrigger className="h-11 rounded-xl"><SelectValue placeholder={tr.register.selectClass} /></SelectTrigger></FormControl>
-                      <SelectContent>
-                        {[6, 7, 8, 9, 10, 11, 12].map((c) => (
-                          <SelectItem key={c} value={c.toString()}>Class {c}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="phone" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">{tr.register.phone}</FormLabel>
-                    <FormControl><Input placeholder={tr.register.phone} maxLength={10} className="h-11 rounded-xl" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="village" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">{tr.register.village}</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl><SelectTrigger className="h-11 rounded-xl"><SelectValue placeholder={tr.register.selectVillage} /></SelectTrigger></FormControl>
-                      <SelectContent>
-                        {VILLAGES.map((v) => (<SelectItem key={v} value={v}>{v}</SelectItem>))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 h-12 text-sm font-semibold rounded-xl" disabled={submitting}>
-                  {submitting ? <><Loader2 className="animate-spin mr-2" size={16} /> {tr.register.registering}</> : tr.register.registerBtn}
-                </Button>
-              </form>
-            </Form>
-          </motion.div>
+            {/* Right: Form */}
+            <div className="lg:col-span-7">
+              <motion.div
+                className="glass-strong rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden"
+                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+              >
+                {duplicateWarning && (
+                  <motion.div
+                    className="flex items-start gap-3 p-4 mb-6 bg-destructive/5 rounded-2xl border border-destructive/20"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                  >
+                    <AlertTriangle className="text-destructive shrink-0 mt-0.5" size={16} />
+                    <p className="text-sm text-destructive font-medium">Potential duplicate record detected. Please verify details.</p>
+                  </motion.div>
+                )}
+
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <FormField control={form.control} name="name" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#7A8C7C]">Full Name</FormLabel>
+                          <FormControl><Input placeholder="Student Name" className="h-12 rounded-xl bg-white/50 dark:bg-black/20 border-white/40" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="father_name" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#7A8C7C]">Father's Name</FormLabel>
+                          <FormControl><Input placeholder="Guardian Name" className="h-12 rounded-xl bg-white/50 dark:bg-black/20 border-white/40" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <FormField control={form.control} name="student_class" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#7A8C7C]">Academic Level</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl><SelectTrigger className="h-12 rounded-xl bg-white/50 dark:bg-black/20 border-white/40"><SelectValue placeholder="Select Class" /></SelectTrigger></FormControl>
+                            <SelectContent className="rounded-2xl border-white/20">
+                              {[6, 7, 8, 9, 10, 11, 12].map((c) => (
+                                <SelectItem key={c} value={c.toString()}>Class {c}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="phone" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#7A8C7C]">Contact Number</FormLabel>
+                          <FormControl><Input placeholder="10-digit Mobile" maxLength={10} className="h-12 rounded-xl bg-white/50 dark:bg-black/20 border-white/40" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </div>
+
+                    <FormField control={form.control} name="village" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#7A8C7C]">Location / Village</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl><SelectTrigger className="h-12 rounded-xl bg-white/50 dark:bg-black/20 border-white/40"><SelectValue placeholder="Select Village" /></SelectTrigger></FormControl>
+                          <SelectContent className="rounded-2xl border-white/20">
+                            {VILLAGES.map((v) => (<SelectItem key={v} value={v}>{v}</SelectItem>))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+
+                    <Button type="submit" className="btn-primary w-full h-14 text-lg font-serif" disabled={submitting}>
+                      {submitting ? <><Loader2 className="animate-spin mr-2" size={20} /> Processing...</> : "Complete Enrollment"}
+                    </Button>
+                  </form>
+                </Form>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </section>
     </Layout>
