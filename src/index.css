@@ -6,35 +6,35 @@
 
 @layer base {
   :root {
-    --background: 220 20% 97%;
-    --foreground: 222 47% 11%;
+    --background: 40 25% 94%; /* Champagne base */
+    --foreground: 130 28% 15%; /* Deep Sage green */
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 130 28% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 130 28% 15%;
 
-    --primary: 222 67% 16%;
+    --primary: 255 100% 65%; /* Violet Accent #6B4EFF */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 100% 52%;
+    --secondary: 130 15% 45%; /* Muted Sage */
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 14% 94%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 130 20% 90%;
+    --muted-foreground: 130 10% 40%;
 
-    --accent: 43 96% 56%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 255 100% 65%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 90%;
-    --input: 220 13% 90%;
-    --ring: 222 67% 16%;
+    --border: 130 15% 85%;
+    --input: 130 15% 85%;
+    --ring: 255 100% 65%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
     --royal-blue: 222 67% 16%;
     --deep-saffron: 30 100% 52%;
@@ -93,7 +93,7 @@
 
   body {
     @apply antialiased;
-    font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
+    font-family: 'DM Sans', 'Inter', 'Noto Sans Devanagari', sans-serif;
     background:
       radial-gradient(ellipse 70% 60% at 80% 10%, rgba(180, 210, 185, 0.25) 0%, transparent 60%),
       radial-gradient(ellipse 50% 70% at 15% 85%, rgba(210, 195, 170, 0.2) 0%, transparent 55%),
@@ -111,7 +111,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
   }
 
   ::selection {
@@ -189,7 +189,7 @@
 
   .premium-gradient-text {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(30 100% 52%), hsl(43 96% 56%), hsl(30 100% 52%));
+    background-image: linear-gradient(135deg, #6B4EFF, #9D7CFF, #6B4EFF);
     background-size: 200% auto;
     animation: shimmer 4s linear infinite;
   }
@@ -216,11 +216,11 @@
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-secondary to-accent;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#6B4EFF] to-[#9D7CFF];
   }
 
   .section-divider {
-    @apply w-16 h-1 mx-auto rounded-full bg-gradient-to-r from-secondary to-accent;
+    @apply w-16 h-1 mx-auto rounded-full bg-gradient-to-r from-[#6B4EFF] to-[#9D7CFF];
   }
 
   .card-hover {
