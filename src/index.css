@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:italic,wght@0,400;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -127,7 +127,7 @@
 
 @layer utilities {
   .hero-gradient {
-    background: linear-gradient(165deg, hsl(222 67% 10%) 0%, hsl(222 67% 16%) 50%, hsl(222 50% 22%) 100%);
+    background: linear-gradient(165deg, rgba(26, 46, 31, 0.05) 0%, rgba(210, 195, 170, 0.02) 50%, rgba(180, 210, 185, 0.05) 100%);
   }
 
   .glass-card {
@@ -392,5 +392,29 @@
   }
   .nav-link-underline:hover::after {
     width: 70%;
+  }
+
+  /* Button Styles */
+  .btn-primary {
+    @apply bg-[#6B4EFF] text-white px-8 h-12 rounded-xl font-medium transition-all duration-200;
+    box-shadow: 0 6px 20px rgba(107, 78, 255, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  .btn-primary:hover {
+    @apply -translate-y-0.5 bg-[#5038E0];
+    box-shadow: 0 12px 32px rgba(107, 78, 255, 0.38);
+  }
+
+  .btn-ghost {
+    @apply bg-white/40 dark:bg-black/40 text-[#1A2E1F] dark:text-[#E8EDE3] px-8 h-12 rounded-xl font-medium border border-white/60 dark:border-white/10 backdrop-blur-md transition-all duration-200;
+  }
+  .btn-ghost:hover {
+    @apply -translate-y-0.5 bg-white/60 dark:bg-black/60;
+  }
+
+  .btn-accent-ghost {
+    @apply bg-[#6B4EFF]/10 text-[#6B4EFF] px-8 h-12 rounded-xl font-medium border border-[#6B4EFF]/25 transition-all duration-200;
+  }
+  .btn-accent-ghost:hover {
+    @apply -translate-y-0.5 bg-[#6B4EFF]/16;
   }
 }

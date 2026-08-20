@@ -102,7 +102,7 @@ const Index = () => {
       />
       {/* Hero */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
-        <div className="absolute inset-0 hero-gradient" />
+        <div className="absolute inset-0" />
         {/* Gradient mesh overlay */}
         <div className="absolute inset-0 opacity-30" style={{
           background: "radial-gradient(ellipse at 20% 50%, hsl(30 100% 52% / 0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, hsl(43 96% 56% / 0.06) 0%, transparent 50%), radial-gradient(ellipse at 50% 80%, hsl(222 67% 40% / 0.1) 0%, transparent 60%)"
@@ -129,7 +129,7 @@ const Index = () => {
             </div>
           </motion.div>
 
-          <motion.h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] mb-6 text-[#1A2E1F] dark:text-[#E8EDE3] text-shadow max-w-4xl mx-auto" initial="hidden" animate="visible" variants={fadeUp} custom={2}>
+          <motion.h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] mb-6 text-[#1A2E1F] dark:text-[#E8EDE3] max-w-4xl mx-auto" initial="hidden" animate="visible" variants={fadeUp} custom={2}>
             {ORG_NAME}
           </motion.h1>
 
@@ -142,13 +142,13 @@ const Index = () => {
           </motion.p>
 
           <motion.div className="flex flex-col sm:flex-row gap-4 justify-center" initial="hidden" animate="visible" variants={fadeUp} custom={5}>
-            <Button asChild size="lg" className="bg-secondary text-white hover:bg-secondary/90 font-semibold text-sm px-8 h-12 shadow-lg shadow-secondary/20 group rounded-xl hover:shadow-secondary/30 hover:shadow-xl transition-all">
+            <Button asChild size="lg" className="btn-primary">
               <Link to="/exam-details">
                 {tr.hero.viewExam}
                 <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold text-sm px-8 h-12 rounded-xl shadow-lg shadow-accent/20 hover:shadow-accent/30 hover:shadow-xl transition-all">
+            <Button asChild size="lg" className="btn-ghost">
               <Link to="/result">{tr.hero.checkResultNow}</Link>
             </Button>
           </motion.div>
