@@ -2,4 +2,9 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
+# Sitemap generated for BBDBASS Exam Portal
 Sitemap: https://shiksha-suvidha-portal.lovable.app/sitemap.xml
+
+# Cache static assets for long duration
+# Note: robots.txt doesn't handle cache-control, but we include this as a developer note.
+# The actual headers should be set via vercel.json or hosting config.
