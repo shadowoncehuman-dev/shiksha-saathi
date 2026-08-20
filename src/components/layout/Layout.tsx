@@ -18,7 +18,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative selection:bg-[#6B4EFF]/20 selection:text-[#1A2E1F]">
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />

@@ -31,28 +31,28 @@ const Header = () => {
 
   return (
     <>
-      {/* Gold accent line */}
-      <div className="fixed top-0 left-0 right-0 z-[60] h-[2px] bg-gradient-to-r from-secondary via-accent to-secondary" />
 
       <motion.header
-        className={`fixed top-[2px] left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled || !isHome
-            ? "bg-primary/95 backdrop-blur-xl shadow-lg shadow-primary/10 border-b border-white/[0.05]"
-            : "bg-transparent"
-        }`}
+        className={`fixed top-6 left-0 right-0 z-50 flex justify-center px-4 transition-all duration-500`}
       >
-        <div className="container mx-auto px-4">
+        <div 
+          className={`
+            w-full max-w-[860px] px-6 py-2 rounded-full border transition-all duration-300
+            ${scrolled || !isHome
+              ? "bg-white/70 dark:bg-black/70 backdrop-blur-xl border-white/40 dark:border-white/10 shadow-lg" 
+              : "bg-white/40 dark:bg-black/40 backdrop-blur-md border-white/20 dark:border-white/5"}
+          `}
+        >
           <div className="flex items-center justify-between h-16 md:h-[4.5rem]">
             <Link to="/" className="flex items-center gap-3 shrink-0 group">
               <motion.img
                 src={logo}
                 alt="Logo"
-                className="w-10 h-10 md:w-11 md:h-11 rounded-full object-contain bg-white/95 p-0.5 shadow-lg ring-2 ring-accent/20"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                className="w-8 h-8 md:w-9 md:h-9 rounded-full object-contain bg-white/95 p-0.5 border border-white/20"
+                whileHover={{ scale: 1.1 }}
               />
-              <span className="hidden sm:block font-playfair text-sm font-bold text-white tracking-wide">
-                BBDBASS
+              <span className="font-serif text-base font-bold text-[#1A2E1F] dark:text-[#E8EDE3] tracking-tight">
+                BBDBASS <em className="italic text-[#6B4EFF] not-italic"> Samiti</em>
               </span>
             </Link>
 
@@ -63,18 +63,14 @@ const Header = () => {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className="relative px-4 py-2 text-sm font-medium transition-all duration-300 nav-link-underline"
+                    className={`
+                      px-3 py-1.5 text-[13px] font-medium rounded-full transition-all duration-200
+                      ${isActive
+                        ? "text-[#1A2E1F] dark:text-[#E8EDE3] bg-white/50 dark:bg-white/10"
+                        : "text-[#7A8C7C] hover:text-[#1A2E1F] dark:hover:text-[#E8EDE3] hover:bg-white/30 dark:hover:bg-white/5"}
+                    `}
                   >
-                    <span className={isActive ? "text-secondary" : "text-white/70 hover:text-white"}>
-                      {item.label}
-                    </span>
-                    {isActive && (
-                      <motion.div
-                        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-secondary to-accent rounded-full"
-                        layoutId="activeNav"
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      />
-                    )}
+                    {item.label}
                   </Link>
                 );
               })}
@@ -85,19 +81,16 @@ const Header = () => {
 
               <button
                 onClick={() => setLang(lang === "en" ? "hi" : "en")}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.08] hover:bg-white/15 text-white text-xs font-semibold transition-all border border-white/[0.08] hover:border-accent/30"
-                title="Toggle Language"
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/5 text-[#7A8C7C] hover:text-[#6B4EFF] transition-all"
               >
-                <Languages size={13} />
-                <span>{lang === "en" ? "हिं" : "EN"}</span>
+                <Languages size={18} />
               </button>
 
               <button
-                className="lg:hidden p-2 text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+                className="lg:hidden w-9 h-9 flex items-center justify-center text-[#1A2E1F] dark:text-[#E8EDE3]"
                 onClick={() => setMobileOpen(!mobileOpen)}
-                aria-label="Toggle menu"
               >
-                {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+                {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
             </div>
           </div>
@@ -109,28 +102,18 @@ const Header = () => {
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
-                className="lg:hidden pb-4 overflow-hidden"
+                className="absolute top-20 left-4 right-4 bg-white/90 dark:bg-black/90 backdrop-blur-2xl rounded-3xl p-6 border border-white/20 dark:border-white/10 shadow-2xl lg:hidden"
               >
-                <div className="glass-morphism rounded-2xl p-2">
-                  {navItems.map((item, i) => (
-                    <motion.div
+                <div className="flex flex-col gap-4">
+                  {navItems.map((item) => (
+                    <Link
                       key={item.path}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.05 }}
+                      to={item.path}
+                      onClick={() => setMobileOpen(false)}
+                      className={`text-lg font-serif ${location.pathname === item.path ? "text-[#6B4EFF]" : "text-[#1A2E1F] dark:text-[#E8EDE3]"}`}
                     >
-                      <Link
-                        to={item.path}
-                        onClick={() => setMobileOpen(false)}
-                        className={`block px-4 py-3 text-sm font-medium rounded-xl transition-all ${
-                          location.pathname === item.path
-                            ? "bg-secondary/20 text-secondary"
-                            : "text-white/70 hover:text-white hover:bg-white/5"
-                        }`}
-                      >
-                        {item.label}
-                      </Link>
-                    </motion.div>
+                      {item.label}
+                    </Link>
                   ))}
                 </div>
               </motion.nav>
