@@ -49,14 +49,14 @@ const SEOHead = ({
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            "mainEntity": faq.map(item => ({
+            "mainEntity": faq.map((item) => ({
               "@type": "Question",
               "name": item.q,
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": item.a
-              }
-            }))
+                "text": item.a,
+              },
+            })),
           })}
         </script>
       )}
@@ -71,11 +71,13 @@ const SEOHead = ({
               "@type": "HowToStep",
               "position": index + 1,
               "name": step.name,
-              "itemListElement": [{
-                "@type": "HowToDirection",
-                "text": step.text
-              }]
-            }))
+              "itemListElement": [
+                {
+                  "@type": "HowToDirection",
+                  "text": step.text,
+                },
+              ],
+            })),
           })}
         </script>
       )}
