@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { BookOpen, Clock, Calendar, GraduationCap, ArrowRight } from "lucide-react";
+import { BookOpen, Clock, Calendar, GraduationCap, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/SEOHead";
@@ -22,8 +22,7 @@ const ExamDetails = () => {
         "Social Reforms",
         "Basic Constitutional Concepts",
       ],
-      gradient: "hero-gradient",
-      slug: "group-1",
+      description: "Foundational assessment for primary-middle students focusing on basic historical awareness.",
     },
     {
       name: "Group 2",
@@ -36,8 +35,7 @@ const ExamDetails = () => {
         "Political Philosophy",
         "Economic Thoughts",
       ],
-      gradient: "bg-gradient-to-br from-secondary to-accent",
-      slug: "group-2",
+      description: "Advanced evaluative framework for senior students covering complex sociological and political themes.",
     },
   ];
 
@@ -47,96 +45,128 @@ const ExamDetails = () => {
         title="Exam Details — BBDBASS" 
         description="View examination groups, schedules, topics and timings for the Dr. B.R. Ambedkar annual examination." 
         path="/exam-details" 
-        howTo={[
-          { name: "Visit Portal", text: "Go to the Shiksha Suvidha Portal home page." },
-          { name: "Register Online", text: "Click 'Register Now' and fill out the student registration form." },
-          { name: "Get Admit Card", text: "Download your admit card immediately after registration." },
-          { name: "Check Exam Groups", text: "Verify your exam group (Group 1 or 2) and reporting time." }
-        ]}
       />
-      {/* Hero */}
-      <section className="hero-gradient text-white pt-28 pb-16 md:pt-36 md:pb-24 relative overflow-hidden">
-        <div className="absolute inset-0 grain-overlay" />
-        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full border border-white/[0.03]" />
-        <div className="absolute bottom-10 -left-10 w-60 h-60 rounded-full border border-secondary/[0.05]" />
-        {/* Decorative accent lines */}
-        <div className="absolute top-1/2 left-0 w-32 h-[1px] bg-gradient-to-r from-secondary/10 to-transparent hidden md:block" />
-        <div className="absolute top-1/2 right-0 w-32 h-[1px] bg-gradient-to-l from-secondary/10 to-transparent hidden md:block" />
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <motion.div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.06] text-secondary text-xs font-semibold mb-6 border border-white/[0.08] luxury-border" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-            <GraduationCap size={14} /> {tr.examDetails.badge}
+      
+      {/* Page Header */}
+      <section className="pt-32 pb-16 bg-[#1A2E1F]/[0.02]">
+        <div className="container mx-auto px-4 text-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-light border border-[#6B4EFF]/20 text-[#6B4EFF] text-xs font-bold mb-6 tracking-widest uppercase"
+          >
+            <GraduationCap size={14} /> 
+            <span>Evaluation Framework</span>
           </motion.div>
-          <motion.h1 className="font-playfair text-4xl md:text-5xl font-bold mb-4 text-shadow" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            {tr.examDetails.title}
+          
+          <motion.h1 
+            className="text-4xl md:text-6xl font-serif font-bold text-[#1A2E1F] dark:text-[#E8EDE3] mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            Curriculum & <span className="premium-gradient-text italic font-normal">Syllabus</span>
           </motion.h1>
-          <motion.div className="section-divider mb-5" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.3 }} />
-          <motion.p className="text-white/40 max-w-md mx-auto text-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-            {tr.examDetails.subtitle}
+          
+          <motion.p 
+            className="text-[#7A8C7C] max-w-2xl mx-auto font-sans text-lg"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            A standardized evaluation system designed to measure student proficiency across multiple dimensions of social and political history.
           </motion.p>
         </div>
       </section>
 
-      {/* Groups */}
-      <section className="py-20 md:py-28">
+      {/* Group Cards */}
+      <section className="py-24">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
             {groups.map((group, i) => (
-              <motion.div key={group.name} className="bg-card rounded-2xl overflow-hidden premium-card shimmer-border card-inner-glow" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.6 }}
-                whileHover={{ y: -6, transition: { duration: 0.3 } }}>
-                {/* Header */}
-                <div className={`${group.gradient} p-6 text-white relative overflow-hidden`}>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent" />
-                  <div className="flex items-center gap-4 relative z-10">
-                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm border border-white/10">
-                      <BookOpen size={22} />
-                    </div>
-                    <div>
-                      <h3 className="font-playfair text-xl font-bold">{group.name}</h3>
-                      <p className="text-sm text-white/80">{group.classes}</p>
-                    </div>
+              <motion.div 
+                key={group.name} 
+                className="glass-strong rounded-[2.5rem] p-10 flex flex-col relative overflow-hidden group"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+              >
+                {/* Visual Accent */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#6B4EFF]/5 rounded-bl-[5rem] transition-all group-hover:bg-[#6B4EFF]/10" />
+                
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-14 h-14 rounded-2xl bg-[#6B4EFF] text-white flex items-center justify-center shadow-lg shadow-[#6B4EFF]/30">
+                    <BookOpen size={24} />
                   </div>
-                </div>
-
-                <div className="p-6 space-y-5">
-                  {/* Info */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="flex items-center gap-2.5 text-sm">
-                      <div className="w-8 h-8 rounded-lg bg-secondary/5 flex items-center justify-center">
-                        <Calendar size={14} className="text-secondary" />
-                      </div>
-                      <span className="text-muted-foreground text-xs">{group.date}</span>
-                    </div>
-                    <div className="flex items-center gap-2.5 text-sm">
-                      <div className="w-8 h-8 rounded-lg bg-secondary/5 flex items-center justify-center">
-                        <Clock size={14} className="text-secondary" />
-                      </div>
-                      <span className="text-muted-foreground text-xs">{group.duration}</span>
-                    </div>
-                  </div>
-
-                  {/* Topics */}
                   <div>
-                    <h4 className="font-semibold text-foreground mb-3 text-sm">{tr.examDetails.topics}</h4>
-                    <ul className="space-y-2">
-                      {group.topics.map((topic) => (
-                        <li key={topic} className="flex items-center gap-3 text-sm text-muted-foreground">
-                          <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-secondary to-accent shrink-0" />
-                          {topic}
-                        </li>
-                      ))}
-                    </ul>
+                    <h3 className="text-3xl font-serif font-bold text-[#1A2E1F] dark:text-[#E8EDE3]">{group.name}</h3>
+                    <p className="text-[#6B4EFF] font-bold text-sm uppercase tracking-tighter">{group.classes}</p>
                   </div>
-
-                  {/* CTA */}
-                  <Button asChild className="w-full bg-accent text-accent-foreground hover:bg-accent/90 group rounded-xl h-11 mt-2 hover:shadow-lg hover:shadow-accent/20 transition-all">
-                    <Link to="/register" aria-label={`Register for ${group.name}`}>
-                      <span className="font-semibold">{tr.examDetails.registerNow}</span>
-                      <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </Button>
                 </div>
+
+                <p className="text-[#7A8C7C] font-sans mb-8 leading-relaxed">
+                  {group.description}
+                </p>
+
+                <div className="grid grid-cols-2 gap-4 mb-10">
+                  <div className="p-4 glass-light rounded-2xl border border-white/40">
+                    <div className="flex items-center gap-2 text-[#6B4EFF] mb-1">
+                      <Calendar size={14} />
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Date</span>
+                    </div>
+                    <p className="text-[#1A2E1F] dark:text-[#E8EDE3] font-serif font-bold">{group.date}</p>
+                  </div>
+                  <div className="p-4 glass-light rounded-2xl border border-white/40">
+                    <div className="flex items-center gap-2 text-[#6B4EFF] mb-1">
+                      <Clock size={14} />
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Duration</span>
+                    </div>
+                    <p className="text-[#1A2E1F] dark:text-[#E8EDE3] font-serif font-bold">{group.duration}</p>
+                  </div>
+                </div>
+
+                <div className="flex-grow">
+                  <h4 className="text-[#1A2E1F] dark:text-[#E8EDE3] font-serif font-bold mb-4 italic">Core Syllabus Topics</h4>
+                  <ul className="space-y-3">
+                    {group.topics.map((topic) => (
+                      <li key={topic} className="flex items-start gap-3 text-[#7A8C7C] text-sm">
+                        <CheckCircle2 size={16} className="text-[#6B4EFF] shrink-0 mt-0.5" />
+                        <span>{topic}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <Button asChild className="btn-primary w-full mt-10">
+                  <Link to="/register" className="flex items-center justify-center gap-2">
+                    Begin Enrollment <ArrowRight size={16} />
+                  </Link>
+                </Button>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Additional Info Section */}
+      <section className="py-24 bg-[#1A2E1F] text-[#E8EDE3] relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full opacity-10 grain-overlay" />
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <h2 className="text-3xl md:text-5xl font-serif font-bold mb-12 italic">Evaluation Standard</h2>
+          <div className="grid md:grid-cols-3 gap-12 max-w-4xl mx-auto">
+            <div>
+              <p className="text-4xl font-serif font-bold text-[#6B4EFF] mb-2">100</p>
+              <p className="text-sm font-bold uppercase tracking-widest text-[#A7B9A7]">Total Marks</p>
+            </div>
+            <div>
+              <p className="text-4xl font-serif font-bold text-[#6B4EFF] mb-2">90</p>
+              <p className="text-sm font-bold uppercase tracking-widest text-[#A7B9A7]">Minutes Allowed</p>
+            </div>
+            <div>
+              <p className="text-4xl font-serif font-bold text-[#6B4EFF] mb-2">MCQ</p>
+              <p className="text-sm font-bold uppercase tracking-widest text-[#A7B9A7]">Question Format</p>
+            </div>
           </div>
         </div>
       </section>
