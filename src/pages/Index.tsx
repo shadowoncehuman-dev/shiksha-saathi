@@ -129,15 +129,15 @@ const Index = () => {
             </div>
           </motion.div>
 
-          <motion.h1 className="font-playfair text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] mb-6 text-white text-shadow max-w-4xl mx-auto" initial="hidden" animate="visible" variants={fadeUp} custom={2}>
+          <motion.h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] mb-6 text-[#1A2E1F] dark:text-[#E8EDE3] text-shadow max-w-4xl mx-auto" initial="hidden" animate="visible" variants={fadeUp} custom={2}>
             {ORG_NAME}
           </motion.h1>
 
-          <motion.p className="text-xl md:text-2xl text-secondary font-playfair font-medium mb-4 tracking-wide" initial="hidden" animate="visible" variants={fadeUp} custom={3}>
+          <motion.p className="text-xl md:text-2xl text-secondary font-serif font-medium mb-4 tracking-wide italic" initial="hidden" animate="visible" variants={fadeUp} custom={3}>
             {tr.hero.tagline}
           </motion.p>
 
-          <motion.p className="text-white/40 max-w-xl mx-auto mb-12 text-sm md:text-base leading-relaxed" initial="hidden" animate="visible" variants={fadeUp} custom={4}>
+          <motion.p className="text-[#3D4F3F] dark:text-[#A7B9A7] max-w-xl mx-auto mb-12 text-sm md:text-base leading-relaxed font-sans" initial="hidden" animate="visible" variants={fadeUp} custom={4}>
             {tr.hero.subheading}
           </motion.p>
 
