@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Phone, User, Briefcase, Crown, Shield, Star, Loader2, Mail, ExternalLink, Linkedin, Twitter } from "lucide-react";
+import { Phone, User, Briefcase, Crown, Shield, Star, Loader2, Mail, ExternalLink, Linkedin, Twitter, Users } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/SEOHead";
 import { TEAM_MEMBERS } from "@/lib/team-data";
