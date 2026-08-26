@@ -78,7 +78,17 @@ const Index = () => {
       
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden">
+        <img
+          src={heroBackdrop}
+          alt=""
+          aria-hidden="true"
+          width={1920}
+          height={1088}
+          className="absolute inset-0 w-full h-full object-cover opacity-60 dark:opacity-25 pointer-events-none select-none"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background pointer-events-none" />
         <div className="container mx-auto px-4 relative z-10">
+
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             
             {/* Left Content */}
