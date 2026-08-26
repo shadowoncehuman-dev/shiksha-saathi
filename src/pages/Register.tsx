@@ -120,13 +120,19 @@ const Register = () => {
       }
 
       const { data: rollData, error: rollError } = await supabase.functions.invoke("generate-roll-number", { body: { student_class: studentClass } });
-      if (rollError || !rollData?.roll_number) throw new Error("Failed to generate roll number");
+      if (rollError || !rollData?.roll_number) throw new Error(rollData?.error || "Registration is currently closed or the roll number could not be generated.");
 
       const { error: insertError } = await supabase.from("registrations").insert({
         roll_number: rollData.roll_number, name: values.name.trim(), father_name: values.father_name.trim(),
         class: studentClass, group: group.name, phone: values.phone, village: values.village,
       });
-      if (insertError) throw insertError;
+      if (insertError) {
+        if ((insertError as any).code === "42501" || /row-level security/i.test(insertError.message)) {
+          throw new Error("Registration is currently closed by the administration.");
+        }
+        throw insertError;
+      }
+
 
       sessionStorage.setItem("admit_card_data", JSON.stringify({
         roll_number: rollData.roll_number, name: values.name.trim(), father_name: values.father_name.trim(),
