@@ -90,6 +90,12 @@ const Register = () => {
     setSubmitting(true);
     setFailedError(null);
     try {
+      const { data: fresh } = await supabase.from("site_settings").select("registration_status").single();
+      if ((fresh?.registration_status || "Not Started") !== "Open") {
+        setStatus(fresh?.registration_status || "Not Started");
+        throw new Error("Registration is currently closed. Please contact the examination centre.");
+      }
+
       const studentClass = parseInt(values.student_class);
       const group = getGroup(studentClass);
 
