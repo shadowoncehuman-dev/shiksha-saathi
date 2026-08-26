@@ -25,6 +25,25 @@ serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
+    // Server-side gate: registration must be open and not cancelled/rescheduled
+    const { data: settings } = await supabase
+      .from("site_settings")
+      .select("registration_status, exam_notice_type")
+      .eq("id", 1)
+      .maybeSingle();
+
+    const blockedNotice = ["cancelled", "rescheduled"].includes(
+      (settings?.exam_notice_type || "info").toLowerCase(),
+    );
+    if (settings?.registration_status !== "Open" || blockedNotice) {
+      return new Response(
+        JSON.stringify({ error: "Registration is currently closed." }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+
+
     // Get all existing roll numbers for this class to find gaps
     const prefix = student_class.toString();
     const { data: existingRegs } = await supabase
