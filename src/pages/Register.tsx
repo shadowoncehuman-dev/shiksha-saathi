@@ -152,18 +152,31 @@ const Register = () => {
   if (successData) return <Layout><RegistrationSuccess {...successData} /></Layout>;
   if (failedError) return <Layout><RegistrationFailed error={failedError} onRetry={() => setFailedError(null)} /></Layout>;
 
-  const isBlocked = examNotice && (examNoticeType === "cancelled" || examNoticeType === "rescheduled");
+  const noticeBlocked = !!examNotice && (examNoticeType === "cancelled" || examNoticeType === "rescheduled");
+  const statusBlocked = status !== "Open";
 
-  if (isBlocked) {
+  if (noticeBlocked || statusBlocked) {
+    const heading = noticeBlocked
+      ? "Portal Restricted"
+      : status === "Closed"
+      ? "Registration Closed"
+      : "Registration Not Started";
+    const message = noticeBlocked
+      ? examNotice
+      : status === "Closed"
+      ? "Registration for this examination cycle has been closed by the administration. Please contact your centre for assistance."
+      : "Registration has not opened yet. Please check back soon for the announcement.";
+
     return (
       <Layout>
+        <SEOHead title="Registration — BBDBASS" description="Registration status for the Dr. B.R. Ambedkar annual examination." path="/register" />
         <div className="flex items-center justify-center min-h-[70vh] px-4 pt-20">
           <motion.div className="glass-strong rounded-[2.5rem] p-10 text-center max-w-md relative overflow-hidden" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
             <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto mb-6">
               <AlertTriangle className="text-destructive" size={32} />
             </div>
-            <h2 className="font-serif text-3xl font-bold text-[#1A2E1F] dark:text-[#E8EDE3] mb-4">Portal Restricted</h2>
-            <p className="text-[#7A8C7C] font-sans leading-relaxed mb-8">{examNotice}</p>
+            <h2 className="font-serif text-3xl font-bold text-[#1A2E1F] dark:text-[#E8EDE3] mb-4">{heading}</h2>
+            <p className="text-[#7A8C7C] font-sans leading-relaxed mb-8">{message}</p>
             <Button onClick={() => navigate("/")} className="btn-primary w-full">Return Home</Button>
           </motion.div>
         </div>
