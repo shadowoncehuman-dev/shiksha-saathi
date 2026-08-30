@@ -9,6 +9,7 @@ import { useLang } from "@/lib/i18n";
 import logo from "@/assets/logo.png";
 import galleryMeeting from "@/assets/gallery-meeting.jpg";
 import galleryShields from "@/assets/gallery-shields.jpg";
+import heroBackdrop from "@/assets/hero-backdrop.jpg";
 import { useRef, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import CountdownTimer from "@/components/CountdownTimer";
