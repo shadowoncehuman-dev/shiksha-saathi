@@ -7,23 +7,43 @@ import { Loader2 } from "lucide-react";
 // Eager load critical route
 import Index from "@/pages/Index";
 
-// Lazy load all other routes
-const Register = lazy(() => import("@/pages/Register"));
-const AdmitCard = lazy(() => import("@/pages/AdmitCard"));
-const Result = lazy(() => import("@/pages/Result"));
-const ResultDetail = lazy(() => import("@/pages/ResultDetail"));
-const Admin = lazy(() => import("@/pages/Admin"));
-const Team = lazy(() => import("@/pages/Team"));
-const Gallery = lazy(() => import("@/pages/Gallery"));
-const ExamDetails = lazy(() => import("@/pages/ExamDetails"));
-const Downloads = lazy(() => import("@/pages/Downloads"));
-const Winners = lazy(() => import("@/pages/Winners"));
-const Invigilator = lazy(() => import("@/pages/Invigilator"));
+// Lazy loader with retry + one-time reload for stale chunks after redeploys
+const lazyWithRetry = (factory: () => Promise<{ default: React.ComponentType<unknown> }>) =>
+  lazy(async () => {
+    try {
+      return await factory();
+    } catch {
+      // Retry once (transient network / chunk fetch failure)
+      try {
+        return await factory();
+      } catch {
+        // Stale build: reload once to pick up new chunks
+        if (!sessionStorage.getItem("chunk_reload")) {
+          sessionStorage.setItem("chunk_reload", "1");
+          window.location.reload();
+        }
+        throw new Error("Failed to load page module");
+      }
+    }
+  });
 
-const NotFound = lazy(() => import("@/pages/NotFound"));
-const Forbidden = lazy(() => import("@/pages/Forbidden"));
-const ServerError = lazy(() => import("@/pages/ServerError"));
-const ServiceUnavailable = lazy(() => import("@/pages/ServiceUnavailable"));
+// Lazy load all other routes
+const Register = lazyWithRetry(() => import("@/pages/Register"));
+const AdmitCard = lazyWithRetry(() => import("@/pages/AdmitCard"));
+const Result = lazyWithRetry(() => import("@/pages/Result"));
+const ResultDetail = lazyWithRetry(() => import("@/pages/ResultDetail"));
+const Admin = lazyWithRetry(() => import("@/pages/Admin"));
+const Team = lazyWithRetry(() => import("@/pages/Team"));
+const Gallery = lazyWithRetry(() => import("@/pages/Gallery"));
+const ExamDetails = lazyWithRetry(() => import("@/pages/ExamDetails"));
+const Downloads = lazyWithRetry(() => import("@/pages/Downloads"));
+const Winners = lazyWithRetry(() => import("@/pages/Winners"));
+const Invigilator = lazyWithRetry(() => import("@/pages/Invigilator"));
+
+const NotFound = lazyWithRetry(() => import("@/pages/NotFound"));
+const Forbidden = lazyWithRetry(() => import("@/pages/Forbidden"));
+const ServerError = lazyWithRetry(() => import("@/pages/ServerError"));
+const ServiceUnavailable = lazyWithRetry(() => import("@/pages/ServiceUnavailable"));
 
 const LazyFallback = () => (
   <div className="flex items-center justify-center min-h-[60vh]">

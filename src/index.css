@@ -130,6 +130,10 @@
     background: linear-gradient(165deg, rgba(26, 46, 31, 0.05) 0%, rgba(210, 195, 170, 0.02) 50%, rgba(180, 210, 185, 0.05) 100%);
   }
 
+  .footer-gradient {
+    background: linear-gradient(165deg, hsl(150 30% 10%) 0%, hsl(155 35% 14%) 55%, hsl(150 30% 9%) 100%);
+  }
+
   .glass-card {
     background: rgba(255, 255, 255, 0.38);
     backdrop-filter: blur(16px);
