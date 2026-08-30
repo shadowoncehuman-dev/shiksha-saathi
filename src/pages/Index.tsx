@@ -39,6 +39,7 @@ const Index = () => {
   const { tr } = useLang();
   const [galleryImages, setGalleryImages] = useState<{ img: string; title: string }[]>([]);
   const [topWinners, setTopWinners] = useState<Winner[]>([]);
+  const [heroImgLoaded, setHeroImgLoaded] = useState(true);
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -78,15 +79,22 @@ const Index = () => {
       />
       
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden">
-        <img
-          src={heroBackdrop}
-          alt=""
-          aria-hidden="true"
-          width={1920}
-          height={1088}
-          className="absolute inset-0 w-full h-full object-cover opacity-60 dark:opacity-25 pointer-events-none select-none"
-        />
+      <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center pt-24 sm:pt-20 pb-12 overflow-hidden">
+        {/* Gradient fallback — always rendered beneath the image so a failed load never blanks the hero */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#F5EFE0] via-[#E4E9DC] to-[#CBD8C8] dark:from-[#142018] dark:via-[#101A14] dark:to-[#0C140F] pointer-events-none" />
+        {heroImgLoaded && (
+          <img
+            src={heroBackdrop}
+            alt=""
+            aria-hidden="true"
+            width={1920}
+            height={1088}
+            loading="eager"
+            decoding="async"
+            onError={() => setHeroImgLoaded(false)}
+            className="absolute inset-0 w-full h-full object-cover opacity-60 dark:opacity-25 pointer-events-none select-none"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background pointer-events-none" />
         <div className="container mx-auto px-4 relative z-10">
 
@@ -102,7 +110,7 @@ const Index = () => {
               </motion.div>
 
               <motion.h1 
-                className="text-5xl md:text-7xl font-serif font-bold leading-[1.05] text-[#1A2E1F] dark:text-[#E8EDE3] mb-6"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold leading-[1.05] text-[#1A2E1F] dark:text-[#E8EDE3] mb-6"
                 initial="hidden" animate="visible" variants={fadeUp} custom={1}
               >
                 Pioneering the <br />
@@ -110,14 +118,14 @@ const Index = () => {
               </motion.h1>
 
               <motion.p 
-                className="text-lg md:text-xl text-[#3D4F3F] dark:text-[#A7B9A7] font-sans max-w-xl mb-10 leading-relaxed"
+                className="text-base sm:text-lg md:text-xl text-[#3D4F3F] dark:text-[#A7B9A7] font-sans max-w-xl mb-10 leading-relaxed"
                 initial="hidden" animate="visible" variants={fadeUp} custom={2}
               >
                 {ORG_NAME} is dedicated to fostering academic brilliance and moral integrity among students through rigorous evaluation.
               </motion.p>
 
               <motion.div 
-                className="flex flex-wrap gap-4"
+                className="flex flex-col sm:flex-row sm:flex-wrap gap-4 w-full sm:w-auto"
                 initial="hidden" animate="visible" variants={fadeUp} custom={3}
               >
                 <Button asChild size="lg" className="btn-primary">
