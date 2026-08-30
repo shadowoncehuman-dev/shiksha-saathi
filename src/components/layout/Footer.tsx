@@ -8,7 +8,7 @@ const Footer = () => {
   const { tr } = useLang();
 
   return (
-    <footer className="hero-gradient text-white relative overflow-hidden">
+    <footer className="footer-gradient text-white relative overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-secondary/40 to-transparent" />
 
       <div className="container mx-auto px-4 py-16">
