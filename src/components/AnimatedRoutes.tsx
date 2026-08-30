@@ -8,24 +8,34 @@ import { Loader2 } from "lucide-react";
 import Index from "@/pages/Index";
 
 // Lazy loader with retry + one-time reload for stale chunks after redeploys
+const CHUNK_RELOAD_KEY = "chunk_reload_at";
+
 const lazyWithRetry = (factory: () => Promise<{ default: React.ComponentType<unknown> }>) =>
   lazy(async () => {
     try {
-      return await factory();
+      const mod = await factory();
+      sessionStorage.removeItem(CHUNK_RELOAD_KEY);
+      return mod;
     } catch {
       // Retry once (transient network / chunk fetch failure)
       try {
-        return await factory();
+        const mod = await factory();
+        sessionStorage.removeItem(CHUNK_RELOAD_KEY);
+        return mod;
       } catch {
-        // Stale build: reload once to pick up new chunks
-        if (!sessionStorage.getItem("chunk_reload")) {
-          sessionStorage.setItem("chunk_reload", "1");
+        // Stale build: hard reload once (max once per 10s) to pick up new chunks
+        const last = Number(sessionStorage.getItem(CHUNK_RELOAD_KEY) || 0);
+        if (Date.now() - last > 10000) {
+          sessionStorage.setItem(CHUNK_RELOAD_KEY, String(Date.now()));
           window.location.reload();
+          // Keep Suspense pending while the page reloads
+          await new Promise(() => {});
         }
         throw new Error("Failed to load page module");
       }
     }
   });
+
 
 // Lazy load all other routes
 const Register = lazyWithRetry(() => import("@/pages/Register"));
