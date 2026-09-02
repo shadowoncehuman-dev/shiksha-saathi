@@ -47,16 +47,45 @@ const Register = () => {
   });
 
   useEffect(() => {
+    let cancelled = false;
+    const applySettings = (data: any) => {
+      if (cancelled) return;
+      setStatus(data?.registration_status || "Not Started");
+      setExamNotice(data?.exam_notice || null);
+      setExamNoticeType(data?.exam_notice_type || "info");
+    };
     const fetchStatus = async () => {
       try {
-        const { data } = await supabase.from("site_settings").select("registration_status, exam_notice, exam_notice_type").single();
-        setStatus(data?.registration_status || "Not Started");
-        setExamNotice((data as any)?.exam_notice || null);
-        setExamNoticeType((data as any)?.exam_notice_type || "info");
-      } catch { setStatus("Not Started"); }
-      setLoading(false);
+        const { data, error } = await supabase
+          .from("site_settings")
+          .select("registration_status, exam_notice, exam_notice_type")
+          .eq("id", 1)
+          .maybeSingle();
+        // Fail closed: if we cannot read the flag, do not show the form
+        if (error || !data) { if (!cancelled) setStatus("Not Started"); }
+        else applySettings(data);
+      } catch { if (!cancelled) setStatus("Not Started"); }
+      if (!cancelled) setLoading(false);
     };
     fetchStatus();
+
+    // Live sync: admin toggles propagate instantly without a page refresh
+    const channel = supabase
+      .channel("register-site-settings")
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "site_settings", filter: "id=eq.1" }, (payload) => applySettings(payload.new))
+      .subscribe();
+
+    // Also re-check whenever the tab regains focus (covers missed realtime events)
+    const onVisible = () => { if (document.visibilityState === "visible") fetchStatus(); };
+    document.addEventListener("visibilitychange", onVisible);
+    const interval = setInterval(fetchStatus, 60_000);
+
+    return () => {
+      cancelled = true;
+      supabase.removeChannel(channel);
+      document.removeEventListener("visibilitychange", onVisible);
+      clearInterval(interval);
+    };
   }, []);
 
   const checkDuplicate = async (name: string, fatherName: string, studentClass: string) => {
