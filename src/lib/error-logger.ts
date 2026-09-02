@@ -102,7 +102,7 @@ export const installGlobalErrorLogging = () => {
 
   // Vite emits this when a modulepreload'ed chunk fails (typically after a redeploy)
   window.addEventListener("vite:preloadError", (e) => {
-    const payload = (e as CustomEvent<Error>).payload;
+    const payload = (e as unknown as { payload?: Error }).payload;
     logRuntimeError("vite:preloadError", payload ?? new Error("vite:preloadError"));
   });
 };
