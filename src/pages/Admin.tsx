@@ -141,10 +141,22 @@ const Admin = () => {
   };
 
   const updateSetting = async (key: string, value: string | null) => {
-    const updated = { ...settings, [key]: value };
-    setSettings(updated);
-    await supabase.from("site_settings").update({ [key]: value }).eq("id", 1);
-    toast({ title: "Setting Updated" });
+    const previous = settings;
+    setSettings({ ...settings, [key]: value });
+    const { data, error } = await supabase
+      .from("site_settings")
+      .update({ [key]: value })
+      .eq("id", 1)
+      .select()
+      .single();
+    if (error || !data) {
+      setSettings(previous);
+      toast({ title: "Save failed", description: error?.message || "Setting was not saved to the database.", variant: "destructive" });
+      return;
+    }
+    // Reflect what the DB actually stored
+    setSettings(data as unknown as SiteSettings);
+    toast({ title: "Setting Updated", description: key === "registration_status" ? `Registration is now: ${data.registration_status}` : undefined });
   };
 
   const fetchStudents = async () => {
