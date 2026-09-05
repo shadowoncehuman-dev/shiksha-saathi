@@ -67,7 +67,7 @@ const Header = () => {
                       px-3 py-1.5 text-[13px] font-medium rounded-full transition-all duration-200
                       ${isActive
                         ? "text-[#1A2E1F] dark:text-[#E8EDE3] bg-white/50 dark:bg-white/10"
-                        : "text-[#7A8C7C] hover:text-[#1A2E1F] dark:hover:text-[#E8EDE3] hover:bg-white/30 dark:hover:bg-white/5"}
+                        : "text-[#4F5F51] dark:text-[#B7C4B8] hover:text-[#1A2E1F] dark:hover:text-[#E8EDE3] hover:bg-white/30 dark:hover:bg-white/5"}
                     `}
                   >
                     {item.label}
@@ -81,7 +81,7 @@ const Header = () => {
 
               <button
                 onClick={() => setLang(lang === "en" ? "hi" : "en")}
-                className="w-9 h-9 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/5 text-[#7A8C7C] hover:text-[#6B4EFF] transition-all"
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/5 text-[#4F5F51] dark:text-[#B7C4B8] hover:text-[#6B4EFF] transition-all"
               >
                 <Languages size={18} />
               </button>
