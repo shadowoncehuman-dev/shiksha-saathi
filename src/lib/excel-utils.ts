@@ -124,7 +124,7 @@ export const buildResultsFromParsed = (rows: ParsedExcelRow[], marksConfigMap: R
     const grade = getGrade(percentage);
     const status = percentage >= 33 ? "PASS" : "FAIL";
     return {
-      roll_number: r.roll_number,
+      roll_number: r.roll_number, exam_year: EXAM_YEAR,
       subject1: 0, subject2: 0, subject3: 0, subject4: 0,
       total: r.total, percentage, grade, status,
     };

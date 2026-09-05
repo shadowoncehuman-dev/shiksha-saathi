@@ -401,7 +401,7 @@ const Admin = () => {
       // First, get all results ordered by percentage
       const { data: allResults } = await supabase
         .from("results")
-        .select("roll_number, percentage, total")
+        .select("roll_number, percentage, total").eq("exam_year", EXAM_YEAR)
         .order("percentage", { ascending: false });
 
       if (!allResults || allResults.length === 0) {
