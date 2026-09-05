@@ -20,7 +20,7 @@ const Footer = () => {
               <h3 className="font-playfair text-lg font-bold text-white">BBDBASS</h3>
             </div>
             <p className="text-white/75 text-sm leading-relaxed max-w-sm mb-6">{tr.footer.tagline}</p>
-            <p className="text-xs text-white/60">{tr.footer.vision}</p>
+            <p className="text-xs text-white/70">{tr.footer.vision}</p>
           </div>
 
           {/* Links */}
@@ -81,8 +81,8 @@ const Footer = () => {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-3">
-          <p className="text-xs text-white/60">© 2027 {ORG_NAME}. {tr.footer.allRights}</p>
-          <p className="text-xs text-white/60">{tr.footer.builtWith}</p>
+          <p className="text-xs text-white/70">© 2027 {ORG_NAME}. {tr.footer.allRights}</p>
+          <p className="text-xs text-white/70">{tr.footer.builtWith}</p>
         </div>
       </div>
     </footer>
