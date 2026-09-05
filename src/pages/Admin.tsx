@@ -161,13 +161,13 @@ const Admin = () => {
 
   const fetchStudents = async () => {
     setLoadingStudents(true);
-    const { data } = await supabase.from("registrations").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase.from("registrations").select("*").eq("exam_year", EXAM_YEAR).order("created_at", { ascending: false });
     if (data) setStudents(data);
     setLoadingStudents(false);
   };
 
   const fetchResultStats = async () => {
-    const { data } = await supabase.from("results").select("status");
+    const { data } = await supabase.from("results").select("status").eq("exam_year", EXAM_YEAR);
     if (data) {
       setResultStats({
         total: data.length,
@@ -606,7 +606,7 @@ const Admin = () => {
     const status = percentage >= 33 ? "PASS" : "FAIL";
     setSavingMarks(true);
     const { error } = await supabase.from("results").upsert(
-      { roll_number: markStudent.roll_number, subject1: 0, subject2: 0, subject3: 0, subject4: 0, total, percentage, grade, status },
+      { roll_number: markStudent.roll_number, exam_year: EXAM_YEAR, subject1: 0, subject2: 0, subject3: 0, subject4: 0, total, percentage, grade, status },
       { onConflict: "roll_number" }
     );
     if (error) toast({ title: "Error saving marks", variant: "destructive" });

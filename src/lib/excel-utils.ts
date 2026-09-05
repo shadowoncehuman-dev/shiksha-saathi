@@ -25,7 +25,7 @@ export const exportStudentsToExcel = async (
   let marksMap: Record<string, StudentMarks> = {};
   if (supabase) {
     try {
-      const { data: marksData } = await supabase.from("results").select("*");
+      const { data: marksData } = await supabase.from("results").select("*").eq("exam_year", EXAM_YEAR);
       if (marksData) {
         marksMap = marksData.reduce((acc: Record<string, StudentMarks>, mark: StudentMarks) => {
           acc[mark.roll_number] = mark;

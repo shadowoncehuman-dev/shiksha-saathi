@@ -65,7 +65,7 @@ const ResultPage = () => {
     if (!searchName.trim() || !searchFatherName.trim()) return;
     setSearching(true);
     try {
-      const { data: regData } = await supabase.from("registrations").select("roll_number, name, father_name, class").ilike("name", searchName.trim()).ilike("father_name", searchFatherName.trim()).single();
+      const { data: regData } = await supabase.from("registrations").select("roll_number, name, father_name, class").eq("exam_year", EXAM_YEAR).ilike("name", searchName.trim()).ilike("father_name", searchFatherName.trim()).single();
       if (!regData) { toast({ title: "Student not found", description: "Please check your name and father's name or contact the admins.", variant: "destructive" }); setSearching(false); return; }
       const { data: resData } = await supabase.from("results").select("*").eq("roll_number", regData.roll_number).single();
       if (resData) navigateToResult(resData, { name: regData.name, father_name: regData.father_name, class: regData.class });
