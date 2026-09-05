@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { type Registration, type SiteSettings } from "@/lib/supabase";
-import { getGrade, formatIndianDateTime } from "@/lib/constants";
+import { getGrade, formatIndianDateTime, EXAM_YEAR } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 import { useLang } from "@/lib/i18n";
 import { exportStudentsToExcel, parseExcelFile, buildResultsFromParsed } from "@/lib/excel-utils";

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
-import { ORG_NAME } from "@/lib/constants";
+import { ORG_NAME, EXAM_YEAR } from "@/lib/constants";
 import { useLang } from "@/lib/i18n";
 import { useToast } from "@/hooks/use-toast";
 import ExamNoticeBanner from "@/components/ExamNoticeBanner";

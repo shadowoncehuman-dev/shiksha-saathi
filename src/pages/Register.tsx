@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { VILLAGES, getGroup, ORG_NAME } from "@/lib/constants";
+import { VILLAGES, getGroup, ORG_NAME, EXAM_YEAR } from "@/lib/constants";
 import { useLang } from "@/lib/i18n";
 import { useToast } from "@/hooks/use-toast";
 import ExamNoticeBanner from "@/components/ExamNoticeBanner";

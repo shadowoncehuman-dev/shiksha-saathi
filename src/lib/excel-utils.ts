@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx";
 import { type Registration } from "@/lib/supabase";
-import { formatIndianDateTime, getGrade } from "@/lib/constants";
+import { formatIndianDateTime, getGrade, EXAM_YEAR } from "@/lib/constants";
 
 type StudentMarks = {
   roll_number: string;
