@@ -247,8 +247,20 @@ const Index = () => {
               transition={{ delay: 0.2 }}
             >
               <Users className="text-[#6B4EFF] mx-auto mb-4" size={32} />
-              <h4 className="text-xl font-serif font-bold text-[#1A2E1F] dark:text-[#E8EDE3]">Elite Network</h4>
-              <p className="text-xs text-[#7A8C7C] mt-2 uppercase tracking-widest font-bold">500+ Active Students</p>
+              <h4 className="text-xl font-serif font-bold text-[#1A2E1F] dark:text-[#E8EDE3]">BBDBASS Annual Exam</h4>
+              <p className="text-xs text-[#5E6F60] dark:text-[#9DB09F] mt-2 uppercase tracking-widest font-bold">{EXAM_DATE}</p>
+              <div className="grid grid-cols-3 gap-2 mt-5">
+                {[
+                  { label: "Registered", value: liveStats?.registered },
+                  { label: "Appeared", value: liveStats?.appeared },
+                  { label: "Passed", value: liveStats?.passed },
+                ].map((s) => (
+                  <div key={s.label}>
+                    <p className="text-2xl font-serif font-bold text-[#1A2E1F] dark:text-[#E8EDE3]">{s.value ?? "—"}</p>
+                    <p className="text-[10px] uppercase tracking-widest text-[#5E6F60] dark:text-[#9DB09F] font-bold">{s.label}</p>
+                  </div>
+                ))}
+              </div>
             </motion.div>
 
             {/* Medium Card */}
