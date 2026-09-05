@@ -40,6 +40,19 @@ const Index = () => {
   const [galleryImages, setGalleryImages] = useState<{ img: string; title: string }[]>([]);
   const [topWinners, setTopWinners] = useState<Winner[]>([]);
   const [heroImgLoaded, setHeroImgLoaded] = useState(true);
+  const [liveStats, setLiveStats] = useState<{ registered: number; appeared: number; passed: number } | null>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const [regs, res, pass] = await Promise.all([
+        supabase.from("registrations").select("id", { count: "exact", head: true }),
+        supabase.from("results").select("id", { count: "exact", head: true }),
+        supabase.from("results").select("id", { count: "exact", head: true }).eq("status", "PASS"),
+      ]);
+      setLiveStats({ registered: regs.count ?? 0, appeared: res.count ?? 0, passed: pass.count ?? 0 });
+    };
+    fetchStats();
+  }, []);
 
   useEffect(() => {
     const fetchGallery = async () => {
