@@ -93,6 +93,7 @@ export type Database = {
         Row: {
           class: number
           created_at: string
+          exam_year: number
           father_name: string
           group: string
           id: string
@@ -104,6 +105,7 @@ export type Database = {
         Insert: {
           class: number
           created_at?: string
+          exam_year?: number
           father_name: string
           group: string
           id?: string
@@ -115,6 +117,7 @@ export type Database = {
         Update: {
           class?: number
           created_at?: string
+          exam_year?: number
           father_name?: string
           group?: string
           id?: string
@@ -127,6 +130,7 @@ export type Database = {
       }
       results: {
         Row: {
+          exam_year: number
           grade: string
           id: string
           percentage: number
@@ -139,6 +143,7 @@ export type Database = {
           total: number
         }
         Insert: {
+          exam_year?: number
           grade?: string
           id?: string
           percentage?: number
@@ -151,6 +156,7 @@ export type Database = {
           total?: number
         }
         Update: {
+          exam_year?: number
           grade?: string
           id?: string
           percentage?: number

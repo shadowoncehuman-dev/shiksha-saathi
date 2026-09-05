@@ -1,3 +1,4 @@
+import { EXAM_YEAR } from "@/lib/constants";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -130,7 +131,7 @@ const SearchTab = ({ initialQuery = "" }: { initialQuery?: string }) => {
     // Try roll number, name, father_name, or phone
     let { data } = await supabase
       .from("registrations")
-      .select("*")
+      .select("*").eq("exam_year", EXAM_YEAR)
       .or(`roll_number.eq.${q},name.ilike.%${q}%,father_name.ilike.%${q}%,phone.ilike.%${q}%`)
       .order("class")
       .limit(50);
@@ -228,7 +229,7 @@ const AllStudentsTab = () => {
 
   const fetchStudents = useCallback(async () => {
     setLoading(true);
-    let query = supabase.from("registrations").select("*", { count: "exact" });
+    let query = supabase.from("registrations").select("*", { count: "exact" }).eq("exam_year", EXAM_YEAR);
     if (filterClass !== "all") query = query.eq("class", parseInt(filterClass));
     const { data, count } = await query.order("roll_number").range(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE - 1);
     setStudents(data || []);

@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx";
 import { type Registration } from "@/lib/supabase";
-import { formatIndianDateTime, getGrade } from "@/lib/constants";
+import { formatIndianDateTime, getGrade, EXAM_YEAR } from "@/lib/constants";
 
 type StudentMarks = {
   roll_number: string;
@@ -25,7 +25,7 @@ export const exportStudentsToExcel = async (
   let marksMap: Record<string, StudentMarks> = {};
   if (supabase) {
     try {
-      const { data: marksData } = await supabase.from("results").select("*");
+      const { data: marksData } = await supabase.from("results").select("*").eq("exam_year", EXAM_YEAR);
       if (marksData) {
         marksMap = marksData.reduce((acc: Record<string, StudentMarks>, mark: StudentMarks) => {
           acc[mark.roll_number] = mark;
@@ -124,7 +124,7 @@ export const buildResultsFromParsed = (rows: ParsedExcelRow[], marksConfigMap: R
     const grade = getGrade(percentage);
     const status = percentage >= 33 ? "PASS" : "FAIL";
     return {
-      roll_number: r.roll_number,
+      roll_number: r.roll_number, exam_year: EXAM_YEAR,
       subject1: 0, subject2: 0, subject3: 0, subject4: 0,
       total: r.total, percentage, grade, status,
     };

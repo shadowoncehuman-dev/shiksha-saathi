@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { VILLAGES, getGroup, ORG_NAME } from "@/lib/constants";
+import { VILLAGES, getGroup, ORG_NAME, EXAM_YEAR } from "@/lib/constants";
 import { useLang } from "@/lib/i18n";
 import { useToast } from "@/hooks/use-toast";
 import ExamNoticeBanner from "@/components/ExamNoticeBanner";
@@ -92,7 +92,7 @@ const Register = () => {
     if (!name || !fatherName || !studentClass) return;
     const { data } = await supabase
       .from("registrations")
-      .select("id")
+      .select("id").eq("exam_year", EXAM_YEAR)
       .ilike("name", name.trim())
       .ilike("father_name", fatherName.trim())
       .eq("class", parseInt(studentClass))
@@ -130,7 +130,7 @@ const Register = () => {
 
       const { data: dupCheck } = await supabase
         .from("registrations")
-        .select("id")
+        .select("id").eq("exam_year", EXAM_YEAR)
         .ilike("name", values.name.trim())
         .ilike("father_name", values.father_name.trim())
         .eq("class", studentClass)
@@ -141,7 +141,7 @@ const Register = () => {
 
       const { data: phoneCheck } = await supabase
         .from("registrations")
-        .select("id")
+        .select("id").eq("exam_year", EXAM_YEAR)
         .eq("phone", values.phone)
         .limit(3);
       if (phoneCheck && phoneCheck.length >= 3) {
@@ -153,7 +153,7 @@ const Register = () => {
 
       const { error: insertError } = await supabase.from("registrations").insert({
         roll_number: rollData.roll_number, name: values.name.trim(), father_name: values.father_name.trim(),
-        class: studentClass, group: group.name, phone: values.phone, village: values.village,
+        class: studentClass, group: group.name, exam_year: EXAM_YEAR, phone: values.phone, village: values.village,
       });
       if (insertError) {
         if ((insertError as any).code === "42501" || /row-level security/i.test(insertError.message)) {

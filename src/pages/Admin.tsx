@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { type Registration, type SiteSettings } from "@/lib/supabase";
-import { getGrade, formatIndianDateTime } from "@/lib/constants";
+import { getGrade, formatIndianDateTime, EXAM_YEAR } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 import { useLang } from "@/lib/i18n";
 import { exportStudentsToExcel, parseExcelFile, buildResultsFromParsed } from "@/lib/excel-utils";
@@ -161,13 +161,13 @@ const Admin = () => {
 
   const fetchStudents = async () => {
     setLoadingStudents(true);
-    const { data } = await supabase.from("registrations").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase.from("registrations").select("*").eq("exam_year", EXAM_YEAR).order("created_at", { ascending: false });
     if (data) setStudents(data);
     setLoadingStudents(false);
   };
 
   const fetchResultStats = async () => {
-    const { data } = await supabase.from("results").select("status");
+    const { data } = await supabase.from("results").select("status").eq("exam_year", EXAM_YEAR);
     if (data) {
       setResultStats({
         total: data.length,
@@ -401,7 +401,7 @@ const Admin = () => {
       // First, get all results ordered by percentage
       const { data: allResults } = await supabase
         .from("results")
-        .select("roll_number, percentage, total")
+        .select("roll_number, percentage, total").eq("exam_year", EXAM_YEAR)
         .order("percentage", { ascending: false });
 
       if (!allResults || allResults.length === 0) {
@@ -606,7 +606,7 @@ const Admin = () => {
     const status = percentage >= 33 ? "PASS" : "FAIL";
     setSavingMarks(true);
     const { error } = await supabase.from("results").upsert(
-      { roll_number: markStudent.roll_number, subject1: 0, subject2: 0, subject3: 0, subject4: 0, total, percentage, grade, status },
+      { roll_number: markStudent.roll_number, exam_year: EXAM_YEAR, subject1: 0, subject2: 0, subject3: 0, subject4: 0, total, percentage, grade, status },
       { onConflict: "roll_number" }
     );
     if (error) toast({ title: "Error saving marks", variant: "destructive" });

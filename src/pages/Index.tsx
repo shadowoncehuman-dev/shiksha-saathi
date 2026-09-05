@@ -4,7 +4,7 @@ import { BookOpen, Clock, Calendar, Award, Users, Shield, ArrowRight, ChevronDow
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/SEOHead";
-import { ORG_NAME, EXAM_DATE, EXAM_GROUPS } from "@/lib/constants";
+import { ORG_NAME, EXAM_DATE, EXAM_GROUPS, EXAM_YEAR, PREVIOUS_EXAM_YEAR } from "@/lib/constants";
 import { useLang } from "@/lib/i18n";
 import logo from "@/assets/logo.png";
 import galleryMeeting from "@/assets/gallery-meeting.jpg";
@@ -40,16 +40,17 @@ const Index = () => {
   const [galleryImages, setGalleryImages] = useState<{ img: string; title: string }[]>([]);
   const [topWinners, setTopWinners] = useState<Winner[]>([]);
   const [heroImgLoaded, setHeroImgLoaded] = useState(true);
-  const [liveStats, setLiveStats] = useState<{ registered: number; appeared: number; passed: number } | null>(null);
+  const [liveStats, setLiveStats] = useState<{ current: number; registered: number; appeared: number; passed: number } | null>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
-      const [regs, res, pass] = await Promise.all([
-        supabase.from("registrations").select("id", { count: "exact", head: true }),
-        supabase.from("results").select("id", { count: "exact", head: true }),
-        supabase.from("results").select("id", { count: "exact", head: true }).eq("status", "PASS"),
+      const [cur, regs, res, pass] = await Promise.all([
+        supabase.from("registrations").select("id", { count: "exact", head: true }).eq("exam_year", EXAM_YEAR),
+        supabase.from("registrations").select("id", { count: "exact", head: true }).eq("exam_year", PREVIOUS_EXAM_YEAR),
+        supabase.from("results").select("id", { count: "exact", head: true }).eq("exam_year", PREVIOUS_EXAM_YEAR),
+        supabase.from("results").select("id", { count: "exact", head: true }).eq("exam_year", PREVIOUS_EXAM_YEAR).eq("status", "PASS"),
       ]);
-      setLiveStats({ registered: regs.count ?? 0, appeared: res.count ?? 0, passed: pass.count ?? 0 });
+      setLiveStats({ current: cur.count ?? 0, registered: regs.count ?? 0, appeared: res.count ?? 0, passed: pass.count ?? 0 });
     };
     fetchStats();
   }, []);
@@ -247,9 +248,12 @@ const Index = () => {
               transition={{ delay: 0.2 }}
             >
               <Users className="text-[#6B4EFF] mx-auto mb-4" size={32} />
-              <h4 className="text-xl font-serif font-bold text-[#1A2E1F] dark:text-[#E8EDE3]">BBDBASS Annual Exam</h4>
+              <h4 className="text-xl font-serif font-bold text-[#1A2E1F] dark:text-[#E8EDE3]">BBDBASS Exam {EXAM_YEAR}</h4>
               <p className="text-xs text-[#5E6F60] dark:text-[#9DB09F] mt-2 uppercase tracking-widest font-bold">{EXAM_DATE}</p>
-              <div className="grid grid-cols-3 gap-2 mt-5">
+              <p className="text-3xl font-serif font-bold text-[#6B4EFF] mt-3">{liveStats?.current ?? "—"}</p>
+              <p className="text-[10px] uppercase tracking-widest text-[#5E6F60] dark:text-[#9DB09F] font-bold">Registered so far</p>
+              <p className="text-[10px] uppercase tracking-widest text-[#5E6F60] dark:text-[#9DB09F] font-bold mt-5 pt-4 border-t border-[#1A2E1F]/10 dark:border-white/10">{PREVIOUS_EXAM_YEAR} Session</p>
+              <div className="grid grid-cols-3 gap-2 mt-2">
                 {[
                   { label: "Registered", value: liveStats?.registered },
                   { label: "Appeared", value: liveStats?.appeared },
