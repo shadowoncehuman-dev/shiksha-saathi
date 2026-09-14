@@ -4,7 +4,7 @@ import { BookOpen, Clock, Calendar, GraduationCap, ArrowRight, CheckCircle2 } fr
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/SEOHead";
-import { EXAM_DATE } from "@/lib/constants";
+import { EXAM_DATE, EXAM_YEAR, EXAM_GROUPS, EXAM_CENTER } from "@/lib/constants";
 import { useLang } from "@/lib/i18n";
 
 const ExamDetails = () => {
@@ -12,10 +12,11 @@ const ExamDetails = () => {
 
   const groups = [
     {
-      name: "Group 1",
-      classes: "Class 6 – 8",
-      duration: "11:00–12:30",
+      name: `BBDBASS Samanya Gyan Pariksha ${EXAM_YEAR} — Group 1`,
+      classes: `Class ${EXAM_GROUPS[0].classes.join(", ")}`,
+      duration: `${EXAM_GROUPS[0].duration} (Morning Slot)`,
       date: EXAM_DATE,
+      center: EXAM_CENTER,
       topics: [
         "Early Life of Dr. Ambedkar",
         "Educational Journey",
@@ -25,10 +26,11 @@ const ExamDetails = () => {
       description: "Foundational assessment for primary-middle students focusing on basic historical awareness.",
     },
     {
-      name: "Group 2",
-      classes: "Class 9 – 12",
-      duration: "14:00–16:00",
+      name: `BBDBASS Samanya Gyan Pariksha ${EXAM_YEAR} — Group 2`,
+      classes: `Class ${EXAM_GROUPS[1].classes.join(", ")}`,
+      duration: `${EXAM_GROUPS[1].duration} (Afternoon Slot)`,
       date: EXAM_DATE,
+      center: EXAM_CENTER,
       topics: [
         "Constitutional Contributions",
         "Social Justice Movement",
@@ -100,7 +102,7 @@ const ExamDetails = () => {
                     <BookOpen size={24} />
                   </div>
                   <div>
-                    <h3 className="text-3xl font-serif font-bold text-[#1A2E1F] dark:text-[#E8EDE3]">{group.name}</h3>
+                    <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#1A2E1F] dark:text-[#E8EDE3] leading-snug">{group.name}</h3>
                     <p className="text-[#6B4EFF] font-bold text-sm uppercase tracking-tighter">{group.classes}</p>
                   </div>
                 </div>
@@ -123,6 +125,13 @@ const ExamDetails = () => {
                       <span className="text-[10px] font-bold uppercase tracking-widest">Duration</span>
                     </div>
                     <p className="text-[#1A2E1F] dark:text-[#E8EDE3] font-serif font-bold">{group.duration}</p>
+                  </div>
+                  <div className="p-4 glass-light rounded-2xl border border-white/40 col-span-2">
+                    <div className="flex items-center gap-2 text-[#6B4EFF] mb-1">
+                      <GraduationCap size={14} />
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Exam Centre</span>
+                    </div>
+                    <p className="text-[#1A2E1F] dark:text-[#E8EDE3] font-serif font-bold">{group.center}</p>
                   </div>
                 </div>
 
