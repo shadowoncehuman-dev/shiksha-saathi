@@ -21,6 +21,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import FlowingMenu from "@/components/premium/FlowingMenu";
 import { useNavigate } from "react-router-dom";
 import AnimatedDataRing from "@/components/premium/AnimatedDataRing";
+import AnimatedHeroBackground from "@/components/premium/AnimatedHeroBackground";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -110,6 +111,7 @@ const Index = () => {
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background pointer-events-none" />
+        <AnimatedHeroBackground />
         <div className="container mx-auto px-4 relative z-10">
 
           <div className="grid lg:grid-cols-12 gap-12 items-center">
