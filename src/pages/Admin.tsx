@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload, Image, UsersRound, Plus, Edit, Phone, Briefcase, FileText, Trophy, Award } from "lucide-react";
+import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload, Image, UsersRound, Plus, Edit, Phone, Briefcase, FileText, Trophy, Award, Calendar } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -699,6 +699,8 @@ const Admin = () => {
           <Tabs defaultValue="settings">
             <TabsList className="mb-6 flex-wrap h-auto gap-1 bg-muted p-1 rounded-xl">
               <TabsTrigger value="settings" className="rounded-lg text-sm"><Settings size={14} className="mr-1.5" /> Settings</TabsTrigger>
+              <TabsTrigger value="exam" className="rounded-lg text-sm"><Calendar size={14} className="mr-1.5" /> Exam</TabsTrigger>
+
               <TabsTrigger value="marks" className="rounded-lg text-sm"><BookOpen size={14} className="mr-1.5" /> Marks</TabsTrigger>
               <TabsTrigger value="students" className="rounded-lg text-sm"><Users size={14} className="mr-1.5" /> Students</TabsTrigger>
               <TabsTrigger value="team" className="rounded-lg text-sm"><UsersRound size={14} className="mr-1.5" /> Team</TabsTrigger>
