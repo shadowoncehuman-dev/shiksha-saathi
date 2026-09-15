@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload, Image, UsersRound, Plus, Edit, Phone, Briefcase, FileText, Trophy, Award } from "lucide-react";
+import { Lock, Loader2, Settings, Users, BookOpen, Download, Trash2, Search, Save, BarChart3, CheckCircle, XCircle, UserCheck, Upload, Image, UsersRound, Plus, Edit, Phone, Briefcase, FileText, Trophy, Award, Calendar } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,8 @@ import { getGrade, formatIndianDateTime, EXAM_YEAR } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 import { useLang } from "@/lib/i18n";
 import { exportStudentsToExcel, parseExcelFile, buildResultsFromParsed } from "@/lib/excel-utils";
+import { DEFAULT_EXAM_CONFIG, type ExamConfig } from "@/hooks/use-exam-config";
+
 
 const SUPABASE_URL = "https://qukzclnrxscrrhindgsz.supabase.co";
 
@@ -121,6 +123,11 @@ const Admin = () => {
   const [addToWinnersEnabled, setAddToWinnersEnabled] = useState(false);
   const [addingWinners, setAddingWinners] = useState(false);
 
+  // Exam configuration
+  const [examConfig, setExamConfig] = useState<ExamConfig>(DEFAULT_EXAM_CONFIG);
+  const [savingExam, setSavingExam] = useState(false);
+
+
   const handleLogin = async () => {
     setVerifying(true);
     try {
@@ -132,13 +139,35 @@ const Admin = () => {
   };
 
   const fetchAll = useCallback(() => {
-    fetchSettings(); fetchStudents(); fetchResultStats(); fetchMarksConfig(); fetchTeam(); fetchGallery(); fetchPdfs(); fetchWinners(); fetchTopStudents();
+    fetchSettings(); fetchStudents(); fetchResultStats(); fetchMarksConfig(); fetchTeam(); fetchGallery(); fetchPdfs(); fetchWinners(); fetchTopStudents(); fetchExamConfig();
   }, []);
 
   const fetchSettings = async () => {
     const { data } = await supabase.from("site_settings").select("*").single();
     if (data) setSettings(data as unknown as SiteSettings);
   };
+
+  const fetchExamConfig = async () => {
+    const { data } = await supabase.from("exam_config").select("*").eq("id", 1).maybeSingle();
+    if (data) setExamConfig({ ...DEFAULT_EXAM_CONFIG, ...data });
+  };
+
+  const saveExamConfig = async () => {
+    setSavingExam(true);
+    const { error } = await supabase.from("exam_config").update({
+      exam_year: Number(examConfig.exam_year) || DEFAULT_EXAM_CONFIG.exam_year,
+      exam_date: examConfig.exam_date,
+      exam_center: examConfig.exam_center,
+      group1_classes: examConfig.group1_classes,
+      group1_time: examConfig.group1_time,
+      group2_classes: examConfig.group2_classes,
+      group2_time: examConfig.group2_time,
+    }).eq("id", 1);
+    setSavingExam(false);
+    if (error) { toast({ title: "Save failed", description: error.message, variant: "destructive" }); return; }
+    toast({ title: "Exam details saved", description: "The site now shows the updated exam information." });
+  };
+
 
   const updateSetting = async (key: string, value: string | null) => {
     const previous = settings;
@@ -670,6 +699,8 @@ const Admin = () => {
           <Tabs defaultValue="settings">
             <TabsList className="mb-6 flex-wrap h-auto gap-1 bg-muted p-1 rounded-xl">
               <TabsTrigger value="settings" className="rounded-lg text-sm"><Settings size={14} className="mr-1.5" /> Settings</TabsTrigger>
+              <TabsTrigger value="exam" className="rounded-lg text-sm"><Calendar size={14} className="mr-1.5" /> Exam</TabsTrigger>
+
               <TabsTrigger value="marks" className="rounded-lg text-sm"><BookOpen size={14} className="mr-1.5" /> Marks</TabsTrigger>
               <TabsTrigger value="students" className="rounded-lg text-sm"><Users size={14} className="mr-1.5" /> Students</TabsTrigger>
               <TabsTrigger value="team" className="rounded-lg text-sm"><UsersRound size={14} className="mr-1.5" /> Team</TabsTrigger>
@@ -678,6 +709,68 @@ const Admin = () => {
               <TabsTrigger value="top-students" className="rounded-lg text-sm"><Award size={14} className="mr-1.5" /> Top Students</TabsTrigger>
               <TabsTrigger value="pdfs" className="rounded-lg text-sm"><FileText size={14} className="mr-1.5" /> PDFs</TabsTrigger>
             </TabsList>
+
+            {/* SETTINGS TAB */}
+            {/* EXAM TAB */}
+            <TabsContent value="exam">
+              <div className="bg-card rounded-2xl p-6 premium-shadow border border-border max-w-3xl space-y-6">
+                <div>
+                  <h3 className="font-playfair text-lg font-semibold">This Year's Exam</h3>
+                  <p className="text-sm text-muted-foreground">These details appear on the Exam Details page, admit cards and the home page.</p>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Exam Year</label>
+                    <Input className="h-11 rounded-xl mt-1" value={examConfig.exam_year}
+                      onChange={(e) => setExamConfig({ ...examConfig, exam_year: Number(e.target.value.replace(/\D/g, "")) || 0 })} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Exam Date</label>
+                    <Input className="h-11 rounded-xl mt-1" placeholder="11 April 2027" value={examConfig.exam_date}
+                      onChange={(e) => setExamConfig({ ...examConfig, exam_date: e.target.value })} />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="text-xs font-medium text-muted-foreground">Exam Centre</label>
+                    <Input className="h-11 rounded-xl mt-1" value={examConfig.exam_center}
+                      onChange={(e) => setExamConfig({ ...examConfig, exam_center: e.target.value })} />
+                  </div>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div className="p-4 rounded-xl border border-border space-y-3">
+                    <p className="font-semibold text-sm">Group 1</p>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Classes (comma separated)</label>
+                      <Input className="h-11 rounded-xl mt-1" placeholder="6,7,8" value={examConfig.group1_classes}
+                        onChange={(e) => setExamConfig({ ...examConfig, group1_classes: e.target.value })} />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Timing</label>
+                      <Input className="h-11 rounded-xl mt-1" placeholder="11:00-12:30" value={examConfig.group1_time}
+                        onChange={(e) => setExamConfig({ ...examConfig, group1_time: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-xl border border-border space-y-3">
+                    <p className="font-semibold text-sm">Group 2</p>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Classes (comma separated)</label>
+                      <Input className="h-11 rounded-xl mt-1" placeholder="9,10,11,12" value={examConfig.group2_classes}
+                        onChange={(e) => setExamConfig({ ...examConfig, group2_classes: e.target.value })} />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Timing</label>
+                      <Input className="h-11 rounded-xl mt-1" placeholder="14:00-16:00" value={examConfig.group2_time}
+                        onChange={(e) => setExamConfig({ ...examConfig, group2_time: e.target.value })} />
+                    </div>
+                  </div>
+                </div>
+
+                <Button onClick={saveExamConfig} disabled={savingExam} className="h-11 rounded-xl">
+                  {savingExam ? <Loader2 size={16} className="animate-spin mr-2" /> : <Save size={16} className="mr-2" />} Save Exam Details
+                </Button>
+              </div>
+            </TabsContent>
 
             {/* SETTINGS TAB */}
             <TabsContent value="settings">

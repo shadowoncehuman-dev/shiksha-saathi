@@ -7,7 +7,8 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { ORG_NAME, EXAM_DATE, EXAM_CENTER, CONTACT } from "@/lib/constants";
+import { ORG_NAME, CONTACT } from "@/lib/constants";
+import { useExamConfig } from "@/hooks/use-exam-config";
 import { useLang } from "@/lib/i18n";
 import logo from "@/assets/logo.png";
 
@@ -23,6 +24,9 @@ type AdmitData = {
 };
 
 const AdmitCard = () => {
+  const { config: examConfig } = useExamConfig();
+  const EXAM_DATE = examConfig.exam_date;
+  const EXAM_CENTER = examConfig.exam_center;
   const [data, setData] = useState<AdmitData | null>(null);
   const [docHash, setDocHash] = useState("");
   const cardRef = useRef<HTMLDivElement>(null);
