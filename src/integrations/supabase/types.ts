@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      exam_config: {
+        Row: {
+          exam_center: string
+          exam_date: string
+          exam_year: number
+          group1_classes: string
+          group1_time: string
+          group2_classes: string
+          group2_time: string
+          id: number
+          updated_at: string
+        }
+        Insert: {
+          exam_center?: string
+          exam_date?: string
+          exam_year?: number
+          group1_classes?: string
+          group1_time?: string
+          group2_classes?: string
+          group2_time?: string
+          id?: number
+          updated_at?: string
+        }
+        Update: {
+          exam_center?: string
+          exam_date?: string
+          exam_year?: number
+          group1_classes?: string
+          group1_time?: string
+          group2_classes?: string
+          group2_time?: string
+          id?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       gallery_images: {
         Row: {
           category: string
