@@ -711,6 +711,68 @@ const Admin = () => {
             </TabsList>
 
             {/* SETTINGS TAB */}
+            {/* EXAM TAB */}
+            <TabsContent value="exam">
+              <div className="bg-card rounded-2xl p-6 premium-shadow border border-border max-w-3xl space-y-6">
+                <div>
+                  <h3 className="font-playfair text-lg font-semibold">This Year's Exam</h3>
+                  <p className="text-sm text-muted-foreground">These details appear on the Exam Details page, admit cards and the home page.</p>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Exam Year</label>
+                    <Input className="h-11 rounded-xl mt-1" value={examConfig.exam_year}
+                      onChange={(e) => setExamConfig({ ...examConfig, exam_year: Number(e.target.value.replace(/\D/g, "")) || 0 })} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Exam Date</label>
+                    <Input className="h-11 rounded-xl mt-1" placeholder="11 April 2027" value={examConfig.exam_date}
+                      onChange={(e) => setExamConfig({ ...examConfig, exam_date: e.target.value })} />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="text-xs font-medium text-muted-foreground">Exam Centre</label>
+                    <Input className="h-11 rounded-xl mt-1" value={examConfig.exam_center}
+                      onChange={(e) => setExamConfig({ ...examConfig, exam_center: e.target.value })} />
+                  </div>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div className="p-4 rounded-xl border border-border space-y-3">
+                    <p className="font-semibold text-sm">Group 1</p>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Classes (comma separated)</label>
+                      <Input className="h-11 rounded-xl mt-1" placeholder="6,7,8" value={examConfig.group1_classes}
+                        onChange={(e) => setExamConfig({ ...examConfig, group1_classes: e.target.value })} />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Timing</label>
+                      <Input className="h-11 rounded-xl mt-1" placeholder="11:00-12:30" value={examConfig.group1_time}
+                        onChange={(e) => setExamConfig({ ...examConfig, group1_time: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-xl border border-border space-y-3">
+                    <p className="font-semibold text-sm">Group 2</p>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Classes (comma separated)</label>
+                      <Input className="h-11 rounded-xl mt-1" placeholder="9,10,11,12" value={examConfig.group2_classes}
+                        onChange={(e) => setExamConfig({ ...examConfig, group2_classes: e.target.value })} />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Timing</label>
+                      <Input className="h-11 rounded-xl mt-1" placeholder="14:00-16:00" value={examConfig.group2_time}
+                        onChange={(e) => setExamConfig({ ...examConfig, group2_time: e.target.value })} />
+                    </div>
+                  </div>
+                </div>
+
+                <Button onClick={saveExamConfig} disabled={savingExam} className="h-11 rounded-xl">
+                  {savingExam ? <Loader2 size={16} className="animate-spin mr-2" /> : <Save size={16} className="mr-2" />} Save Exam Details
+                </Button>
+              </div>
+            </TabsContent>
+
+            {/* SETTINGS TAB */}
             <TabsContent value="settings">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="bg-card rounded-2xl p-6 premium-shadow border border-border">
