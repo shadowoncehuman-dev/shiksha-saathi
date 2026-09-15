@@ -4,19 +4,20 @@ import { BookOpen, Clock, Calendar, GraduationCap, ArrowRight, CheckCircle2 } fr
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/SEOHead";
-import { EXAM_DATE, EXAM_YEAR, EXAM_GROUPS, EXAM_CENTER } from "@/lib/constants";
 import { useLang } from "@/lib/i18n";
+import { useExamConfig, parseClasses } from "@/hooks/use-exam-config";
 
 const ExamDetails = () => {
   const { tr } = useLang();
+  const { config } = useExamConfig();
 
   const groups = [
     {
-      name: `BBDBASS Samanya Gyan Pariksha ${EXAM_YEAR} — Group 1`,
-      classes: `Class ${EXAM_GROUPS[0].classes.join(", ")}`,
-      duration: `${EXAM_GROUPS[0].duration} (Morning Slot)`,
-      date: EXAM_DATE,
-      center: EXAM_CENTER,
+      name: `BBDBASS Samanya Gyan Pariksha ${config.exam_year} — Group 1`,
+      classes: `Class ${parseClasses(config.group1_classes).join(", ")}`,
+      duration: `${config.group1_time} (Morning Slot)`,
+      date: config.exam_date,
+      center: config.exam_center,
       topics: [
         "Early Life of Dr. Ambedkar",
         "Educational Journey",
@@ -26,11 +27,11 @@ const ExamDetails = () => {
       description: "Foundational assessment for primary-middle students focusing on basic historical awareness.",
     },
     {
-      name: `BBDBASS Samanya Gyan Pariksha ${EXAM_YEAR} — Group 2`,
-      classes: `Class ${EXAM_GROUPS[1].classes.join(", ")}`,
-      duration: `${EXAM_GROUPS[1].duration} (Afternoon Slot)`,
-      date: EXAM_DATE,
-      center: EXAM_CENTER,
+      name: `BBDBASS Samanya Gyan Pariksha ${config.exam_year} — Group 2`,
+      classes: `Class ${parseClasses(config.group2_classes).join(", ")}`,
+      duration: `${config.group2_time} (Afternoon Slot)`,
+      date: config.exam_date,
+      center: config.exam_center,
       topics: [
         "Constitutional Contributions",
         "Social Justice Movement",
@@ -40,6 +41,7 @@ const ExamDetails = () => {
       description: "Advanced evaluative framework for senior students covering complex sociological and political themes.",
     },
   ];
+
 
   return (
     <Layout>
