@@ -21,6 +21,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import FlowingMenu from "@/components/premium/FlowingMenu";
 import { useNavigate } from "react-router-dom";
 import AnimatedDataRing from "@/components/premium/AnimatedDataRing";
+import AnimatedHeroBackground from "@/components/premium/AnimatedHeroBackground";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
