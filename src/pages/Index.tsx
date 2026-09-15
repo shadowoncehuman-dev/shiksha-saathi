@@ -111,6 +111,7 @@ const Index = () => {
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background pointer-events-none" />
+        <AnimatedHeroBackground />
         <div className="container mx-auto px-4 relative z-10">
 
           <div className="grid lg:grid-cols-12 gap-12 items-center">
