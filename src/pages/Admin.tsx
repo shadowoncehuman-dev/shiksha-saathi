@@ -12,6 +12,8 @@ import { getGrade, formatIndianDateTime, EXAM_YEAR } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 import { useLang } from "@/lib/i18n";
 import { exportStudentsToExcel, parseExcelFile, buildResultsFromParsed } from "@/lib/excel-utils";
+import { DEFAULT_EXAM_CONFIG, type ExamConfig } from "@/hooks/use-exam-config";
+
 
 const SUPABASE_URL = "https://qukzclnrxscrrhindgsz.supabase.co";
 
@@ -121,6 +123,11 @@ const Admin = () => {
   const [addToWinnersEnabled, setAddToWinnersEnabled] = useState(false);
   const [addingWinners, setAddingWinners] = useState(false);
 
+  // Exam configuration
+  const [examConfig, setExamConfig] = useState<ExamConfig>(DEFAULT_EXAM_CONFIG);
+  const [savingExam, setSavingExam] = useState(false);
+
+
   const handleLogin = async () => {
     setVerifying(true);
     try {
@@ -132,13 +139,35 @@ const Admin = () => {
   };
 
   const fetchAll = useCallback(() => {
-    fetchSettings(); fetchStudents(); fetchResultStats(); fetchMarksConfig(); fetchTeam(); fetchGallery(); fetchPdfs(); fetchWinners(); fetchTopStudents();
+    fetchSettings(); fetchStudents(); fetchResultStats(); fetchMarksConfig(); fetchTeam(); fetchGallery(); fetchPdfs(); fetchWinners(); fetchTopStudents(); fetchExamConfig();
   }, []);
 
   const fetchSettings = async () => {
     const { data } = await supabase.from("site_settings").select("*").single();
     if (data) setSettings(data as unknown as SiteSettings);
   };
+
+  const fetchExamConfig = async () => {
+    const { data } = await supabase.from("exam_config").select("*").eq("id", 1).maybeSingle();
+    if (data) setExamConfig({ ...DEFAULT_EXAM_CONFIG, ...data });
+  };
+
+  const saveExamConfig = async () => {
+    setSavingExam(true);
+    const { error } = await supabase.from("exam_config").update({
+      exam_year: Number(examConfig.exam_year) || DEFAULT_EXAM_CONFIG.exam_year,
+      exam_date: examConfig.exam_date,
+      exam_center: examConfig.exam_center,
+      group1_classes: examConfig.group1_classes,
+      group1_time: examConfig.group1_time,
+      group2_classes: examConfig.group2_classes,
+      group2_time: examConfig.group2_time,
+    }).eq("id", 1);
+    setSavingExam(false);
+    if (error) { toast({ title: "Save failed", description: error.message, variant: "destructive" }); return; }
+    toast({ title: "Exam details saved", description: "The site now shows the updated exam information." });
+  };
+
 
   const updateSetting = async (key: string, value: string | null) => {
     const previous = settings;
