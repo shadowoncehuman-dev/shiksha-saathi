@@ -267,6 +267,9 @@ function mountScrollWorld(container, config) {
     scrollbarFill.style.transform = `scaleX(${clamp(y / (totalW * vh))})`;
     hint.style.opacity = clamp(1 - y / (0.5 * vh));
     if (particles) particles.style.transform = `translate3d(0, ${-y * 0.05}px, 0)`;
+    // Embedded mode: once the visitor scrolls past the world, hide the fixed
+    // layers so the rest of the page (sections below) is fully usable.
+    container.classList.toggle('sw-past', y > totalW * vh + vh * 0.6);
     ticking = false;
   }
 
@@ -434,6 +437,10 @@ function injectCSS() {
     .sw-btn{padding:15px 26px;}
   }
   @media (prefers-reduced-motion:reduce){ .sw-hint i::after{animation:none;} .sw-pt{display:none;} }
+  /* Embedded mode: everything fixed disappears once the world is scrolled past. */
+  .sw-past .sw-sky,.sw-past .sw-stage,.sw-past .sw-copylayer,.sw-past .sw-route,
+  .sw-past .sw-hint,.sw-past .sw-scrollbar,.sw-past .sw-topbar{opacity:0!important;visibility:hidden;pointer-events:none;transition:opacity .45s ease,visibility .45s;}
+  .sw-sky,.sw-stage,.sw-copylayer,.sw-route,.sw-hint,.sw-scrollbar,.sw-topbar{transition:opacity .45s ease,visibility .45s;}
   `;
   // Wrap in a cascade layer so the page's own theme tokens (unlayered
   // :root / .sw-root { --sw-bg / --sw-ink / --sw-accent … }) always win over
@@ -444,5 +451,5 @@ function injectCSS() {
 }
 
 // Expose for module + global use.
-if (typeof module !== 'undefined' && module.exports) module.exports = { mountScrollWorld };
 if (typeof window !== 'undefined') window.mountScrollWorld = mountScrollWorld;
+export { mountScrollWorld };
