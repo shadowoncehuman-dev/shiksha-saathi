@@ -1,6 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
-import { BookOpen, Clock, Calendar, Award, Users, Shield, ArrowRight, ChevronDown, GraduationCap, Sparkles, Trophy, Crown, Medal } from "lucide-react";
+import { BookOpen, Clock, Calendar, Award, Users, Shield, ArrowRight, ChevronDown, GraduationCap, Trophy, Crown, Medal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/SEOHead";
@@ -9,7 +9,6 @@ import { useLang } from "@/lib/i18n";
 import logo from "@/assets/logo.png";
 import galleryMeeting from "@/assets/gallery-meeting.jpg";
 import galleryShields from "@/assets/gallery-shields.jpg";
-import heroBackdrop from "@/assets/hero-backdrop.jpg";
 import { useRef, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import CountdownTimer from "@/components/CountdownTimer";
@@ -20,8 +19,7 @@ import QuestionPaperBanner from "@/components/QuestionPaperBanner";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import FlowingMenu from "@/components/premium/FlowingMenu";
 import { useNavigate } from "react-router-dom";
-import AnimatedDataRing from "@/components/premium/AnimatedDataRing";
-import AnimatedHeroBackground from "@/components/premium/AnimatedHeroBackground";
+import ScrollWorld from "@/components/premium/ScrollWorld";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -40,7 +38,6 @@ const Index = () => {
   const { tr } = useLang();
   const [galleryImages, setGalleryImages] = useState<{ img: string; title: string }[]>([]);
   const [topWinners, setTopWinners] = useState<Winner[]>([]);
-  const [heroImgLoaded, setHeroImgLoaded] = useState(true);
   const [liveStats, setLiveStats] = useState<{ current: number; registered: number; appeared: number; passed: number } | null>(null);
 
   useEffect(() => {
