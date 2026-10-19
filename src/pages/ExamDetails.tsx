@@ -6,6 +6,7 @@ import Layout from "@/components/layout/Layout";
 import SEOHead from "@/components/SEOHead";
 import { useLang } from "@/lib/i18n";
 import { useExamConfig, parseClasses } from "@/hooks/use-exam-config";
+import worldExam from "@/assets/world/exam.jpg";
 
 const ExamDetails = () => {
   const { tr } = useLang();
@@ -80,6 +81,18 @@ const ExamDetails = () => {
           >
             A standardized evaluation system designed to measure student proficiency across multiple dimensions of social and political history.
           </motion.p>
+
+          {/* Cinematic diorama banner — from the homepage scroll world */}
+          <motion.div
+            className="mt-12 max-w-4xl mx-auto rounded-[2.5rem] overflow-hidden premium-shadow border border-[#6B4EFF]/15 relative"
+            initial={{ opacity: 0, y: 30, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+          >
+            <img src={worldExam} alt="Miniature clay diorama of the examination hall" width={1536} height={1024} loading="lazy" decoding="async" className="w-full h-auto object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E1F]/40 via-transparent to-transparent pointer-events-none" />
+            <p className="absolute bottom-5 left-6 text-[#F5EFE0] font-serif italic text-lg drop-shadow">Exam day, in miniature.</p>
+          </motion.div>
         </div>
       </section>
 

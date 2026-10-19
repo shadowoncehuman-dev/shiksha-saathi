@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import ExamNoticeBanner from "@/components/ExamNoticeBanner";
 import CountdownTimer from "@/components/CountdownTimer";
 import QuestionPaperBanner from "@/components/QuestionPaperBanner";
+import worldResults from "@/assets/world/results.jpg";
 
 const ResultPage = () => {
   const [resultStatus, setResultStatus] = useState<string | null>(null);
@@ -119,6 +120,18 @@ const ResultPage = () => {
             <h2 className="font-playfair text-3xl font-bold text-foreground mt-3 mb-3">{tr.result.checkResult}</h2>
             <div className="section-divider mb-4" />
             <p className="text-muted-foreground text-sm">{ORG_NAME}</p>
+          </motion.div>
+
+          {/* Cinematic diorama banner — from the homepage scroll world */}
+          <motion.div
+            className="mb-8 rounded-[2rem] overflow-hidden premium-shadow border border-border relative"
+            initial={{ opacity: 0, y: 24, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.1, duration: 0.7, ease: "easeOut" }}
+          >
+            <img src={worldResults} alt="Miniature clay diorama of answer sheets being evaluated" width={1536} height={1024} loading="lazy" decoding="async" className="w-full h-44 md:h-56 object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E1F]/45 via-transparent to-transparent pointer-events-none" />
+            <p className="absolute bottom-4 left-5 text-[#F5EFE0] font-serif italic drop-shadow">Every mark, checked with care.</p>
           </motion.div>
 
           {/* Exam Notice Banner */}
